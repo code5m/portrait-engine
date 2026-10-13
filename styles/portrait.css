@@ -58,3 +58,55 @@
 .mouth{left:55px;top:266px;width:99px}.upper-lip{width:88px;left:5px;height:20px;top:0px;opacity:.53;clip-path:polygon(0 78%,19% 52%,37% 34%,50% 53%,62% 32%,81% 50%,100% 75%,80% 84%,50% 80%,19% 91%);background:#877f75}.lip-line{width:89px;left:5px;top:13px;border-top-width:1.7px;border-radius:20% 20% 63% 57%;opacity:.85}.lower-lip{width:73px;left:14px;top:16px;height:17px;opacity:.55;background:radial-gradient(ellipse at 49% 1%,#a39a8c,#d6cdc1 71%,transparent 78%);border-bottom-color:#ada69d}
 .chin-shadow{top:37px;opacity:.43}
 
+/* Portrait anatomy study: keep silhouettes in step with the face-width landmark. */
+.ear-left{left:calc(71px - var(--face-half-delta,0px))}
+.ear-right{right:calc(68px - var(--face-half-delta,0px))}
+.hair-back,.hair-cap{transform:scaleX(var(--hair-structure-x,1))}
+.lock-left-a{transform:rotate(5deg) scaleX(var(--hair-structure-x,1))}
+.lock-left-b{transform:rotate(-8deg) scaleX(var(--hair-structure-x,1))}
+.lock-right-a{transform:rotate(-4deg) scaleX(var(--hair-structure-x,1))}
+.lock-right-b{transform:rotate(6deg) scaleX(var(--hair-structure-x,1))}
+.mouth{transform:scaleX(var(--mouth-x,1));transform-origin:50% 31%}
+/* A compact 2D value model: moving the key light shifts forehead, temple and nose shadows. */
+.face{background:radial-gradient(ellipse 93% 78% at var(--light-x,39%) 31%,#f8f4eb 0%,#e5dfd4 31%,#c5c0b4 66%,#96948b 86%,#575a55 100%)}
+.face-tones{background:
+  radial-gradient(ellipse 58% 49% at var(--light-x,39%) 17%,#fffdf4b8,transparent 85%),
+  radial-gradient(ellipse 75% 78% at var(--shadow-x,61%) 48%,#4d4f4765,transparent 83%),
+  radial-gradient(ellipse at 17% 67%,#6969603e,transparent 29%),
+  radial-gradient(ellipse at 84% 68%,#6662594f,transparent 29%),
+  radial-gradient(ellipse at 51% 92%,#77746d8c,transparent 29%)}
+.face .side-shadow-left{opacity:var(--shadow-left-opacity,.26)}
+.face .side-shadow-right{opacity:var(--shadow-right-opacity,.44)}
+.forehead-light{left:calc(44px + var(--forehead-shift,0px))}
+.nose-bridge{box-shadow:var(--nose-cast-x,2.5px) 4px 9px #393b3457}
+.nose-tip{background:radial-gradient(circle at var(--light-x,39%) 23%,#f7f1e6,#d0cabc 57%,transparent 87%)}
+/* A paper-tooth impression over the face, not a bitmap/noise asset. */
+.face::before{content:"";inset:0;z-index:12;border-radius:inherit;pointer-events:none;
+  background:radial-gradient(circle,#40413930 .4px,transparent .85px) 0 0 / 3.2px 3.2px;
+  opacity:calc(.22 * var(--hatch,.62));mix-blend-mode:multiply}
+/* Actual pencil construction lines; available without generating or loading images. */
+.construction-guides{display:none;inset:0;z-index:26;pointer-events:none;font:9px ui-monospace,monospace;letter-spacing:1px}
+.portrait[data-study="structure"] .construction-guides{display:block}
+.construction-ellipse{left:calc(87px - var(--face-half-delta,0px));top:91px;width:calc(207px * var(--face-x,1));height:304px;border:1px dashed #76533cb0;border-radius:47% 48% 48% 50%/35% 36% 59% 61%;box-shadow:0 0 0 1px #f2e8d43b}
+.construction-axis{left:190px;top:57px;height:362px;border-left:1px dashed #996e517c}
+.construction-line{left:66px;width:245px;height:0;border-top:1px dashed #895737a6}
+.construction-line::after{right:0;bottom:2px;color:#785b42;background:#ece4d1a8;padding:1px 2px;font-size:8px}
+.guide-brow{top:203px}.guide-eye{top:239px}.guide-nose{top:336px}.guide-mouth{top:373px}
+.guide-brow::after{content:"BROW"}.guide-eye::after{content:"EYES"}.guide-nose::after{content:"NOSE"}.guide-mouth::after{content:"MOUTH"}
+.portrait[data-study="structure"] .face-hatching{opacity:.05}
+.portrait[data-study="structure"] .cheek-hatch{opacity:.08}
+.portrait[data-study="structure"] .hair-strands{opacity:.22}
+
+/* Portrait quality study: recede obvious geometric discs and lipstick edges. */
+.eye-white{background:radial-gradient(ellipse at 47% 72%,#d7d2c8 0%,#eae6dc 62%,#a19f97 100%);border-top-color:#54534d;border-bottom-color:#9a978f;box-shadow:inset 0 3px 3px #3c3c374f}
+.iris{width:18px;height:19px;left:27px;top:7px;opacity:.88}
+.pupil{left:4px;top:4px;width:10px;height:11px}
+.glint{left:10px;top:3px;width:4px;height:5px}
+.nose-left,.nose-right{opacity:.35;filter:blur(3px);background:radial-gradient(ellipse at 52% 40%,#c4bfb3 0%,#b1ab9f 28%,transparent 83%)}
+.nose-tip{left:23px;top:53px;width:27px;height:23px;filter:blur(1.5px);background:radial-gradient(ellipse at var(--light-x,39%) 24%,#f6eee1 0%,#d1cabe 53%,transparent 89%)}
+.nostril{top:70px;width:14px;height:5px;border-bottom:1.5px solid #555149;opacity:.64}
+.nostril-left{left:12px}.nostril-right{right:11px}
+.upper-lip{opacity:.29;background:linear-gradient(#938a7e,#7e786f)}
+.lip-line{border-top-color:#5e5b53;border-top-width:1.3px;opacity:.68}
+.lower-lip{opacity:.36;height:15px;border:0;filter:blur(.8px)}
+.chin-shadow{opacity:.23}

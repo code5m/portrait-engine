@@ -62,3 +62,11 @@ python3 test/browser-qa.py
 ## 许可证
 
 原创代码采用 MIT License。本项目不包含先前讨论的其他开源项目的代码与图片素材。
+
+## Research 001: geometry and controllable light
+
+- Face-width changes now coordinate ear placement and the hair silhouette.
+- Added mouth-width and key-light-direction controls; existing seven-control JSON imports still work.
+- The study switch reveals anatomical construction guides without changing the saved portrait.
+- Pure `derivePortraitStyle()` mapping is unit-tested at narrow/wide face and left/right light extremes.
+- See `docs/RESEARCH-001.md` for methods and honest limits. This is *not yet* a photographic or academy-level graphite portrait.

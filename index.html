@@ -75,6 +75,13 @@
               <div class="hair-lock lock-right-b"></div>
               <div class="hair-strands strands-left"></div>
               <div class="hair-strands strands-right"></div>
+              <div class="construction-guides" aria-hidden="true">
+                <div class="construction-ellipse"></div><div class="construction-axis"></div>
+                <div class="construction-line guide-brow"></div>
+                <div class="construction-line guide-eye"></div>
+                <div class="construction-line guide-nose"></div>
+                <div class="construction-line guide-mouth"></div>
+              </div>
             </div>
             <div class="drawing-signature">PE <span> / graphite study</span></div>
             <div class="paper-footer"><span data-t="paperLeft">STRUCTURE / LIGHT / HATCH</span><span data-t="paperRight">100% CODE</span></div>
@@ -91,6 +98,7 @@
       <aside class="inspector" aria-labelledby="inspector-title">
         <div class="inspector-header"><span class="eyebrow" data-t="inspectorEyebrow">STUDIO CONTROLS</span><h2 id="inspector-title" data-t="inspectorTitle">Sculpt the portrait</h2><p data-t="inspectorIntro">Move a slider. Watch the CSS face respond.</p></div>
         <fieldset class="preset-fieldset"><legend data-t="presets">CHARACTER STUDIES</legend><div class="preset-buttons" role="group" aria-label="Character presets"><button type="button" class="preset active" data-preset="classic" data-t="presetClassic" aria-pressed="true">Classic</button><button type="button" class="preset" data-preset="gentle" data-t="presetGentle" aria-pressed="false">Gentle</button><button type="button" class="preset" data-preset="angular" data-t="presetAngular" aria-pressed="false">Angular</button></div></fieldset>
+        <fieldset class="study-fieldset"><legend data-t="studyTitle">Drawing study mode</legend><div class="study-buttons" role="group" aria-label="Drawing study views"><button type="button" class="study-button active" data-study-mode="graphite" data-t="studyGraphite" aria-pressed="true">Graphite portrait</button><button type="button" class="study-button" data-study-mode="structure" data-t="studyStructure" aria-pressed="false">Construction guides</button></div></fieldset>
         <div class="control-section"><div class="section-header"><span class="eyebrow" data-t="structure">01 / FACE GEOMETRY</span></div><div class="controls" id="geometry-controls"></div></div>
         <div class="control-section"><div class="section-header"><span class="eyebrow" data-t="surface">02 / GRAPHITE FINISH</span></div><div class="controls" id="finish-controls"></div></div>
         <div class="inspector-actions"><button class="primary-button" type="button" id="download-btn"><span data-t="save">Export portrait parameters</span><span aria-hidden="true">&darr;</span></button><div class="secondary-actions"><button type="button" id="import-btn" class="subtle-button" data-t="load">Import parameters</button><button type="button" id="reset-btn" class="subtle-button" data-t="reset">Reset</button></div><input id="upload-input" type="file" accept="application/json,.json" hidden><p class="save-note" data-t="saveNote">Parameters save locally. JSON export is lossless.</p></div>

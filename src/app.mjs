@@ -1,5 +1,6 @@
 import { DEFINITIONS, PRESETS, KEYS, defaults, normalize, equal, encode, decode } from './parameters.mjs';
 import { zh } from './i18n.mjs';
+import { derivePortraitStyle } from './geometry.mjs';
 
 const root = document.querySelector('#portrait');
 const paper = document.querySelector('#portrait-paper');
@@ -21,7 +22,7 @@ function localize() {
     const phrase = zh[el.dataset.t];
     if (phrase) el.textContent = phrase;
   }
-  root.setAttribute('aria-label', 'Portrait Engine original CSS graphite portrait');
+  root.setAttribute('aria-label', zh.portraitAria);
 }
 
 function buildControls() {
@@ -62,14 +63,7 @@ function buildControls() {
 }
 
 function apply() {
-  root.style.setProperty('--face-x', String(values.faceWidth / 100));
-  root.style.setProperty('--eye-offset', `${values.eyeSpacing}px`);
-  root.style.setProperty('--nose-x', String(values.noseWidth / 100));
-  root.style.setProperty('--jaw-radius-left', `${50 - (values.jaw - 100) * .45}%`);
-  root.style.setProperty('--jaw-radius-right', `${48 - (values.jaw - 100) * .45}%`);
-  root.style.setProperty('--ink', String(values.graphite / 100));
-  root.style.setProperty('--hatch', String(values.hatching / 100));
-  root.style.setProperty('--hair-x', String(values.hairVolume / 100));
+  for (const [name, value] of Object.entries(derivePortraitStyle(values))) root.style.setProperty(name, value);
   for (const key of KEYS) {
     const def = DEFINITIONS[key];
     const input = document.getElementById(`param-${key}`);
@@ -119,7 +113,21 @@ function updateScale() {
   root.style.setProperty('--portrait-scale', String(Math.max(.55, scale)));
 }
 
+function setStudyMode(mode) {
+  if (!['graphite', 'structure'].includes(mode)) return;
+  root.dataset.study = mode;
+  for (const button of document.querySelectorAll('[data-study-mode]')) {
+    const active = button.dataset.studyMode === mode;
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-pressed', String(active));
+  }
+}
+
 localize();
+setStudyMode('graphite');
+for (const button of document.querySelectorAll('[data-study-mode]')) {
+  button.addEventListener('click', () => setStudyMode(button.dataset.studyMode));
+}
 restore();
 buildControls();
 apply();

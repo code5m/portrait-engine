@@ -20,3 +20,12 @@
 ## 下一阶段
 
 优先改进素描比例、发丝排线、鼻梁和嘴唇的质感；之后开发真正的面部结构模型、精细编辑及多种导出。与直接 AI 生图的对比应以**可控性、稳定性和修改效率**进行实测，不凭主观热情判定商业价值。
+
+## Research 001 quality status
+
+- Nine interactive numeric controls, including mouth width and directional key light.
+- A read-only construction guide overlay; view modes cannot modify stored portrait geometry.
+- The derived landmark mapper is tested at narrow/wide silhouette and opposite lighting extremes.
+- Legacy v1 seven-control JSON portraits still load with safe defaults for new controls.
+- Offline build reproducibility is now checked on CI to detect source/bundle drift.
+- Human/artist visual fidelity remains UNVERIFIED. Passing tests must not be described as realism achievement.

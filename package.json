@@ -3,13 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Original CSS-drawn graphite portrait studio, with no image or SVG assets.",
+  "description": "Original code-drawn graphite portrait studio without image assets.",
   "scripts": {
     "dev": "python3 -m http.server 4173",
-    "check": "node --check src/app.mjs && node --check src/parameters.mjs && node --check src/i18n.mjs",
+    "check": "node --check src/app.mjs && node --check src/parameters.mjs && node --check src/i18n.mjs && node --check src/geometry.mjs && node --check test/parameters.test.mjs && node --check test/geometry.test.mjs",
     "test": "node --test test/*.test.mjs",
-    "build": "python3 scripts/build-standalone.py",
-    "verify": "npm run check && npm test && npm run build"
+    "verify": "npm run check && npm run build && npm test",
+    "build": "python3 scripts/build-standalone.py"
   },
   "engines": {
     "node": ">=20"

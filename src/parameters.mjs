@@ -5,13 +5,15 @@ export const DEFINITIONS = Object.freeze({
   jaw: { min: 82, max: 118, step: 1, value: 100, group: 'geometry', unit: '%' },
   graphite: { min: 15, max: 100, step: 1, value: 65, group: 'finish', unit: '%' },
   hatching: { min: 0, max: 100, step: 1, value: 62, group: 'finish', unit: '%' },
-  hairVolume: { min: 75, max: 125, step: 1, value: 100, group: 'finish', unit: '%' }
+  hairVolume: { min: 75, max: 125, step: 1, value: 100, group: 'finish', unit: '%' },
+  mouthWidth: { min: 82, max: 118, step: 1, value: 100, group: 'geometry', unit: '%' },
+  lightDirection: { min: -60, max: 60, step: 1, value: -30, group: 'finish', unit: '\u00b0' }
 });
 
 export const PRESETS = Object.freeze({
-  classic: { faceWidth: 100, eyeSpacing: 0, noseWidth: 100, jaw: 100, graphite: 65, hatching: 62, hairVolume: 100 },
-  gentle: { faceWidth: 90, eyeSpacing: 6, noseWidth: 85, jaw: 88, graphite: 46, hatching: 43, hairVolume: 110 },
-  angular: { faceWidth: 109, eyeSpacing: -4, noseWidth: 115, jaw: 115, graphite: 87, hatching: 86, hairVolume: 90 }
+  classic: { faceWidth: 100, eyeSpacing: 0, noseWidth: 100, jaw: 100, graphite: 65, hatching: 62, hairVolume: 100, mouthWidth: 100, lightDirection: -30 },
+  gentle: { faceWidth: 90, eyeSpacing: 6, noseWidth: 85, jaw: 88, graphite: 46, hatching: 43, hairVolume: 110, mouthWidth: 92, lightDirection: -44 },
+  angular: { faceWidth: 109, eyeSpacing: -4, noseWidth: 115, jaw: 115, graphite: 87, hatching: 86, hairVolume: 90, mouthWidth: 108, lightDirection: 38 }
 });
 
 export const KEYS = Object.freeze(Object.keys(DEFINITIONS));
