@@ -107,7 +107,7 @@
   radial-gradient(ellipse at 51% 92%,#77746d8c,transparent 29%)}
 .face .side-shadow-left{opacity:var(--shadow-left-opacity,.26)}
 .face .side-shadow-right{opacity:var(--shadow-right-opacity,.44)}
-.forehead-light{left:calc(44px + (var(--light-x,39%) - 39%) * .16)}
+.forehead-light{left:calc(44px + var(--forehead-shift,0px))}
 .nose-bridge{box-shadow:var(--nose-cast-x,2.5px) 4px 9px #393b3457}
 .nose-tip{background:radial-gradient(circle at var(--light-x,39%) 23%,#f7f1e6,#d0cabc 57%,transparent 87%)}
 /* A paper-tooth impression over the face, not a bitmap/noise asset. */
@@ -126,6 +126,20 @@
 .portrait[data-study="structure"] .face-hatching{opacity:.05}
 .portrait[data-study="structure"] .cheek-hatch{opacity:.08}
 .portrait[data-study="structure"] .hair-strands{opacity:.22}
+
+/* Portrait quality study: recede obvious geometric discs and lipstick edges. */
+.eye-white{background:radial-gradient(ellipse at 47% 72%,#d7d2c8 0%,#eae6dc 62%,#a19f97 100%);border-top-color:#54534d;border-bottom-color:#9a978f;box-shadow:inset 0 3px 3px #3c3c374f}
+.iris{width:18px;height:19px;left:27px;top:7px;opacity:.88}
+.pupil{left:4px;top:4px;width:10px;height:11px}
+.glint{left:10px;top:3px;width:4px;height:5px}
+.nose-left,.nose-right{opacity:.35;filter:blur(3px);background:radial-gradient(ellipse at 52% 40%,#c4bfb3 0%,#b1ab9f 28%,transparent 83%)}
+.nose-tip{left:23px;top:53px;width:27px;height:23px;filter:blur(1.5px);background:radial-gradient(ellipse at var(--light-x,39%) 24%,#f6eee1 0%,#d1cabe 53%,transparent 89%)}
+.nostril{top:70px;width:14px;height:5px;border-bottom:1.5px solid #555149;opacity:.64}
+.nostril-left{left:12px}.nostril-right{right:11px}
+.upper-lip{opacity:.29;background:linear-gradient(#938a7e,#7e786f)}
+.lip-line{border-top-color:#5e5b53;border-top-width:1.3px;opacity:.68}
+.lower-lip{opacity:.36;height:15px;border:0;filter:blur(.8px)}
+.chin-shadow{opacity:.23}
 
 </style>
   <script type="module">
@@ -171,6 +185,43 @@ function decode(json) {
   if (parsed?.format !== 'portrait-engine-params' || parsed?.version !== 1 || !parsed.parameters || typeof parsed.parameters !== 'object') throw new Error('Unsupported portrait file');
   if (!KEYS.some(key => Number.isFinite(parsed.parameters[key]))) throw new Error('No valid parameters');
   return normalize(parsed.parameters);
+}
+
+
+/**
+ * Maps human-readable sliders into coordinated CSS landmarks.
+ * The face is centered at x=190.5px in a fixed 380px drawing coordinate space.
+ * A change to face width must also relocate both ears and widen the hair mass.
+ * Lighting is deliberately a *stylized* 2D value model, not a physically
+ * correct cast-shadow solver.
+ */
+function derivePortraitStyle(raw) {
+  const p = normalize(raw);
+  const faceScale = p.faceWidth / 100;
+  const halfDelta = 103.5 * (faceScale - 1);
+  const light01 = (p.lightDirection + 60) / 120;
+  const ink = p.graphite / 100;
+  const shadowLeft = (0.19 + 0.66 * light01) * ink;
+  const shadowRight = (0.19 + 0.66 * (1 - light01)) * ink;
+  return Object.freeze({
+    '--face-x': String(faceScale),
+    '--face-half-delta': `${halfDelta.toFixed(2)}px`,
+    '--hair-structure-x': String(Number(((p.hairVolume / 100) * (1 + .36 * (faceScale - 1))).toFixed(4))),
+    '--hair-x': String(Number(((p.hairVolume / 100) * (1 + .36 * (faceScale - 1))).toFixed(4))),
+    '--eye-offset': `${p.eyeSpacing}px`,
+    '--nose-x': String(p.noseWidth / 100),
+    '--mouth-x': String(p.mouthWidth / 100),
+    '--jaw-radius-left': `${50 - (p.jaw - 100) * .45}%`,
+    '--jaw-radius-right': `${48 - (p.jaw - 100) * .45}%`,
+    '--ink': String(ink),
+    '--hatch': String(p.hatching / 100),
+    '--light-x': `${(28 + 44 * light01).toFixed(1)}%`,
+    '--shadow-x': `${(72 - 44 * light01).toFixed(1)}%`,
+    '--shadow-left-opacity': shadowLeft.toFixed(4),
+    '--shadow-right-opacity': shadowRight.toFixed(4),
+    '--nose-cast-x': `${(5 - 10 * light01).toFixed(1)}px`,
+    '--forehead-shift': `${(-8 + 16 * light01).toFixed(1)}px`
+  });
 }
 
 // This file uses Unicode escapes to keep the portable source ASCII-only.
