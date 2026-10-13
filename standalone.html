@@ -802,6 +802,179 @@
 .portrait .lock-right-b {height:190px;top:183px;opacity:.89;}
 
 </style>
+  <style>
+/* Research 004: portrait form before decoration.
+   The study concentrates on the negative spaces at the hairline, orbit,
+   alar cartilages, lips and neck. All marks are CSS: no images, SVG, canvas
+   or generated texture. Values remain linked to the existing nine sliders. */
+
+/* A: make the dark frame look like a sequence of turned graphite locks,
+   not a rigid, uniformly filled oval helmet. Keep the existing scale hooks. */
+.portrait .hair-back {
+  left:83px; top:52px; width:217px; height:311px;
+  border-radius:52% 49% 45% 44% / 29% 32% 70% 69%;
+  background:
+    radial-gradient(ellipse 82% 52% at 30% 26%,#797c7159,transparent 82%),
+    radial-gradient(ellipse 47% 70% at 86% 61%,#1e221db8,transparent 92%),
+    #3a3d37;
+  box-shadow: inset 9px 13px 16px #1c231d65, 4px 6px 9px #45443d21;
+}
+.portrait .hair-cap {
+  left:79px; top:63px; width:229px; height:147px;
+  clip-path: polygon(0% 65%,5% 30%,15% 14%,34% 2%,48% 1%,62% 4%,78% 12%,92% 30%,100% 66%,94% 71%,81% 48%,67% 32%,56% 30%,47% 38%,38% 44%,29% 46%,22% 54%,11% 67%);
+  background:
+    radial-gradient(ellipse 82% 64% at 32% 36%,#7d817160,transparent 84%),
+    repeating-linear-gradient(107deg,#353b33 0 7px,#454a40 9px,#33382f 13px,#2c312b 19px);
+  box-shadow: inset 12px 11px 10px #202a245e;
+}
+.portrait .part-line {left:180px;top:88px;height:26px;opacity:.34;transform:rotate(-18deg)}
+.portrait .hair-behind-left {
+  left:67px; top:99px; width:85px; height:282px;
+  border-radius:68% 20% 56% 42% / 20% 34% 75% 85%;
+  transform:rotate(9deg) scaleX(var(--hair-structure-x,1));
+  background:radial-gradient(ellipse 60% 90% at 23% 27%,#65695a91,transparent 81%), linear-gradient(106deg,#1f251f,#424940 38%,#252d27 82%);
+}
+.portrait .hair-behind-right {
+  left:237px; top:105px; width:78px; height:280px;
+  border-radius:23% 73% 58% 30% / 24% 28% 79% 77%;
+  transform:rotate(-6deg) scaleX(var(--hair-structure-x,1));
+  background:radial-gradient(ellipse 68% 88% at 76% 29%,#59625388,transparent 84%), linear-gradient(76deg,#252b25,#3b4139 54%,#1c241e 94%);
+}
+.portrait .lock-left-a {
+  left:76px; top:121px; width:47px; height:203px;
+  border-radius:62% 31% 58% 23% / 26% 40% 70% 80%;
+  clip-path:polygon(35% 0,95% 0,77% 24%,58% 45%,68% 64%,39% 99%,4% 88%,15% 54%,11% 27%);
+  transform:rotate(7deg) scaleX(var(--hair-structure-x,1));
+}
+.portrait .lock-left-b {
+  left:63px; top:202px; width:46px; height:135px;
+  clip-path:polygon(41% 0,95% 4%,78% 37%,93% 82%,40% 100%,4% 82%,12% 46%);
+  opacity:.67;transform:rotate(-12deg) scaleX(var(--hair-structure-x,1));
+}
+.portrait .lock-right-a {
+  right:75px;top:124px;width:47px;height:212px;
+  border-radius:38% 67% 33% 58% / 23% 42% 72% 84%;
+  clip-path:polygon(22% 0,73% 0,98% 28%,86% 52%,90% 77%,45% 100%,14% 82%,34% 51%);
+  transform:rotate(-8deg) scaleX(var(--hair-structure-x,1));
+}
+.portrait .lock-right-b {
+  right:59px;top:201px;width:47px;height:142px;
+  clip-path:polygon(13% 0,65% 0,95% 43%,87% 83%,39% 100%,3% 78%,25% 37%);
+  opacity:.75;transform:rotate(13deg) scaleX(var(--hair-structure-x,1));
+}
+.portrait .hair-lock {
+  background:
+    radial-gradient(ellipse 45% 84% at 21% 43%,#898b7850,transparent 88%),
+    repeating-linear-gradient(99deg,#242b25 0 5px,#353d33 7px,#4b5043 10px,#252d27 15px);
+  box-shadow:inset 7px 1px 10px #6872632e,inset -9px 2px 12px #101c17a8,3px 6px 7px #2f352f3f;
+}
+.portrait .hair-strands {opacity:.26; width:44px; background:repeating-linear-gradient(98deg,transparent 0 9px,#b1b3a12d 9.3px 9.7px,transparent 10px 17px)}
+.portrait .strands-left {left:71px;top:126px;height:191px}
+.portrait .strands-right {right:72px;top:138px;height:185px}
+.portrait .hair-sweep{opacity:calc(.22 + var(--hatch,.62)*.27);border-color:#73776875}
+.portrait .sweep-left-one{left:77px;top:109px}
+.portrait .sweep-left-two{left:76px;top:141px}
+.portrait .sweep-left-three{left:75px;top:203px}
+.portrait .sweep-right-one{right:83px;top:112px}
+.portrait .sweep-right-two{right:79px;top:148px}
+.portrait .sweep-right-three{right:72px;top:205px}
+/* Deliberate, sparse off-axis flyaways. Four independent ink contours are
+   drawn with curved CSS borders instead of mechanically tiling a pattern. */
+.portrait .flyaway {z-index:12;width:34px;height:88px;border-radius:51% 4% 68% 10% / 60% 2% 98% 3%;border-left:1px solid #4b5146b5;opacity:calc(.28 + var(--hatch,.62)*.39);pointer-events:none}
+.portrait .flyaway-a{left:73px;top:142px;transform:rotate(-18deg)}
+.portrait .flyaway-b{left:88px;top:212px;height:110px;transform:rotate(22deg);opacity:.26}
+.portrait .flyaway-c{right:69px;top:137px;transform:scaleX(-1) rotate(-13deg)}
+.portrait .flyaway-d{right:78px;top:245px;height:115px;transform:scaleX(-1) rotate(18deg);opacity:.28}
+
+/* B: an upper lid is a curved edge over a globe, not a sleeping flat bar.
+   Vary the two eyes slightly; reserve the darkest ink for pupil and rim. */
+.portrait .eye {top:137px;width:61px;height:40px}
+.portrait .eye-left {left:25px;transform:translateX(calc(-1 * var(--eye-offset))) rotate(-2deg)}
+.portrait .eye-right {right:27px;top:138px;transform:translateX(var(--eye-offset)) rotate(1deg)}
+.portrait .eye-white,
+.portrait .eye-right .eye-white {
+  left:2px;top:10px;width:58px;height:21px;
+  clip-path:polygon(0 59%,10% 40%,27% 24%,46% 12%,65% 18%,83% 38%,100% 60%,82% 84%,60% 90%,35% 91%,16% 84%);
+  border:none;border-radius:50%;transform:none;
+  background:radial-gradient(ellipse at 45% 62%,#efebe0 0%,#d9d8cf 65%,#999c8f 100%);
+  box-shadow:inset 0 4px 5px #303a3066;
+}
+.portrait .eye-right .eye-white{left:1px;width:57px;clip-path:polygon(0 62%,13% 36%,36% 17%,57% 16%,76% 33%,100% 59%,84% 82%,58% 94%,30% 88%)}
+.portrait .iris {left:24px;top:8px;width:22px;height:22px;opacity:.93;background:radial-gradient(circle at 50% 50%,#232a25 0 26%,#677066 28% 53%,#9a9a89 72%,#575c53 100%);border:1px solid #6f736b;box-shadow:inset 0 0 3px #292d28a8}
+.portrait .eye-right .iris{left:22px;top:9px;width:21px;height:21px}
+.portrait .pupil{left:6px;top:6px;width:9px;height:10px;background:#1f2923}
+.portrait .glint{top:4px;left:13px;width:3px;height:3px;opacity:.76;background:#efecdf}
+.portrait .eye::before{content:"";left:1px;top:6px;width:59px;height:16px;border-top:1.9px solid #42473e;border-radius:61% 45% 26% 18% / 91% 67% 30% 19%;transform:rotate(-1deg);z-index:9;opacity:.83}
+.portrait .eye-right::before{left:0;width:58px;transform:rotate(1deg);border-radius:48% 61% 19% 32% / 78% 89% 25% 26%}
+.portrait .eye::after{left:1px;top:5px;width:59px;height:10px;border-bottom:1px solid #595c53a1;border-radius:52% 59% 43% 31%;transform:rotate(-.5deg);background:radial-gradient(ellipse at 51% 7%,#5b615672,transparent 89%);box-shadow:0 1.3px 2px #56595047;opacity:.73}
+.portrait .eye-right::after{left:1px;top:6px;width:58px;height:9px;transform:rotate(1deg)}
+.portrait .crease{top:1px;left:6px;width:51px;border-top:1.1px solid #54574f8a;transform:rotate(-3deg);opacity:.74}
+.portrait .eye-right .crease{top:1px;left:5px;width:50px;transform:rotate(2deg);opacity:.68}
+.portrait .lower-lid{left:8px;top:28px;width:47px;border-bottom:1px solid #5c5d5666;opacity:.58;transform:rotate(-2deg)}
+.portrait .eye-right .lower-lid{left:8px;top:28px;width:47px;transform:rotate(1deg)}
+.portrait .eyebrow-left{top:113px;left:27px;transform:rotate(-7deg)}
+.portrait .eyebrow-right{top:114px;right:29px;transform:scaleX(-1) rotate(5deg)}
+.portrait .eye-socket-left{top:125px;opacity:calc(.28 + var(--plane-shade-left,.3)*.72)}
+.portrait .eye-socket-right{top:126px;opacity:calc(.28 + var(--plane-shade-right,.3)*.73)}
+
+/* C: remove the airbrushed bright column and express the small cartilaginous
+   planes of the nose through asymmetrical turning values. */
+.portrait .nasal-plane-left{left:76px;top:176px;width:28px;opacity:calc(.24 + var(--plane-shade-left,.3)*.58);transform:rotate(6deg)}
+.portrait .nasal-plane-right{right:73px;top:179px;width:22px;opacity:calc(.19 + var(--plane-shade-right,.3)*.55);transform:rotate(-6deg)}
+.portrait .nose-bridge{left:22px;top:5px;width:28px;height:69px;filter:blur(3.3px);background:linear-gradient(90deg,#5b60564f 0%,#c9c4b738 25%,#f6f0e6b5 50%,#aaa79a60 80%,#74796c57 100%);box-shadow:var(--nose-cast-x,3px) 3px 7px #4e544a38}
+.portrait .nose-tip{left:24px;top:52px;width:28px;height:19px;filter:blur(2px);background:radial-gradient(ellipse 83% 74% at 40% 44%,#ede9dab5,#bcb7ac62 69%,transparent 95%)}
+.portrait .nose-left{left:10px;top:58px;width:24px;height:20px;opacity:.46;transform:rotate(-9deg)}
+.portrait .nose-right{right:6px;top:58px;width:22px;height:17px;opacity:.55;transform:rotate(6deg)}
+.portrait .nostril{top:70px;border-bottom:1.3px solid #51564de0;opacity:.69;height:7px}
+.portrait .nostril-left{left:10px;width:13px;transform:rotate(-9deg)}
+.portrait .nostril-right{right:7px;width:12px;transform:rotate(8deg)}
+.portrait .nose::after{left:33px;top:72px;opacity:.55;width:8px;height:8px;filter:blur(2px)}
+
+/* D: an upper-lip shadow and the highlight below it should describe a mouth,
+   not an opaque grey bar. The corners are not at identical elevations. */
+.portrait .mouth{left:57px;top:261px;width:95px;transform:scaleX(var(--mouth-x,1)) rotate(-.5deg)}
+.portrait .upper-lip{left:8px;top:9px;width:81px;height:14px;opacity:.49;filter:blur(.65px);clip-path:polygon(0 79%,12% 54%,30% 27%,42% 42%,52% 55%,64% 33%,84% 50%,100% 73%,84% 79%,68% 78%,51% 82%,33% 76%,17% 85%)}
+.portrait .lip-line{top:18px;left:9px;width:79px;height:12px;border-top:1.1px solid #4e554bab;opacity:.63;border-radius:12% 19% 75% 78% / 45% 42% 74% 72%;transform:rotate(-.5deg)}
+.portrait .lower-lip{left:18px;top:23px;width:63px;height:15px;border:0;opacity:.62;filter:blur(.7px);background:radial-gradient(ellipse 95% 86% at 50% 10%,#aba99db3 0%,#d8d4c5a9 57%,transparent 85%)}
+.portrait .mouth::before{left:6px;top:19px;opacity:.5}
+.portrait .mouth::after{right:4px;top:18px;opacity:.47}
+.portrait .chin-plane{opacity:.3;top:281px}
+.portrait .chin-shadow{opacity:.20}
+
+/* E: avoid the detached grey strip below the chin. The head-only study is
+   allowed a hint of neck, but this should evaporate into the paper. */
+.portrait .neck{left:151px;top:371px;width:79px;height:70px;background:linear-gradient(90deg,#a7a69b 0%,#d2cec1 23%,#e0dbd1 57%,#8c8e82 89%,#767a70);box-shadow:inset 0 11px 14px #58584f6e;mask-image:linear-gradient(#000 0 18%,#0007 55%,transparent 99%);-webkit-mask-image:linear-gradient(#000 0 18%,#0007 55%,transparent 99%)}
+.portrait .neck::after{opacity:calc(var(--hatch,.62)*.24)}
+
+.portrait[data-study="structure"] .flyaway{opacity:.08}
+
+/* Research 004 blind A/B self-check: four native-CSS hair-opacity
+   variants were rendered (vA–vD). The former dark front locks obscured
+   both ears and looked like cut plastic. vB (.23/.8) retains form while
+   exposing skin and ear edges. This is a provisional visual preference,
+   NOT an independent expert rating. */
+.portrait .hair-lock {opacity:calc(.14 + var(--hatch,.62)*.15)}
+.portrait .hair-behind {opacity:.8}
+.portrait .hair-cap {opacity:.95}
+
+/* Replace the visibly periodic square paper grid with low-contrast,
+   offset stippling. No bitmap, image URL, or injected raster is used. */
+.paper::before {
+  opacity:.19;
+  background:
+    radial-gradient(circle at 2px 1px,#69696029 .55px,transparent .8px) 0 0 / 11px 13px,
+    radial-gradient(circle at 3px 4px,#7974691a .43px,transparent .95px) 3px 0 / 13px 7px,
+    repeating-linear-gradient(101deg,transparent 0 11px,#5b5b5512 11px 11.2px,transparent 11.2px 27px);
+}
+/* Reduce the porcelain-white oval around each pupil: paper and orbital
+   value should be continuous, with upper lids carrying the darker contour. */
+.portrait .eye-white,.portrait .eye-right .eye-white{
+  background:radial-gradient(ellipse at 45% 63%,#dfddd5,#c1c4ba 73%,#969b90 100%);
+}
+.portrait .iris {opacity:.87}
+.portrait .eye::after {opacity:.86}
+
+</style>
   <script type="module">
 const DEFINITIONS = Object.freeze({
   faceWidth: { min: 80, max: 120, step: 1, value: 100, group: 'geometry', unit: '%' },
@@ -1219,6 +1392,10 @@ updateScale();
               <div class="hair-sweep sweep-right-one"></div>
               <div class="hair-sweep sweep-right-two"></div>
               <div class="hair-sweep sweep-right-three"></div>
+              <div class="flyaway flyaway-a"></div>
+              <div class="flyaway flyaway-b"></div>
+              <div class="flyaway flyaway-c"></div>
+              <div class="flyaway flyaway-d"></div>
               <div class="construction-guides" aria-hidden="true">
                 <div class="construction-ellipse"></div><div class="construction-axis"></div>
                 <div class="construction-line guide-brow"></div>

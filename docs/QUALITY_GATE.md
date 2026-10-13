@@ -57,3 +57,16 @@ The research issue remains open until that evidence exists.
 - [x] 3 x 3 real Chromium rendering with structural and lighting pixel invariants.
 - [ ] Independent art-quality blind review: still missing.
 - [ ] Professional naturalistic graphite portrait: not achieved; no claims of photorealism.
+
+## Research 004：工程门禁与艺术边界
+
+- [x] 原始 CSS 绘画、四条独立发丝均不加载图片/SVG/Canvas/URL。
+- [x] `styles/study004.css` 同步进入网页、离线 HTML、真实浏览器 QA。
+- [x] 本地单元与契约测试：25 项通过。
+- [x] 实际 Chromium 九宫格：9/9，通过五官边界、左右光照响应、手机横向溢出检查。
+- [x] 四种发型透明度进行了真实浏览器对照，有可再现试验和量化记录。
+- [ ] 独立艺术家盲评与专业铅笔素描质量验收：未完成。
+- [ ] 不同人物身份、批量参数化人脸、照片级写实：未完成。
+- [ ] GitHub 远端两项 CI 需以该提交的实际运行结果为准，不以本地测试替代。
+
+**测试限制：** 深色像素比例变化只能表明明暗覆盖变化，不代表视觉真实程度得到独立认可；浏览器实现的鼻梁仍较几何化、眼睛仍有平面角色感。

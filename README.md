@@ -86,3 +86,9 @@ human anatomical accuracy nor artistic realism.
 ## Research 003: face likeness and QA fidelity
 
 Research 003 adds `styles/likeness.css`: intentionally asymmetric eye construction, a softer hairline, adjusted cheek/jaw volume, and reworked nostril/lip marks. `docs/RESEARCH-003.md` records browser-rendered evidence and the key limitation: this remains a stylized drawing, not professional graphite portrait realism. The nine-case real-browser matrix is archived as CI evidence, not used as a rendering asset.
+
+## Research 004 — 清晰轮廓与写实性边界
+
+本轮缩窄并打破规则的头发暗块，加强眼睑、鼻翼、嘴角的相互关系，将周期性网格纸纹改为微弱纸张颗粒。**从单张 CSS 艺术品向高写实素描迈进仍未完成。** 研究和四组发型试验、九组 Chromium 截图见 [研究记录](docs/RESEARCH-004.md)，可复现运行 `python3 test/hair-probe.py` 与 `python3 test/research-matrix.py`。
+
+工程测试与艺术审核分开：浏览器渲染和无外部图像素材检查能自动化；美术写实度仍需要真人盲评，未通过、不得以 CI 绿灯冒充通过。

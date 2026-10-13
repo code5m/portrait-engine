@@ -62,3 +62,9 @@ expression, gestural line quality, and perceived identity.
 ## Research 003 / landmarks vs render geometry
 
 `styles/likeness.css` is loaded last and contains coherent overrides for face proportions, eyelid overlap, nose, lips, and side-part hair. `deriveHeadLandmarks()` now maps the actual unequal left and right eye group centers rather than a fictitious symmetric center. This is a 2D drawing approximation, not a physically correct anatomical rig. The offline bundler, browser QA in-memory loader, and main page must include every CSS layer; unit tests enforce the same drawing source.
+
+## Research 004：独立视觉试验层
+
+`styles/study004.css` 在 `likeness.css` 之后加载，集中存放候选面部形体与少量独立发丝的 CSS 声明。`index.html`、单文件构建和 Chromium QA 使用完全相同的样式顺序。浏览器试验脚本仅临时注入四种透明度配置来进行比较，生成图片不参与任何运行时绘制。
+
+所有绘画图形仍是 HTML 元素、渐变、遮罩、阴影和边框，没有下载图片、内嵌 SVG、Canvas 或 AI 生图底图。CSS 的 2D 参数仍然是画面经验曲线，**不是**人体解剖模型或物理光线跟踪。

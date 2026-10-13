@@ -34,11 +34,12 @@ jobs:
           npm run build
           PORTRAIT_QA_DIR=test-results/research-002 python test/browser-qa.py
           python test/research-matrix.py
+          python test/hair-probe.py
       - name: Upload reproducible visual evidence (not runtime assets)
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: research-003-css-portrait-matrix
-          path: test-results/research-003/
+          name: research-004-css-portrait-matrix
+          path: test-results/research-004/
           if-no-files-found: warn
           retention-days: 21
