@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Portrait Engine: an original, code-drawn graphite portrait studio.">
+  <meta name="theme-color" content="#141716">
+  <title>Portrait Engine | CSS Graphite Lab</title>
+  <style>
+:root{font-family:Inter,"Noto Sans",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#f0efe8;background:#141716;font-synthesis:none;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}*{box-sizing:border-box}body{margin:0;min-height:100vh}button,input{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #d8a878;outline-offset:3px}a{color:inherit;text-decoration:none}.app-shell{max-width:1630px;margin:0 auto;min-height:100vh;padding:0 42px}.topbar{height:90px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #343936}.identity{display:flex;align-items:center;gap:14px}.identity-mark{width:39px;height:39px;border:1px solid #9a9b8d;display:grid;place-items:center;font:600 26px Georgia,serif;letter-spacing:-4px;transform:rotate(-2deg);padding-right:3px}.mark-dot{color:#cb9a70}.identity-text{display:flex;flex-direction:column;gap:4px}.identity-text strong{font-size:13px;letter-spacing:2.3px;font-weight:650}.identity-text small{color:#8d9691;letter-spacing:1.6px;font-size:9px}.topbar-right{display:flex;align-items:center;gap:12px;color:#afb9b0;font-size:11px;letter-spacing:.6px}.status-dot{width:7px;height:7px;background:#b8c3a2;border-radius:50%;box-shadow:0 0 10px #b8c3a255}.edition{border-left:1px solid #3e433f;margin-left:14px;padding-left:19px;color:#777f7c}.workspace{display:grid;grid-template-columns:minmax(0,1fr) 340px;min-height:800px}.canvas-panel{padding:51px 60px 30px 0;min-width:0}.canvas-heading{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:30px}.eyebrow{color:#bf9e7b;font-size:10px;letter-spacing:2.25px;font-weight:700}.canvas-heading h1{font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:clamp(28px,3.35vw,49px);letter-spacing:-1.7px;margin:14px 0 8px;line-height:1.13}.subtitle{font-size:13px;color:#969f99;margin:0}.canvas-index{padding-top:3px;font-family:monospace;font-size:11px;color:#78847d}.drawing-stage{height:min(64vw,660px);min-height:520px;max-height:660px;background:radial-gradient(circle at 50% 48%,#41443d,#242a27 65%,#1d2421 100%);border:1px solid #3a403b;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}.drawing-stage:after{content:"";position:absolute;inset:18px;border:1px solid #ffffff08;pointer-events:none}.stage-corner{position:absolute;width:35px;height:35px;z-index:3;pointer-events:none}.stage-corner-tl{left:12px;top:12px;border-left:1px solid #8d9388;border-top:1px solid #8d9388}.stage-corner-br{right:12px;bottom:12px;border-right:1px solid #8d9388;border-bottom:1px solid #8d9388}.paper{--paper-width:465px;position:relative;background:#dedbd1;width:min(76%,var(--paper-width));height:min(91%,604px);min-height:445px;box-shadow:0 4px 8px #080a0926,0 26px 45px #060a0840,inset 0 0 90px #9a978212;overflow:hidden;display:flex;align-items:center;justify-content:center}.paper:before{content:"";position:absolute;inset:0;z-index:5;pointer-events:none;opacity:.25;background:repeating-linear-gradient(1deg,transparent 0px,transparent 2px,#68696113 2.5px,transparent 3.2px),repeating-linear-gradient(93deg,transparent 0px,transparent 4px,#5f605014 4.4px,transparent 5.3px)}.paper:after{content:"";position:absolute;inset:0;z-index:5;pointer-events:none;box-shadow:inset 0 0 82px #8d8a743a}.paper-badge{position:absolute;top:21px;left:24px;z-index:6;color:#827f73;font-size:9px;letter-spacing:2.1px}.drawing-signature{position:absolute;bottom:46px;right:32px;z-index:6;color:#77746d;font:italic 30px Georgia,serif;transform:rotate(-7deg)}.drawing-signature span{font:italic 10px Georgia,serif;letter-spacing:1px}.paper-footer{position:absolute;bottom:18px;left:24px;right:24px;z-index:6;display:flex;justify-content:space-between;font:8px monospace;letter-spacing:1.2px;color:#8b877e}.canvas-footnote{display:flex;align-items:center;justify-content:space-between;margin-top:20px;font-size:11px;color:#939a93;gap:10px}.canvas-footnote>div{display:flex;align-items:center;gap:9px}.legend-swatch{width:12px;height:12px;border:1px solid #81877d;background:repeating-linear-gradient(145deg,#a8a59a 0 1px,transparent 1px 3px)}.text-link{border:0;background:none;color:#d9c0a5;font-size:11px;white-space:nowrap}.text-link:hover{text-decoration:underline}.inspector{border-left:1px solid #353a36;padding:53px 0 30px 35px;display:flex;flex-direction:column;gap:29px}.inspector-header h2{font-family:Georgia,serif;font-size:27px;font-weight:400;margin:13px 0 8px}.inspector-header p{margin:0;color:#9fa7a0;font-size:12px}.preset-fieldset{border:0;padding:0;margin:0}.preset-fieldset legend{padding:0;margin:0 0 13px;color:#bdc3b7;font-size:10px;letter-spacing:1.55px;font-weight:700}.preset-buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.preset{border:1px solid #434b44;color:#a7b2a8;background:#222824;height:39px;font-size:12px;border-radius:3px;transition:background .2s,border-color .2s}.preset.active,.preset[aria-pressed="true"]{border-color:#c5ae91;background:#394039;color:#faf1dd}.preset:hover{border-color:#8a9a8d}.control-section{border-top:1px solid #343b36;padding-top:21px}.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:19px}.control-row{margin-bottom:21px}.control-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}.control-meta label{font-size:12px;color:#d5dbd1}.control-meta output{font:12px monospace;color:#bfaa8d}.control-row input[type=range]{appearance:none;-webkit-appearance:none;width:100%;height:3px;display:block;border-radius:100px;background:linear-gradient(to right,#cfb38f 0%,#cfb38f var(--progress,50%),#414940 var(--progress,50%));cursor:pointer;margin:12px 0}.control-row input[type=range]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;border:2px solid #e5d5c0;background:#303a33;width:14px;height:14px;border-radius:50%;box-shadow:0 0 0 3px #141716}.control-row input[type=range]::-moz-range-thumb{border:2px solid #e5d5c0;background:#303a33;width:11px;height:11px;border-radius:50%}.control-hint{color:#77827a;font-size:10px;line-height:1.5;margin-top:3px}.inspector-actions{margin-top:2px}.primary-button{width:100%;min-height:44px;padding:0 15px;background:#d6c5ad;border:1px solid #f0d6b5;border-radius:3px;color:#202521;display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:700}.primary-button:hover{background:#f1d9b7}.secondary-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}.subtle-button{height:37px;border:1px solid #505a50;background:transparent;color:#c3cec3;border-radius:3px;font-size:11px}.subtle-button:hover{background:#2b322d}.save-note{margin:11px 0 0;color:#78837b;font-size:10px}.learn-card{background:#202823;border:1px solid #3f493f;padding:21px 20px;margin-top:auto}.learn-card h3{font:normal 19px/1.3 Georgia,serif;color:#eee7d9;margin:13px 0}.learn-card p{color:#98a29a;font-size:12px;line-height:1.75;margin:0 0 16px}.learn-card a{color:#e5c49c;font-size:11px;text-decoration:underline;text-underline-offset:4px}.site-footer{height:63px;border-top:1px solid #303831;display:flex;align-items:center;justify-content:space-between;color:#6e786f;font:9px monospace;letter-spacing:1.2px}.toast{position:fixed;bottom:20px;left:50%;transform:translate(-50%,120px);padding:12px 18px;background:#e1cfb5;color:#1c241e;border-radius:3px;box-shadow:0 10px 35px #0005;font-size:13px;pointer-events:none;opacity:0;transition:transform .24s,opacity .24s;z-index:20}.toast.is-visible{transform:translate(-50%,0);opacity:1} @media(min-width:1500px){.workspace{grid-template-columns:minmax(0,1fr) 380px}.inspector{padding-left:44px}.canvas-panel{padding-right:76px}.drawing-stage{max-height:715px;height:715px}} @media(max-width:1110px){.app-shell{padding:0 25px}.workspace{grid-template-columns:minmax(0,1fr) 295px}.canvas-panel{padding-right:22px}.inspector{padding-left:23px}.drawing-stage{min-height:500px}.paper{width:83%;height:88%}}@media(max-width:800px){.app-shell{padding:0 18px}.topbar{height:76px}.topbar-right{font-size:0;gap:0}.edition{font-size:11px}.status-dot{display:none}.workspace{display:flex;flex-direction:column}.canvas-panel{padding:34px 0 16px}.canvas-heading{margin-bottom:22px}.drawing-stage{height:72vw;min-height:420px;max-height:610px}.paper{width:min(76%,465px);height:93%}.inspector{border-left:0;border-top:1px solid #353a36;padding:29px 0;display:grid;grid-template-columns:1fr 1fr;gap:23px}.inspector-header,.preset-fieldset,.inspector-actions,.learn-card{grid-column:1/-1}.inspector-header h2{margin:8px 0}.learn-card{margin-top:0}.site-footer{font-size:8px}}@media(max-width:520px){.app-shell{padding:0 13px}.identity-text strong{font-size:11px;letter-spacing:1.7px}.identity-text small{font-size:7px}.canvas-heading h1{font-size:30px}.canvas-index{display:none}.drawing-stage{height:110vw;min-height:425px;max-height:560px}.paper{width:88%;height:92%}.paper-badge{font-size:7px;left:15px}.paper-footer{left:15px;right:15px;font-size:7px}.drawing-signature{right:20px;bottom:39px}.canvas-footnote{align-items:flex-start;line-height:1.5}.inspector{display:flex}.control-section{margin-top:-8px}.site-footer span:last-child{display:none}}@media print{body{background:white}.topbar,.canvas-heading,.canvas-footnote,.inspector,.site-footer,.stage-corner{display:none!important}.app-shell{padding:0}.workspace{display:block;min-height:0}.canvas-panel{padding:0}.drawing-stage{border:0;background:white;height:100vh;max-height:none;min-height:0}.paper{width:465px;height:604px;box-shadow:none;border:1px solid #e7e4db}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;animation:none!important}}
+.arch-link{background:none;border:0;padding:0;color:#e5c49c;font-size:11px;text-decoration:underline;text-underline-offset:4px;text-align:left}
+.architecture-dialog{color:#eae6dc;background:#242b27;border:1px solid #8e9180;border-radius:4px;padding:30px 30px 22px;width:min(90vw,500px);box-shadow:0 28px 90px #0009}
+.architecture-dialog::backdrop{background:#0a0f0cbd;backdrop-filter:blur(3px)}
+.architecture-dialog h2{font:normal 26px/1.2 Georgia,serif;margin:15px 0}
+.architecture-dialog p{font-size:13px;line-height:1.8;color:#b6beb6}
+.architecture-dialog code{display:block;overflow:auto;font:12px monospace;background:#151b17;padding:12px;color:#ddc7ac}
+.dialog-eyebrow{color:#c9a984;font-size:10px;letter-spacing:2px}
+.dialog-close{border:1px solid #a6af9c;border-radius:2px;background:transparent;color:#f2eadd;padding:9px 26px;margin-top:10px}
+
+</style>
+  <style>
+/* All portrait marks are original CSS shapes, gradients and masks. No asset URLs. */
+.portrait{--face-x:1;--eye-offset:0px;--nose-x:1;--jaw-x:1;--ink:.65;--hatch:.62;--hair-x:1;position:relative;flex:none;width:380px;height:500px;margin-top:12px;filter:grayscale(1);transform:scale(var(--portrait-scale,1));transform-origin:center center;isolation:isolate}
+.portrait *,.portrait *:before,.portrait *:after{box-sizing:border-box;position:absolute}
+.portrait-aura{width:325px;height:422px;left:30px;top:27px;border-radius:48%;background:radial-gradient(ellipse,#65615b28 12%,#77766c1b 50%,transparent 75%);filter:blur(11px)}
+.hair-behind{top:82px;width:120px;height:365px;z-index:1;background:repeating-linear-gradient(104deg,#242523 0px,#66655d 2px,#292a27 5px,#7b776e 7px,#262623 12px);box-shadow:inset 19px 0 16px #2228,4px 8px 12px #49483d45;opacity:.95}.hair-behind-left{left:42px;border-radius:90% 14% 35% 65% / 33% 20% 85% 50%;transform:rotate(6deg) scaleX(var(--hair-x))}.hair-behind-right{left:228px;border-radius:18% 90% 60% 30% / 20% 30% 68% 80%;transform:rotate(-5deg) scaleX(var(--hair-x))}
+.hair-back{left:62px;top:42px;width:255px;height:329px;z-index:1;border-radius:50% 49% 43% 43% / 31% 32% 55% 48%;background:radial-gradient(ellipse at 50% 52%,#4c4b45 30%,#313330 70%,#212420 88%,transparent 99%);box-shadow:-8px 4px 8px #3b3a3650,10px 9px 16px #24272350;transform:scaleX(var(--hair-x))}
+.neck{left:152px;top:361px;width:82px;height:112px;z-index:2;clip-path:polygon(10% 0%,90% 0%,99% 99%,5% 99%);border-radius:34% 33% 18% 19%;background:linear-gradient(90deg,#6f6b66 0%,#aca69b 14%,#d2cdc2 31%,#dbd6cd 56%,#a29e96 82%,#575955 100%);box-shadow:inset 0 15px 20px #54514b99}
+.neck:after{content:"";left:5px;top:5px;width:80px;height:85px;background:radial-gradient(ellipse at 55% 4%,#54534a96,transparent 65%),repeating-linear-gradient(28deg,#4a4b4630 0 1px,transparent 1px 5px);opacity:var(--hatch)}
+.ear{top:220px;width:36px;height:66px;background:radial-gradient(ellipse at 53% 45%,#6b6962 0 12%,#aaa69a 32%,#d4ccbe 54%,#78766c 98%);box-shadow:inset 3px 1px 9px #47494388;z-index:3}.ear-left{left:71px;border-radius:75% 23% 42% 70%;transform:rotate(-8deg)}.ear-right{right:68px;border-radius:26% 77% 70% 40%;transform:rotate(8deg)}.ear span{width:16px;height:34px;left:11px;top:14px;border:3px solid #64645e;border-left-color:transparent;border-bottom-color:#77736d;border-radius:45%;opacity:.7}
+.face{left:87px;top:91px;width:207px;height:304px;z-index:4;transform:scaleX(var(--face-x));transform-origin:50% 37%;border-radius:47% 48% 48% 50% / 35% 36% 59% 61%;background:radial-gradient(ellipse at 51% 36%,#eee9de 0%,#e6e1d6 29%,#d7d1c5 50%,#c0bbae 70%,#9a978d 87%,#615f57 100%);box-shadow:inset 0 -5px 9px #53534a55,inset 9px -4px 21px #4d4c4345,inset -12px 3px 24px #383b365a,0 1px 2px #3332}
+.face-tones{inset:0;border-radius:inherit;background:radial-gradient(ellipse at 15% 60%,#67665d80,transparent 31%),radial-gradient(ellipse at 89% 58%,#68675d70,transparent 32%),radial-gradient(ellipse at 51% 20%,#f8f3e6c9,transparent 40%),radial-gradient(ellipse at 49% 74%,#f3e6d273,transparent 47%),radial-gradient(ellipse at 49% 99%,#77736b88,transparent 30%);opacity:calc(.4 + var(--ink)*.68)}
+.side-shadow{top:78px;width:38px;height:180px;background:radial-gradient(ellipse,#5d5b5480,transparent 72%);filter:blur(10px);opacity:var(--ink)}.side-shadow-left{left:2px}.side-shadow-right{right:1px}
+.face-hatching{inset:0;z-index:1;border-radius:inherit;pointer-events:none;background:repeating-linear-gradient(30deg,transparent 0 3.3px,#35383250 3.3px 4px,transparent 4px 7.3px),repeating-linear-gradient(153deg,transparent 0 7px,#3c3c3752 7px 7.6px,transparent 7.6px 12px);-webkit-mask-image:radial-gradient(ellipse at 13% 57%,black,transparent 26%),radial-gradient(ellipse at 90% 57%,black,transparent 30%),radial-gradient(ellipse at 51% 92%,black,transparent 30%);mask-image:radial-gradient(ellipse at 13% 57%,black,transparent 26%),radial-gradient(ellipse at 90% 57%,black,transparent 30%),radial-gradient(ellipse at 51% 92%,black,transparent 30%);opacity:calc(var(--hatch)*.48)}
+.forehead-light{left:46px;top:11px;width:119px;height:83px;border-radius:50%;background:radial-gradient(ellipse,#fffdf18f,transparent 71%);filter:blur(8px)}
+.temple{top:109px;width:31px;height:80px;background:radial-gradient(ellipse,#76736c77,transparent 72%);filter:blur(7px)}.temple-left{left:5px}.temple-right{right:2px}
+.portrait .eyebrow{top:106px;width:66px;height:20px;z-index:6;border-top:7px solid #444640;border-radius:78% 27% 2% 6% / 91% 70% 2% 2%;filter:drop-shadow(1px 3px 2px #555b5252);opacity:calc(.65 + var(--ink)*.36)}.portrait .eyebrow-left{left:18px;transform:rotate(6deg)}.portrait .eyebrow-right{right:18px;transform:scaleX(-1) rotate(6deg)}.portrait .eyebrow i{left:4px;top:-5px;width:58px;height:14px;background:repeating-linear-gradient(146deg,#302f2caa 0 1px,transparent 1px 4px);clip-path:polygon(0 10%,100% 0,89% 65%,0 82%)}
+.eye{top:133px;width:73px;height:39px;z-index:7;filter:drop-shadow(0 1px 1px #78736c33)}.eye-left{left:18px;transform:translateX(calc(-1*var(--eye-offset)))}.eye-right{right:18px;transform:translateX(var(--eye-offset)) scaleX(-1)}
+.eye-white{left:0;top:5px;width:73px;height:25px;background:radial-gradient(ellipse at 50% 70%,#e4e0d6,#f0ece4 52%,#a19d92 90%);border-top:4px solid #3e403b;border-bottom:2px solid #89877e;border-radius:8% 80% 38% 62% / 12% 89% 46% 83%;transform:rotate(2deg);box-shadow:inset 0 5px 4px #4b4c4780}
+.eye-white:before{content:"";width:15px;height:10px;left:-2px;top:12px;border-bottom:2px solid #66635e;border-radius:50%;transform:rotate(17deg)}
+.eye-white:after{content:"";width:9px;height:15px;right:1px;top:-2px;border-right:2px solid #575853;border-radius:50%;transform:rotate(26deg)}
+.iris{left:31px;top:7px;width:25px;height:26px;border:2px solid #595b54;border-radius:50%;background:repeating-conic-gradient(from 4deg,#3d423e 0 7deg,#9e9c8f 7deg 18deg,#60655e 18deg 23deg);box-shadow:0 0 1px #2227;clip-path:ellipse(51% 47% at 50% 50%)}.pupil{width:13px;height:15px;top:4px;left:4px;background:#262a27;border-radius:50%}.glint{width:7px;height:8px;top:3px;left:13px;border-radius:50%;background:#fff8e8}
+.lower-lid{top:32px;left:11px;width:56px;height:7px;border-bottom:1px solid #74736b;border-radius:0 0 60% 60%;opacity:.7}.crease{left:4px;top:1px;width:67px;height:11px;border-top:2px solid #848178;border-radius:50%;transform:rotate(-4deg);opacity:.65}
+.under-eye{top:166px;width:63px;height:23px;background:radial-gradient(ellipse,#6e6d6354 2%,transparent 72%);filter:blur(7px)}.under-eye-left{left:18px}.under-eye-right{right:18px}
+.nose{top:167px;left:72px;width:64px;height:84px;z-index:8;transform:scaleX(var(--nose-x));transform-origin:50% 50%}
+.nose-bridge{left:17px;top:0;width:34px;height:72px;border-radius:28% 48% 36% 50%;background:linear-gradient(90deg,#77756d6b 0%,#d2cbbf2b 24%,#fefcf189 55%,#b4aca075 94%,#7e7e7580);box-shadow:7px 2px 12px #54524933;filter:blur(3px)}
+.nose-left{left:10px;top:52px;width:26px;height:22px;border-radius:75% 35% 65% 66%;background:radial-gradient(ellipse at 45% 35%,#ded7ca,#9c9687 75%);box-shadow:-3px 2px 4px #74706644}.nose-right{right:8px;top:52px;width:26px;height:22px;border-radius:35% 75% 66% 65%;background:radial-gradient(ellipse at 55% 35%,#ded7ca,#a49c8d 78%)}
+.nose-tip{left:22px;top:50px;width:29px;height:29px;border-radius:50%;background:radial-gradient(circle at 36% 28%,#f7f0e5,#d1cbbd 67%,transparent 89%)}
+.nostril{width:17px;height:9px;top:67px;border-radius:50%;border-bottom:3px solid #615f57;opacity:.9}.nostril-left{left:8px;transform:rotate(-13deg)}.nostril-right{right:7px;transform:rotate(14deg)}
+.philtrum{top:250px;left:94px;width:20px;height:14px;background:linear-gradient(90deg,#665f5542,transparent 35%,transparent 62%,#665f5542);filter:blur(2px);opacity:.7}
+.mouth{left:52px;top:262px;width:105px;height:52px;z-index:8}.upper-lip{left:4px;top:0;width:98px;height:24px;clip-path:polygon(0 77%,17% 38%,37% 22%,50% 50%,63% 22%,83% 38%,100% 76%,76% 94%,50% 84%,20% 94%);background:linear-gradient(#9e9389,#8c827a);opacity:.83}.lip-line{left:5px;top:14px;width:96px;height:13px;border-top:2px solid #55554f;border-radius:16% 20% 47% 50%;transform:rotate(-1deg)}.lower-lip{top:20px;left:17px;width:73px;height:22px;border-radius:20% 18% 78% 80% / 15% 18% 90% 90%;background:radial-gradient(ellipse at 55% 1%,#b0a59a 20%,#cbbeb0 74%,transparent 77%);border-bottom:1px solid #817a70;opacity:.82}.chin-shadow{left:30px;top:43px;width:50px;height:5px;border-radius:50%;background:#76716699;filter:blur(4px)}
+.cheek-hatch{top:208px;width:43px;height:64px;background:repeating-linear-gradient(24deg,#514f4780 0 .6px,transparent .6px 4px);-webkit-mask-image:radial-gradient(ellipse,black,transparent 71%);mask-image:radial-gradient(ellipse,black,transparent 71%);opacity:calc(var(--hatch)*.49)}.cheek-hatch-left{left:6px;transform:rotate(10deg)}.cheek-hatch-right{right:6px;transform:rotate(-8deg)}.jawline{top:242px;width:35px;height:45px;border-bottom:1px solid #66625d4a;border-radius:50%;opacity:.7}.jawline-left{left:21px;transform:rotate(24deg)}.jawline-right{right:21px;transform:rotate(-24deg)}
+.hair-cap{left:72px;top:53px;width:238px;height:161px;z-index:9;border-radius:48% 50% 20% 20% / 70% 65% 21% 29%;clip-path:polygon(1% 47%,8% 28%,28% 8%,53% 1%,78% 6%,96% 30%,100% 70%,85% 65%,76% 39%,59% 29%,52% 21%,37% 39%,24% 50%,6% 78%);background:repeating-linear-gradient(109deg,#343733 0,#353733 2px,#8a867d 4px,#424640 7px,#212724 11px);box-shadow:inset 13px 12px 21px #292e2977;filter:drop-shadow(0 4px 2px #57534a4f);transform:scaleX(var(--hair-x))}
+.part-line{top:59px;left:184px;width:3px;height:41px;z-index:11;border-radius:50%;transform:rotate(9deg);background:linear-gradient(#cdc6b3,#988f80,transparent);filter:blur(.7px)}
+.hair-lock{z-index:11;background:repeating-linear-gradient(94deg,#2e332e 0,#66685f 2px,#2e342f 6px,#838278 9px,#313632 13px);box-shadow:3px 6px 8px #46483f55,inset 5px 2px 6px #77746a33}
+.lock-left-a{left:65px;top:89px;width:74px;height:254px;border-radius:67% 43% 82% 18% / 33% 51% 53% 64%;clip-path:polygon(65% 0,100% 2%,88% 35%,62% 65%,65% 100%,28% 91%,2% 47%,21% 15%);transform:rotate(5deg) scaleX(var(--hair-x))}
+.lock-left-b{left:44px;top:178px;width:69px;height:225px;border-radius:40% 75% 55% 38%;clip-path:polygon(52% 0%,96% 4%,65% 46%,100% 98%,24% 100%,8% 50%);transform:rotate(-8deg) scaleX(var(--hair-x))}
+.lock-right-a{right:64px;top:93px;width:64px;height:266px;border-radius:43% 76% 34% 64% / 41% 65% 51% 53%;clip-path:polygon(18% 0,69% 0,96% 37%,75% 70%,92% 100%,30% 99%,8% 63%,0 18%);transform:rotate(-4deg) scaleX(var(--hair-x))}
+.lock-right-b{right:44px;top:197px;width:70px;height:213px;border-radius:60% 22% 76% 30%;clip-path:polygon(19% 0,88% 0,99% 43%,67% 67%,84% 100%,15% 100%,3% 47%);transform:rotate(6deg) scaleX(var(--hair-x))}
+.hair-strands{z-index:12;top:92px;width:74px;height:281px;pointer-events:none;background:repeating-linear-gradient(97deg,transparent 0 5px,#a7a39a55 5.5px 6px,transparent 6.5px 12px);opacity:.65;filter:blur(.35px)}.strands-left{left:55px;border-radius:48% 32% 40% 48%;clip-path:polygon(55% 0,100% 10%,68% 50%,92% 100%,0 92%,9% 31%);transform:rotate(4deg)}.strands-right{right:53px;border-radius:37% 52% 50% 35%;clip-path:polygon(20% 0,90% 18%,96% 87%,29% 100%,18% 61%,0 20%);transform:rotate(-8deg)}
+.face{border-radius:47% 48% var(--jaw-radius-right,48%) var(--jaw-radius-left,50%) / 35% 36% 59% 61%}
+/* Graphite refinements: reduce artificial stripe contrast and sharpen facial anatomy. */
+.hair-behind{background:repeating-linear-gradient(103deg,#333632 0px,#484c45 1.6px,#343833 3.7px,#626157 4.5px,#343732 6.9px);box-shadow:inset 14px 0 20px #171b1690,5px 8px 12px #37393240}
+.hair-cap{background:repeating-linear-gradient(108deg,#333833 0px,#444740 1.2px,#57584f 2.2px,#363a34 3.8px,#252b26 5.7px)}
+.hair-lock{background:repeating-linear-gradient(100deg,#323832 0px,#4c5049 1.1px,#373d36 2.8px,#72736a 3.4px,#343a34 5.5px);box-shadow:inset 7px 0px 8px #333a335e,4px 5px 7px #42453e4d}
+.hair-strands{background:repeating-linear-gradient(99deg,transparent 0 2.7px,#c6c4ae25 3px 3.5px,transparent 3.8px 7px);opacity:.8}
+.neck{left:154px;width:75px;height:101px;-webkit-mask-image:linear-gradient(#000 0 62%,transparent 99%);mask-image:linear-gradient(#000 0 62%,transparent 99%)}
+.face{background:radial-gradient(ellipse at 43% 36%,#f5f0e6 0%,#e6e0d4 27%,#d1c9bc 59%,#9e9a90 86%,#62635d 100%)}
+.face-tones{background:radial-gradient(ellipse at 12% 49%,#5b5c566b,transparent 31%),radial-gradient(ellipse at 92% 48%,#55564e7d,transparent 34%),radial-gradient(ellipse at 50% 15%,#fefcf299,transparent 47%),radial-gradient(ellipse at 18% 72%,#a09b9163,transparent 28%),radial-gradient(ellipse at 82% 72%,#938f876b,transparent 27%),radial-gradient(ellipse at 49% 92%,#74716b91,transparent 28%)}
+.portrait .eyebrow{width:58px;height:15px;top:112px;border-top-width:5px;opacity:.85}.portrait .eyebrow-left{left:24px}.portrait .eyebrow-right{right:24px}.portrait .eyebrow i{width:52px}
+.eye{top:136px;width:62px;height:36px}.eye-left{left:24px}.eye-right{right:24px}
+.eye-white{width:62px;height:20px;top:5px;border-top-width:3px;border-bottom-width:1.5px;border-radius:12% 68% 42% 51% / 11% 90% 63% 92%}
+.eye-white:before{top:9px}.eye-white:after{height:12px}
+.iris{width:20px;height:20px;left:26px;top:7px;border-width:1.5px}.pupil{width:11px;height:12px;top:3px;left:3px}.glint{width:5px;height:6px;top:2px;left:11px}.lower-lid{top:27px;left:9px;width:49px}.crease{width:57px;top:1px;opacity:.46}
+.under-eye{top:167px;width:48px;opacity:.63}.under-eye-left{left:26px}.under-eye-right{right:26px}
+.nose{top:169px}.nose-bridge{width:25px;left:22px;filter:blur(4px);background:linear-gradient(90deg,#74726950,#d2cbbf16 19%,#fefcf18a 57%,#9c94867d 99%)}
+.nose-left,.nose-right{box-shadow:none;background:radial-gradient(ellipse at 50% 24%,#ebe3d6,#bbb4a5 70%,transparent 91%);filter:blur(1px)}
+.nose-tip{background:radial-gradient(circle at 37% 22%,#f7f0e5,#d8d0c3 60%,transparent 85%)}.nostril{border-bottom-width:2px}
+.mouth{left:55px;top:266px;width:99px}.upper-lip{width:88px;left:5px;height:20px;top:0px;opacity:.53;clip-path:polygon(0 78%,19% 52%,37% 34%,50% 53%,62% 32%,81% 50%,100% 75%,80% 84%,50% 80%,19% 91%);background:#877f75}.lip-line{width:89px;left:5px;top:13px;border-top-width:1.7px;border-radius:20% 20% 63% 57%;opacity:.85}.lower-lip{width:73px;left:14px;top:16px;height:17px;opacity:.55;background:radial-gradient(ellipse at 49% 1%,#a39a8c,#d6cdc1 71%,transparent 78%);border-bottom-color:#ada69d}
+.chin-shadow{top:37px;opacity:.43}
+
+</style>
+  <script type="module">
+const DEFINITIONS = Object.freeze({
+  faceWidth: { min: 80, max: 120, step: 1, value: 100, group: 'geometry', unit: '%' },
+  eyeSpacing: { min: -16, max: 16, step: 1, value: 0, group: 'geometry', unit: 'px' },
+  noseWidth: { min: 80, max: 125, step: 1, value: 100, group: 'geometry', unit: '%' },
+  jaw: { min: 82, max: 118, step: 1, value: 100, group: 'geometry', unit: '%' },
+  graphite: { min: 15, max: 100, step: 1, value: 65, group: 'finish', unit: '%' },
+  hatching: { min: 0, max: 100, step: 1, value: 62, group: 'finish', unit: '%' },
+  hairVolume: { min: 75, max: 125, step: 1, value: 100, group: 'finish', unit: '%' }
+});
+
+const PRESETS = Object.freeze({
+  classic: { faceWidth: 100, eyeSpacing: 0, noseWidth: 100, jaw: 100, graphite: 65, hatching: 62, hairVolume: 100 },
+  gentle: { faceWidth: 90, eyeSpacing: 6, noseWidth: 85, jaw: 88, graphite: 46, hatching: 43, hairVolume: 110 },
+  angular: { faceWidth: 109, eyeSpacing: -4, noseWidth: 115, jaw: 115, graphite: 87, hatching: 86, hairVolume: 90 }
+});
+
+const KEYS = Object.freeze(Object.keys(DEFINITIONS));
+function defaults() {
+  return Object.fromEntries(KEYS.map(key => [key, DEFINITIONS[key].value]));
+}
+function normalize(raw, fallback = defaults()) {
+  if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) return { ...fallback };
+  const output = {};
+  for (const key of KEYS) {
+    const config = DEFINITIONS[key];
+    const value = raw[key];
+    const parsed = typeof value === 'number' ? value : NaN;
+    const prior = fallback[key];
+    const safe = Number.isFinite(parsed) ? parsed : prior;
+    output[key] = Math.max(config.min, Math.min(config.max, Math.round(safe / config.step) * config.step));
+  }
+  return output;
+}
+function equal(a, b) { return KEYS.every(key => a[key] === b[key]); }
+function encode(data) { return JSON.stringify({ format: 'portrait-engine-params', version: 1, parameters: normalize(data) }, null, 2); }
+function decode(json) {
+  const parsed = JSON.parse(json);
+  if (parsed?.format !== 'portrait-engine-params' || parsed?.version !== 1 || !parsed.parameters || typeof parsed.parameters !== 'object') throw new Error('Unsupported portrait file');
+  if (!KEYS.some(key => Number.isFinite(parsed.parameters[key]))) throw new Error('No valid parameters');
+  return normalize(parsed.parameters);
+}
+
+// This file uses Unicode escapes to keep the portable source ASCII-only.
+const zh = {
+  status:'\u539f\u521b\u4f5c\u54c1 / \u65e0\u56fe\u7247\u7d20\u6750',
+  eyebrow:'\u5b9e\u9a8c 01 / \u77f3\u58a8\u7d20\u63cf',
+  title:'\u7528\u4ee3\u7801\uff0c\u753b\u51fa\u4e00\u5f20\u8138\u3002',
+  subtitle:'\u4e0d\u4f7f\u7528\u7167\u7247\u3001SVG \u6216 Canvas\u3002\u53ea\u7528 CSS \u7ed8\u5236\u3002',
+  badge:'\u4eba\u7269\u7814\u7a76 001',
+  paperLeft:'\u7ed3\u6784 / \u5149\u5f71 / \u6392\u7ebf',
+  paperRight:'100% \u4ee3\u7801',
+  footnote:'\u6bcf\u4e2a\u4e94\u5b98\u90fd\u662f\u72ec\u7acb CSS \u56fe\u5c42\uff0c\u53ef\u4ee5\u76f4\u63a5\u68c0\u67e5\u6e90\u7801\u3002',
+  print:'\u6253\u5370\u4f5c\u54c1',
+  inspectorEyebrow:'\u7ed8\u753b\u5de5\u4f5c\u53f0',
+  inspectorTitle:'\u5851\u9020\u8fd9\u5f20\u8096\u50cf',
+  inspectorIntro:'\u62d6\u52a8\u6ed1\u5757\uff0c\u89c2\u5bdf\u4ee3\u7801\u7ed8\u5236\u7684\u4eba\u8138\u5b9e\u65f6\u53d8\u5316\u3002',
+  presets:'\u4eba\u7269\u98ce\u683c\u9884\u8bbe',
+  presetClassic:'\u7ecf\u5178',
+  presetGentle:'\u67d4\u548c',
+  presetAngular:'\u786c\u6717',
+  structure:'01 / \u9762\u90e8\u7ed3\u6784',
+  surface:'02 / \u77f3\u58a8\u8d28\u611f',
+  save:'\u5bfc\u51fa\u4eba\u7269\u53c2\u6570',
+  load:'\u5bfc\u5165\u53c2\u6570',
+  reset:'\u6062\u590d\u9ed8\u8ba4',
+  saveNote:'\u53c2\u6570\u81ea\u52a8\u4fdd\u5b58\u5728\u6d4f\u89c8\u5668\u4e2d\uff1bJSON \u53ef\u65e0\u635f\u5bfc\u51fa\u3002',
+  learnTag:'\u7ed8\u5236\u539f\u7406',
+  learnTitle:'\u4e00\u5f20\u5b8c\u5168\u7531\u4ee3\u7801\u6784\u6210\u7684\u8096\u50cf\u3002',
+  learnBody:'\u4e94\u5b98\u3001\u5934\u53d1\u3001\u660e\u6697\u548c\u6392\u7ebf\u5168\u90e8\u4f7f\u7528 CSS \u7684\u5f62\u72b6\u3001\u6e10\u53d8\u3001\u9634\u5f71\u4e0e\u906e\u7f69\u5b9e\u73b0\u3002\u6d4f\u89c8\u5668\u5728\u6253\u5f00\u65f6\u76f4\u63a5\u7ed8\u5236\u3002',
+  readArchitecture:'\u9605\u8bfb\u67b6\u6784\u4e0e\u5b9e\u73b0\u8bf4\u660e \u2197',
+  footerLeft:'\u539f\u521b\u4ee3\u7801\u7ed8\u753b / \u65e9\u671f\u77f3\u58a8\u7d20\u63cf\u5b9e\u9a8c',
+  footerRight:'\u5173\u6ce8\u539f\u7406\uff0c\u800c\u4e0d\u662f\u590d\u5236\u4f5c\u54c1',
+  faceWidth:'\u8138\u578b\u5bbd\u5ea6',eyeSpacing:'\u53cc\u773c\u95f4\u8ddd',noseWidth:'\u9f3b\u7ffc\u5bbd\u5ea6',jaw:'\u4e0b\u988c\u7ed3\u6784',graphite:'\u660e\u6697\u5bf9\u6bd4',hatching:'\u94c5\u7b14\u6392\u7ebf',hairVolume:'\u5934\u53d1\u84ec\u677e\u5ea6',
+  hint_faceWidth:'\u8c03\u8282\u6574\u4e2a\u9762\u90e8\u7684\u6a2a\u5411\u6bd4\u4f8b',hint_eyeSpacing:'\u6539\u53d8\u5de6\u53f3\u773c\u4f4d\u7f6e',hint_noseWidth:'\u5f71\u54cd\u9f3b\u7ffc\u4e0e\u9f3b\u5c16\u5bbd\u5ea6',hint_jaw:'\u8c03\u8282\u4e0b\u988c\u7684\u5bbd\u7a84',hint_graphite:'\u6539\u53d8\u7d20\u63cf\u6697\u90e8\u6df1\u6d45',hint_hatching:'\u6539\u53d8\u94c5\u7b14\u7eb9\u7406\u5bc6\u5ea6',hint_hairVolume:'\u6539\u53d8\u5de6\u53f3\u5934\u53d1\u4f53\u79ef',
+  archWarning: "\u5f53\u524d\u4ecd\u662f\u98ce\u683c\u5316\u7d20\u63cf\u5b9e\u9a8c\uff0c\u5c1a\u672a\u8fbe\u5230\u4e13\u4e1a\u5199\u5b9e\u94c5\u7b14\u753b\u6c34\u51c6\uff1b\u53ef\u67e5\u770b\u4e0b\u8f7d\u5305\u4e2d\u7684\u5b8c\u6574\u6280\u672f\u6587\u6863\u3002",
+  close: "\u5173\u95ed",
+  toastReset:'\u5df2\u6062\u590d\u9ed8\u8ba4\u53c2\u6570',toastSaved:'\u5df2\u5bfc\u51fa\u4eba\u7269\u53c2\u6570',toastLoaded:'\u5df2\u5bfc\u5165\u4eba\u7269\u53c2\u6570',toastError:'\u65e0\u6cd5\u8bfb\u53d6\u53c2\u6570\u6587\u4ef6'
+};
+
+
+const root = document.querySelector('#portrait');
+const paper = document.querySelector('#portrait-paper');
+const toast = document.querySelector('#toast');
+const fileInput = document.querySelector('#upload-input');
+const STORAGE_KEY = 'portrait-engine/parameters/v1';
+let values = defaults();
+let noticeTimer;
+
+function notify(message) {
+  toast.textContent = message;
+  toast.classList.add('is-visible');
+  clearTimeout(noticeTimer);
+  noticeTimer = setTimeout(() => toast.classList.remove('is-visible'), 2800);
+}
+
+function localize() {
+  for (const el of document.querySelectorAll('[data-t]')) {
+    const phrase = zh[el.dataset.t];
+    if (phrase) el.textContent = phrase;
+  }
+  root.setAttribute('aria-label', 'Portrait Engine original CSS graphite portrait');
+}
+
+function buildControls() {
+  for (const [key, def] of Object.entries(DEFINITIONS)) {
+    const parent = document.getElementById(def.group === 'geometry' ? 'geometry-controls' : 'finish-controls');
+    const row = document.createElement('div');
+    row.className = 'control-row';
+    const meta = document.createElement('div');
+    meta.className = 'control-meta';
+    const label = document.createElement('label');
+    label.htmlFor = `param-${key}`;
+    label.textContent = zh[key] ?? key;
+    const out = document.createElement('output');
+    out.htmlFor = label.htmlFor;
+    out.id = `output-${key}`;
+    meta.append(label, out);
+    const input = document.createElement('input');
+    input.id = label.htmlFor;
+    input.type = 'range';
+    input.min = def.min;
+    input.max = def.max;
+    input.step = def.step;
+    input.value = values[key];
+    input.dataset.key = key;
+    input.setAttribute('aria-describedby', `hint-${key}`);
+    input.addEventListener('input', () => {
+      values = normalize({ ...values, [key]: input.valueAsNumber });
+      apply();
+      persist();
+    });
+    const hint = document.createElement('div');
+    hint.className = 'control-hint';
+    hint.id = `hint-${key}`;
+    hint.textContent = zh[`hint_${key}`] ?? '';
+    row.append(meta, input, hint);
+    parent.append(row);
+  }
+}
+
+function apply() {
+  root.style.setProperty('--face-x', String(values.faceWidth / 100));
+  root.style.setProperty('--eye-offset', `${values.eyeSpacing}px`);
+  root.style.setProperty('--nose-x', String(values.noseWidth / 100));
+  root.style.setProperty('--jaw-radius-left', `${50 - (values.jaw - 100) * .45}%`);
+  root.style.setProperty('--jaw-radius-right', `${48 - (values.jaw - 100) * .45}%`);
+  root.style.setProperty('--ink', String(values.graphite / 100));
+  root.style.setProperty('--hatch', String(values.hatching / 100));
+  root.style.setProperty('--hair-x', String(values.hairVolume / 100));
+  for (const key of KEYS) {
+    const def = DEFINITIONS[key];
+    const input = document.getElementById(`param-${key}`);
+    const out = document.getElementById(`output-${key}`);
+    input.value = String(values[key]);
+    out.textContent = `${values[key]}${def.unit}`;
+    const fraction = (values[key] - def.min) / (def.max - def.min) * 100;
+    input.style.setProperty('--progress', `${fraction}%`);
+  }
+  for (const preset of document.querySelectorAll('[data-preset]')) {
+    const active = equal(values, PRESETS[preset.dataset.preset]);
+    preset.classList.toggle('active', active);
+    preset.setAttribute('aria-pressed', String(active));
+  }
+}
+
+function persist() {
+  try { localStorage.setItem(STORAGE_KEY, encode(values)); } catch { /* Browser may block storage. */ }
+}
+function restore() {
+  try {
+    const serialized = localStorage.getItem(STORAGE_KEY);
+    if (serialized) values = decode(serialized);
+  } catch { values = defaults(); }
+}
+function download() {
+  const blob = new Blob([encode(values)], { type: 'application/json;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = 'portrait-engine-character.json';
+  document.body.append(anchor);
+  anchor.click();
+  anchor.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  notify(zh.toastSaved);
+}
+async function importFile(file) {
+  if (!file || file.size > 1024 * 1024) throw new Error('Invalid file size');
+  const text = await file.text();
+  return decode(text);
+}
+function updateScale() {
+  if (!paper || !root) return;
+  const rect = paper.getBoundingClientRect();
+  const scale = Math.min(1.06, (rect.width - 14) / 380, (rect.height - 60) / 500);
+  root.style.setProperty('--portrait-scale', String(Math.max(.55, scale)));
+}
+
+localize();
+restore();
+buildControls();
+apply();
+for (const button of document.querySelectorAll('[data-preset]')) {
+  button.addEventListener('click', () => {
+    values = { ...PRESETS[button.dataset.preset] };
+    apply(); persist();
+  });
+}
+document.getElementById('reset-btn').addEventListener('click', () => {
+  values = defaults(); apply(); persist(); notify(zh.toastReset);
+});
+document.getElementById('download-btn').addEventListener('click', download);
+document.getElementById('import-btn').addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', async () => {
+  try {
+    if (!fileInput.files?.[0]) return;
+    values = await importFile(fileInput.files[0]);
+    apply(); persist(); notify(zh.toastLoaded);
+  } catch { notify(zh.toastError); }
+  finally { fileInput.value = ''; }
+});
+document.getElementById('print-btn').addEventListener('click', () => window.print());
+const architectureDialog = document.getElementById('architecture-dialog');
+document.getElementById('arch-btn').addEventListener('click', () => architectureDialog.showModal());
+document.getElementById('arch-close').addEventListener('click', () => architectureDialog.close());
+architectureDialog.addEventListener('click', event => { if (event.target === architectureDialog) architectureDialog.close(); });
+if ('ResizeObserver' in window) new ResizeObserver(updateScale).observe(paper);
+window.addEventListener('resize', updateScale);
+updateScale();
+
+</script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="identity" href="./" aria-label="Portrait Engine home">
+        <span class="identity-mark" aria-hidden="true">P<span class="mark-dot">.</span></span>
+        <span class="identity-text"><strong>PORTRAIT ENGINE</strong><small>CODE-DRAWN PORTRAITS / LAB 001</small></span>
+      </a>
+      <div class="topbar-right">
+        <span class="status-dot" aria-hidden="true"></span><span data-t="status">Original / zero image assets</span>
+        <span class="edition">v0.1</span>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="canvas-panel" aria-labelledby="canvas-title">
+        <div class="canvas-heading">
+          <div>
+            <div class="eyebrow" data-t="eyebrow">EXPERIMENT 01 / GRAPHITE</div>
+            <h1 id="canvas-title" data-t="title">A face, drawn with code.</h1>
+            <p class="subtitle" data-t="subtitle">No photographs. No SVG. No Canvas. Pure CSS.</p>
+          </div>
+          <span class="canvas-index">01 / 01</span>
+        </div>
+
+        <div class="drawing-stage" id="drawing-stage">
+          <div class="paper" id="portrait-paper">
+            <span class="paper-badge" data-t="badge">STUDY NO. 001</span>
+            <div id="portrait" class="portrait" role="img" aria-label="Hand-built monochrome graphite portrait of an adult woman, drawn from CSS shapes and gradients only">
+              <div class="portrait-aura"></div>
+              <div class="hair-behind hair-behind-left"></div>
+              <div class="hair-behind hair-behind-right"></div>
+              <div class="hair-back"></div>
+              <div class="neck"><span class="neck-hatch"></span></div>
+              <div class="ear ear-left"><span></span></div>
+              <div class="ear ear-right"><span></span></div>
+              <div class="face">
+                <div class="face-tones"></div>
+                <div class="side-shadow side-shadow-left"></div>
+                <div class="side-shadow side-shadow-right"></div>
+                <div class="face-hatching"></div>
+                <div class="forehead-light"></div>
+                <div class="temple temple-left"></div>
+                <div class="temple temple-right"></div>
+                <div class="eyebrow eyebrow-left"><i></i></div>
+                <div class="eyebrow eyebrow-right"><i></i></div>
+                <div class="eye eye-left"><span class="eye-white"></span><span class="iris"><i class="pupil"></i><i class="glint"></i></span><span class="lower-lid"></span><span class="crease"></span></div>
+                <div class="eye eye-right"><span class="eye-white"></span><span class="iris"><i class="pupil"></i><i class="glint"></i></span><span class="lower-lid"></span><span class="crease"></span></div>
+                <div class="under-eye under-eye-left"></div>
+                <div class="under-eye under-eye-right"></div>
+                <div class="nose"><span class="nose-bridge"></span><span class="nose-left"></span><span class="nose-right"></span><span class="nose-tip"></span><span class="nostril nostril-left"></span><span class="nostril nostril-right"></span></div>
+                <div class="philtrum"></div>
+                <div class="mouth"><div class="upper-lip"></div><div class="lip-line"></div><div class="lower-lip"></div><div class="chin-shadow"></div></div>
+                <div class="cheek-hatch cheek-hatch-left"></div>
+                <div class="cheek-hatch cheek-hatch-right"></div>
+                <div class="jawline jawline-left"></div>
+                <div class="jawline jawline-right"></div>
+              </div>
+              <div class="hair-cap"></div>
+              <div class="part-line"></div>
+              <div class="hair-lock lock-left-a"></div>
+              <div class="hair-lock lock-left-b"></div>
+              <div class="hair-lock lock-right-a"></div>
+              <div class="hair-lock lock-right-b"></div>
+              <div class="hair-strands strands-left"></div>
+              <div class="hair-strands strands-right"></div>
+            </div>
+            <div class="drawing-signature">PE <span> / graphite study</span></div>
+            <div class="paper-footer"><span data-t="paperLeft">STRUCTURE / LIGHT / HATCH</span><span data-t="paperRight">100% CODE</span></div>
+          </div>
+          <div class="stage-corner stage-corner-tl"></div><div class="stage-corner stage-corner-br"></div>
+        </div>
+
+        <div class="canvas-footnote">
+          <div><span class="legend-swatch"></span><span data-t="footnote">Each feature is an independent CSS layer you can inspect.</span></div>
+          <button id="print-btn" class="text-link" type="button" data-t="print">Print artwork</button>
+        </div>
+      </section>
+
+      <aside class="inspector" aria-labelledby="inspector-title">
+        <div class="inspector-header"><span class="eyebrow" data-t="inspectorEyebrow">STUDIO CONTROLS</span><h2 id="inspector-title" data-t="inspectorTitle">Sculpt the portrait</h2><p data-t="inspectorIntro">Move a slider. Watch the CSS face respond.</p></div>
+        <fieldset class="preset-fieldset"><legend data-t="presets">CHARACTER STUDIES</legend><div class="preset-buttons" role="group" aria-label="Character presets"><button type="button" class="preset active" data-preset="classic" data-t="presetClassic" aria-pressed="true">Classic</button><button type="button" class="preset" data-preset="gentle" data-t="presetGentle" aria-pressed="false">Gentle</button><button type="button" class="preset" data-preset="angular" data-t="presetAngular" aria-pressed="false">Angular</button></div></fieldset>
+        <div class="control-section"><div class="section-header"><span class="eyebrow" data-t="structure">01 / FACE GEOMETRY</span></div><div class="controls" id="geometry-controls"></div></div>
+        <div class="control-section"><div class="section-header"><span class="eyebrow" data-t="surface">02 / GRAPHITE FINISH</span></div><div class="controls" id="finish-controls"></div></div>
+        <div class="inspector-actions"><button class="primary-button" type="button" id="download-btn"><span data-t="save">Export portrait parameters</span><span aria-hidden="true">&darr;</span></button><div class="secondary-actions"><button type="button" id="import-btn" class="subtle-button" data-t="load">Import parameters</button><button type="button" id="reset-btn" class="subtle-button" data-t="reset">Reset</button></div><input id="upload-input" type="file" accept="application/json,.json" hidden><p class="save-note" data-t="saveNote">Parameters save locally. JSON export is lossless.</p></div>
+        <div class="learn-card"><div class="eyebrow" data-t="learnTag">HOW IT WORKS</div><h3 data-t="learnTitle">A portrait with no pixels to download.</h3><p data-t="learnBody">Every feature is made with border radii, gradients, shadows, masks and repeating CSS strokes. The browser paints it at runtime.</p><button type="button" id="arch-btn" class="arch-link" data-t="readArchitecture">Read architecture / docs</button></div>
+      </aside>
+    </main>
+    <footer class="site-footer"><span data-t="footerLeft">ORIGINAL CODE ART / EARLY GRAPHITE EXPERIMENT</span><span data-t="footerRight">DESIGNED TO BE INSPECTED, NOT IMITATED</span></footer>
+    <dialog id="architecture-dialog" class="architecture-dialog" aria-labelledby="architecture-title">
+      <div class="dialog-eyebrow">PORTRAIT ENGINE / NOTES</div>
+      <h2 id="architecture-title" data-t="learnTitle">A portrait with no image assets.</h2>
+      <p data-t="learnBody">This portrait uses only CSS shapes and gradients.</p>
+      <code>#portrait &gt; .face &gt; .eye / .nose / .mouth</code>
+      <p data-t="archWarning">This is a stylized experiment, not a photorealistic drawing.</p>
+      <button type="button" id="arch-close" class="dialog-close" data-t="close">Close</button>
+    </dialog>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </div>
+</body>
+</html>

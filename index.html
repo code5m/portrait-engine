@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Portrait Engine: an original, code-drawn graphite portrait studio.">
+  <meta name="theme-color" content="#141716">
+  <title>Portrait Engine | CSS Graphite Lab</title>
+  <link rel="stylesheet" href="./styles/layout.css">
+  <link rel="stylesheet" href="./styles/portrait.css">
+  <script type="module" src="./src/app.mjs"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="identity" href="./" aria-label="Portrait Engine home">
+        <span class="identity-mark" aria-hidden="true">P<span class="mark-dot">.</span></span>
+        <span class="identity-text"><strong>PORTRAIT ENGINE</strong><small>CODE-DRAWN PORTRAITS / LAB 001</small></span>
+      </a>
+      <div class="topbar-right">
+        <span class="status-dot" aria-hidden="true"></span><span data-t="status">Original / zero image assets</span>
+        <span class="edition">v0.1</span>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="canvas-panel" aria-labelledby="canvas-title">
+        <div class="canvas-heading">
+          <div>
+            <div class="eyebrow" data-t="eyebrow">EXPERIMENT 01 / GRAPHITE</div>
+            <h1 id="canvas-title" data-t="title">A face, drawn with code.</h1>
+            <p class="subtitle" data-t="subtitle">No photographs. No SVG. No Canvas. Pure CSS.</p>
+          </div>
+          <span class="canvas-index">01 / 01</span>
+        </div>
+
+        <div class="drawing-stage" id="drawing-stage">
+          <div class="paper" id="portrait-paper">
+            <span class="paper-badge" data-t="badge">STUDY NO. 001</span>
+            <div id="portrait" class="portrait" role="img" aria-label="Hand-built monochrome graphite portrait of an adult woman, drawn from CSS shapes and gradients only">
+              <div class="portrait-aura"></div>
+              <div class="hair-behind hair-behind-left"></div>
+              <div class="hair-behind hair-behind-right"></div>
+              <div class="hair-back"></div>
+              <div class="neck"><span class="neck-hatch"></span></div>
+              <div class="ear ear-left"><span></span></div>
+              <div class="ear ear-right"><span></span></div>
+              <div class="face">
+                <div class="face-tones"></div>
+                <div class="side-shadow side-shadow-left"></div>
+                <div class="side-shadow side-shadow-right"></div>
+                <div class="face-hatching"></div>
+                <div class="forehead-light"></div>
+                <div class="temple temple-left"></div>
+                <div class="temple temple-right"></div>
+                <div class="eyebrow eyebrow-left"><i></i></div>
+                <div class="eyebrow eyebrow-right"><i></i></div>
+                <div class="eye eye-left"><span class="eye-white"></span><span class="iris"><i class="pupil"></i><i class="glint"></i></span><span class="lower-lid"></span><span class="crease"></span></div>
+                <div class="eye eye-right"><span class="eye-white"></span><span class="iris"><i class="pupil"></i><i class="glint"></i></span><span class="lower-lid"></span><span class="crease"></span></div>
+                <div class="under-eye under-eye-left"></div>
+                <div class="under-eye under-eye-right"></div>
+                <div class="nose"><span class="nose-bridge"></span><span class="nose-left"></span><span class="nose-right"></span><span class="nose-tip"></span><span class="nostril nostril-left"></span><span class="nostril nostril-right"></span></div>
+                <div class="philtrum"></div>
+                <div class="mouth"><div class="upper-lip"></div><div class="lip-line"></div><div class="lower-lip"></div><div class="chin-shadow"></div></div>
+                <div class="cheek-hatch cheek-hatch-left"></div>
+                <div class="cheek-hatch cheek-hatch-right"></div>
+                <div class="jawline jawline-left"></div>
+                <div class="jawline jawline-right"></div>
+              </div>
+              <div class="hair-cap"></div>
+              <div class="part-line"></div>
+              <div class="hair-lock lock-left-a"></div>
+              <div class="hair-lock lock-left-b"></div>
+              <div class="hair-lock lock-right-a"></div>
+              <div class="hair-lock lock-right-b"></div>
+              <div class="hair-strands strands-left"></div>
+              <div class="hair-strands strands-right"></div>
+            </div>
+            <div class="drawing-signature">PE <span> / graphite study</span></div>
+            <div class="paper-footer"><span data-t="paperLeft">STRUCTURE / LIGHT / HATCH</span><span data-t="paperRight">100% CODE</span></div>
+          </div>
+          <div class="stage-corner stage-corner-tl"></div><div class="stage-corner stage-corner-br"></div>
+        </div>
+
+        <div class="canvas-footnote">
+          <div><span class="legend-swatch"></span><span data-t="footnote">Each feature is an independent CSS layer you can inspect.</span></div>
+          <button id="print-btn" class="text-link" type="button" data-t="print">Print artwork</button>
+        </div>
+      </section>
+
+      <aside class="inspector" aria-labelledby="inspector-title">
+        <div class="inspector-header"><span class="eyebrow" data-t="inspectorEyebrow">STUDIO CONTROLS</span><h2 id="inspector-title" data-t="inspectorTitle">Sculpt the portrait</h2><p data-t="inspectorIntro">Move a slider. Watch the CSS face respond.</p></div>
+        <fieldset class="preset-fieldset"><legend data-t="presets">CHARACTER STUDIES</legend><div class="preset-buttons" role="group" aria-label="Character presets"><button type="button" class="preset active" data-preset="classic" data-t="presetClassic" aria-pressed="true">Classic</button><button type="button" class="preset" data-preset="gentle" data-t="presetGentle" aria-pressed="false">Gentle</button><button type="button" class="preset" data-preset="angular" data-t="presetAngular" aria-pressed="false">Angular</button></div></fieldset>
+        <div class="control-section"><div class="section-header"><span class="eyebrow" data-t="structure">01 / FACE GEOMETRY</span></div><div class="controls" id="geometry-controls"></div></div>
+        <div class="control-section"><div class="section-header"><span class="eyebrow" data-t="surface">02 / GRAPHITE FINISH</span></div><div class="controls" id="finish-controls"></div></div>
+        <div class="inspector-actions"><button class="primary-button" type="button" id="download-btn"><span data-t="save">Export portrait parameters</span><span aria-hidden="true">&darr;</span></button><div class="secondary-actions"><button type="button" id="import-btn" class="subtle-button" data-t="load">Import parameters</button><button type="button" id="reset-btn" class="subtle-button" data-t="reset">Reset</button></div><input id="upload-input" type="file" accept="application/json,.json" hidden><p class="save-note" data-t="saveNote">Parameters save locally. JSON export is lossless.</p></div>
+        <div class="learn-card"><div class="eyebrow" data-t="learnTag">HOW IT WORKS</div><h3 data-t="learnTitle">A portrait with no pixels to download.</h3><p data-t="learnBody">Every feature is made with border radii, gradients, shadows, masks and repeating CSS strokes. The browser paints it at runtime.</p><button type="button" id="arch-btn" class="arch-link" data-t="readArchitecture">Read architecture / docs</button></div>
+      </aside>
+    </main>
+    <footer class="site-footer"><span data-t="footerLeft">ORIGINAL CODE ART / EARLY GRAPHITE EXPERIMENT</span><span data-t="footerRight">DESIGNED TO BE INSPECTED, NOT IMITATED</span></footer>
+    <dialog id="architecture-dialog" class="architecture-dialog" aria-labelledby="architecture-title">
+      <div class="dialog-eyebrow">PORTRAIT ENGINE / NOTES</div>
+      <h2 id="architecture-title" data-t="learnTitle">A portrait with no image assets.</h2>
+      <p data-t="learnBody">This portrait uses only CSS shapes and gradients.</p>
+      <code>#portrait &gt; .face &gt; .eye / .nose / .mouth</code>
+      <p data-t="archWarning">This is a stylized experiment, not a photorealistic drawing.</p>
+      <button type="button" id="arch-close" class="dialog-close" data-t="close">Close</button>
+    </dialog>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </div>
+</body>
+</html>
