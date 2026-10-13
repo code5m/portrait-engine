@@ -12,7 +12,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 
 def embedded_page():
     html = (ROOT / 'index.html').read_text()
-    for name in ('layout', 'portrait'):
+    for name in ('layout', 'portrait', 'anatomy', 'graphite'):
         css = (ROOT / 'styles' / f'{name}.css').read_text()
         html = html.replace(f'<link rel="stylesheet" href="./styles/{name}.css">', f'<style>{css}</style>')
     code = '\n'.join(re.sub(r'^export ', '', (ROOT / 'src' / f'{name}.mjs').read_text(), flags=re.M) for name in ('parameters','geometry','i18n','app'))
@@ -23,7 +23,7 @@ async def run():
     screenshot_dir = pathlib.Path(os.environ.get('PORTRAIT_QA_DIR', '/tmp'))
     screenshot_dir.mkdir(parents=True, exist_ok=True)
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True, executable_path=os.environ.get('CHROMIUM_PATH','/usr/bin/chromium'), args=['--no-sandbox'])
+        browser = await p.chromium.launch(headless=True, executable_path=os.environ.get('CHROMIUM_PATH') or ('/usr/bin/chromium' if pathlib.Path('/usr/bin/chromium').exists() else None), args=['--no-sandbox'])
         page = await browser.new_page(viewport={'width':1440,'height':1000})
         errors = []
         page.on('pageerror', lambda err: errors.append(str(err)))

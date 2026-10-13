@@ -43,6 +43,7 @@ python3 test/browser-qa.py
 | 路径 | 用途 |
 | --- | --- |
 | `index.html` | 人物五官的 HTML 结构与操作界面 |
+| `styles/anatomy.css` and `styles/graphite.css` | Research 002: facial planes, localized dry pencil marks and quieter hair mass |
 | `styles/portrait.css` | 原创 CSS 画头部的核心代码 |
 | `styles/layout.css` | 工作台布局、响应式与打印 |
 | `src/parameters.mjs` | 参数契约、验证和 JSON 格式 |
@@ -63,10 +64,21 @@ python3 test/browser-qa.py
 
 原创代码采用 MIT License。本项目不包含先前讨论的其他开源项目的代码与图片素材。
 
-## Research 001: geometry and controllable light
+## Research 002: Anatomy and graphite marks
 
-- Face-width changes now coordinate ear placement and the hair silhouette.
-- Added mouth-width and key-light-direction controls; existing seven-control JSON imports still work.
-- The study switch reveals anatomical construction guides without changing the saved portrait.
-- Pure `derivePortraitStyle()` mapping is unit-tested at narrow/wide face and left/right light extremes.
-- See `docs/RESEARCH-001.md` for methods and honest limits. This is *not yet* a photographic or academy-level graphite portrait.
+- Face structure now has independent CSS planes for brow ridge, eye socket,
+  cheekbone, alar/nasal shadow, lower lip, chin and mandibular turn.
+- Hair texture was reduced from mechanical bright stripes toward a dark mass
+  with a few guided curved pencil strokes.
+- The geometry module now exposes explicit drawing-coordinate landmarks.
+  Nine face-width/lighting combinations can be rendered via:
+
+```bash
+python3 -m pip install playwright pillow
+python3 -m playwright install chromium
+python3 test/research-matrix.py
+```
+
+See `docs/RESEARCH-002.md` for the study log and honest visual limitations.
+The portraits are still stylized; the nine render checks certify neither
+human anatomical accuracy nor artistic realism.

@@ -1,0 +1,44 @@
+name: Visual study (headless Chromium)
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'styles/**'
+      - 'src/geometry.mjs'
+      - 'test/research-matrix.py'
+      - 'test/browser-qa.py'
+  pull_request:
+    paths:
+      - 'styles/**'
+      - 'src/geometry.mjs'
+      - 'test/research-matrix.py'
+      - 'test/browser-qa.py'
+permissions:
+  contents: read
+jobs:
+  visual:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install browser QA dependencies
+        run: |
+          python -m pip install playwright pillow
+          python -m playwright install --with-deps chromium
+      - name: Run real browser checks
+        run: |
+          npm run build
+          PORTRAIT_QA_DIR=test-results/research-002 python test/browser-qa.py
+          python test/research-matrix.py
+      - name: Upload reproducible visual evidence (not runtime assets)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: research-002-css-portrait-matrix
+          path: test-results/research-002/
+          if-no-files-found: warn
+          retention-days: 21

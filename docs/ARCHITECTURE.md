@@ -31,3 +31,30 @@
 ## 后续架构原则
 
 先提升艺术质量和结构化脸部参数，再按需求引入独立 SVG 绘制引擎。SVG 引擎不能冒充纯 CSS 绘制；AI 只能修改结构化参数，不得把 AI 生图悄悄替换到纯 CSS 画面。
+
+
+## Research 002 / Plane and stroke renderer
+
+The rendering pipeline keeps three concerns separate:
+
+1. `src/parameters.mjs`: stable validated user parameters (v1 export remains
+   compatible with legacy seven-control portraits).
+2. `src/geometry.mjs`: explicit canvas-independent drawing-coordinate
+   landmarks and derived CSS property values. These are *illustration*
+   landmarks, not physiological model predictions.
+3. `styles/portrait.css`, `styles/anatomy.css`, and `styles/graphite.css`:
+   silhouette, anatomy planes, and region-specific pencil marks.
+
+Each style is loaded in that order. The offline compiler embeds all four CSS
+files (including `layout.css`) in exactly the same order. The renderer never
+loads photos, AI image assets, SVG or Canvas drawing primitives.
+
+The extra anatomy layers remain subordinate to the `.face` coordinates,
+so changing face width scales these layers consistently. Ear and hair mass
+are positioned relative to the outer face silhouette, not independently.
+`deriveHeadLandmarks()` exposes visual design anchors for QA while the actual
+paint remains CSS-only.
+
+The nine-image browser matrix and JSON DOM measurements are **technical
+invariants**. Human visual inspection remains necessary for proportion,
+expression, gestural line quality, and perceived identity.

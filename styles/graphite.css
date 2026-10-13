@@ -1,0 +1,147 @@
+/* Research 002 / Form-following dry graphite strokes.
+   Texture is drawn with gradients and masks and contains no images.
+   Small shifts of angle, length, and opacity across anatomical regions aim
+   to imply a human pencil pass instead of one tiled linear pattern. */
+
+/* Subtle paper tooth on skin; the stronger rhythm is delegated to
+   direction-specific hatch patches and hair strands below. */
+.portrait .face::before {
+  background:radial-gradient(circle,#383c351b .34px,transparent .9px) 0 0 / 4px 3.8px;
+  opacity:calc(var(--hatch,.62) * .33);
+}
+.portrait .face-hatching{
+  background:
+    repeating-linear-gradient(36deg,transparent 0 5.1px,#484c4351 5.1px 5.55px,transparent 5.55px 10px),
+    repeating-linear-gradient(148deg,transparent 0 11px,#4b4e4740 11px 11.35px,transparent 11.35px 16px);
+  mask-image:
+    radial-gradient(ellipse 31% 45% at 12% 64%,black,transparent 93%),
+    radial-gradient(ellipse 34% 44% at 90% 57%,black,transparent 92%),
+    radial-gradient(ellipse 42% 21% at 51% 89%,black,transparent 96%);
+  -webkit-mask-image:
+    radial-gradient(ellipse 31% 45% at 12% 64%,black,transparent 93%),
+    radial-gradient(ellipse 34% 44% at 90% 57%,black,transparent 92%),
+    radial-gradient(ellipse 42% 21% at 51% 89%,black,transparent 96%);
+  opacity:calc(var(--hatch,.62) * .43);
+}
+
+/* Oblique short strokes curl around the zygoma; reverse on far cheek.
+   Each hatching patch uses its own geometry and illuminated-side strength. */
+.portrait .cheek-plane::after {
+  content:"";inset:4px 0 4px 2px;border-radius:45%;
+  background:repeating-linear-gradient(44deg,transparent 0 5.2px,#3439317a 5.2px 5.7px,transparent 5.7px 10.4px);
+  mask-image:radial-gradient(ellipse 81% 70% at 45% 65%,black,transparent 79%);
+  -webkit-mask-image:radial-gradient(ellipse 81% 70% at 45% 65%,black,transparent 79%);
+  opacity:calc(var(--hatch,.62) * .58);
+}
+.portrait .cheek-plane-right::after{transform:scaleX(-1) rotate(-12deg)}
+.portrait .cheek-plane-left::after{transform:rotate(-8deg)}
+.portrait .eye-socket::after {
+  content:"";inset:4px 10px 11px 6px;
+  background:repeating-linear-gradient(119deg,transparent 0 2.6px,#31382e63 2.6px 3px,transparent 3px 7px);
+  mask-image:radial-gradient(ellipse at 54% 29%,black,transparent 72%);
+  -webkit-mask-image:radial-gradient(ellipse at 54% 29%,black,transparent 72%);
+  opacity:calc(var(--hatch,.62) * .46);
+}
+.portrait .eye-socket-right::after{transform:scaleX(-1)}
+.portrait .nose-bridge::after{
+  content:"";left:1px;top:14px;width:12px;height:51px;
+  border-radius:30%;background:repeating-linear-gradient(155deg,#4b504765 0 .42px,transparent .42px 3.8px);
+  mask-image:linear-gradient(0deg,transparent,black 36% 71%,transparent);
+  -webkit-mask-image:linear-gradient(0deg,transparent,black 36% 71%,transparent);
+  opacity:calc(var(--hatch,.62) * .48);
+}
+.portrait .jaw-plane::after{
+  content:"";inset:12px 2px 7px 2px;
+  background:repeating-linear-gradient(23deg,#3b3e3763 0 .44px,transparent .44px 4.4px);
+  mask-image:radial-gradient(ellipse at 50% 67%,black,transparent 76%);
+  -webkit-mask-image:radial-gradient(ellipse at 50% 67%,black,transparent 76%);
+  opacity:calc(var(--hatch,.62) * .52);
+}
+.portrait .jaw-plane-right::after{transform:scaleX(-1)}
+.portrait .chin-plane::after{
+  content:"";left:18px;top:18px;width:90px;height:26px;
+  border-radius:50%;
+  background:repeating-linear-gradient(103deg,#47484052 0 .4px,transparent .4px 5.5px);
+  mask-image:radial-gradient(ellipse,black,transparent 76%);
+  -webkit-mask-image:radial-gradient(ellipse,black,transparent 76%);
+  opacity:calc(var(--hatch,.62) * .32);
+}
+.portrait[data-study="structure"] .cheek-plane::after,
+.portrait[data-study="structure"] .eye-socket::after,
+.portrait[data-study="structure"] .jaw-plane::after,
+.portrait[data-study="structure"] .chin-plane::after{opacity:0}
+
+/* Larger black masses keep the hair silhouette while irregularly spaced
+   graphite highlights suggest bundles turning rather than straight stripes. */
+.portrait .hair-behind {
+  background:
+    radial-gradient(ellipse 130% 63% at 55% 44%,#62665b40,transparent 74%),
+    repeating-linear-gradient(101deg,#292d28 0 3px,#41443d 4.4px,#33372f 6.1px,#55564e 7px,#282d29 10.9px,#40433c 12px,#2e332c 15.5px);
+}
+.portrait .hair-cap{
+  background:
+    radial-gradient(ellipse 52% 83% at 29% 25%,#95998a54,transparent 85%),
+    repeating-linear-gradient(109deg,#242925 0 2.5px,#484b43 3.4px,#2b302a 5.2px,#66695d 7.9px,#30352e 10.2px,#3b4038 13.8px);
+}
+.portrait .hair-lock{
+  background:
+    radial-gradient(ellipse at 24% 25%,#888a7954,transparent 70%),
+    repeating-linear-gradient(96deg,#252b27 0 3.2px,#343a33 4.1px,#5c5f56 5.9px,#333932 8.2px,#65665b 9.5px,#282f2a 13px);
+  box-shadow:inset -10px 0 12px #141a1761,inset 9px 2px 7px #a9a78a19,2px 3px 5px #30352d50;
+}
+.portrait .hair-strands {
+  background:repeating-linear-gradient(98deg,transparent 0 6.2px,#b2b29a23 6.2px 6.7px,transparent 6.7px 11.4px);
+  opacity:.62;
+}
+
+/* A sparse set of drawn C-curves follows the outside edge of each hair mass.
+   Width, height, rotation and opacity differ by stroke; no procedural bitmap. */
+.portrait .hair-sweep{
+  z-index:13;border-radius:52% 39% 48% 49%;
+  border-style:solid;border-color:transparent;
+  border-left-color:#d6d1ba5a;
+  border-width:0 0 0 1.1px;
+  box-shadow:-1px 0 .5px #11181436;
+  pointer-events:none;
+  opacity:calc(.26 + var(--hatch,.62) * .55);
+}
+.portrait .sweep-left-one{left:79px;top:111px;width:33px;height:176px;transform:rotate(13deg)}
+.portrait .sweep-left-two{left:66px;top:139px;width:49px;height:222px;transform:rotate(4deg);opacity:.34}
+.portrait .sweep-left-three{left:54px;top:229px;width:48px;height:162px;transform:rotate(-16deg);opacity:.24}
+.portrait .sweep-right-one{right:77px;top:114px;width:35px;height:177px;transform:scaleX(-1) rotate(12deg)}
+.portrait .sweep-right-two{right:63px;top:165px;width:43px;height:215px;transform:scaleX(-1) rotate(3deg);opacity:.35}
+.portrait .sweep-right-three{right:54px;top:244px;width:40px;height:155px;transform:scaleX(-1) rotate(-12deg);opacity:.24}
+.portrait[data-study="structure"] .hair-sweep{opacity:.09}
+
+/* Dark, continuous masses with very restrained micro-strokes.
+   The prior uniform bright bars made the hair look like a repeating texture
+   rather than pencil-drawn bundles. Broad value dominates the thin lines. */
+.portrait .hair-back {
+  background:
+    radial-gradient(ellipse 84% 83% at 38% 21%,#757a6b58,transparent 69%),
+    radial-gradient(ellipse 72% 84% at 80% 80%,#0f1713ad,transparent 88%),
+    #323a33;
+}
+.portrait .hair-behind {
+  background:
+    radial-gradient(ellipse 42% 85% at 31% 47%,#747a6859,transparent 79%),
+    radial-gradient(ellipse 84% 75% at 95% 75%,#151e18ac,transparent 87%),
+    repeating-linear-gradient(103deg,#292f2a 0 4.8px,#333a32 6.7px,#2b322b 9.8px,#373d34 12px,#2a302a 16.4px);
+}
+.portrait .hair-cap {
+  background:
+    radial-gradient(ellipse 63% 90% at 27% 32%,#777e6c6f,transparent 76%),
+    repeating-linear-gradient(107deg,#2b332b 0 4px,#353d34 5.2px,#2d342d 7.8px,#40443a 11px,#293028 14.2px);
+}
+.portrait .hair-lock {
+  background:
+    radial-gradient(ellipse 45% 83% at 22% 48%,#777b6d5b,transparent 86%),
+    radial-gradient(ellipse 61% 85% at 92% 56%,#111a16b2,transparent 85%),
+    repeating-linear-gradient(98deg,#2a312b 0 3.9px,#343b34 5.5px,#2f362f 9px,#393f36 11.2px,#2b322a 14px);
+}
+.portrait .hair-strands {
+  background:
+    repeating-linear-gradient(96deg,transparent 0 9.6px,#a0a18f28 9.7px 10.1px,transparent 10.1px 18px);
+  opacity:.65;
+}
+.portrait .hair-sweep{opacity:calc(.37 + var(--hatch,.62) * .44)}

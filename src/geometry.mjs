@@ -15,11 +15,15 @@ export function derivePortraitStyle(raw) {
   const ink = p.graphite / 100;
   const shadowLeft = (0.19 + 0.66 * light01) * ink;
   const shadowRight = (0.19 + 0.66 * (1 - light01)) * ink;
+  // Landmarks in the unscaled 380 x 500 CSS portrait coordinate system.
+  // These are a deliberate drawing reference, not a claim of medical anatomy.
+  const landmarks = deriveHeadLandmarks(p);
   return Object.freeze({
     '--face-x': String(faceScale),
     '--face-half-delta': `${halfDelta.toFixed(2)}px`,
-    '--hair-structure-x': String(Number(((p.hairVolume / 100) * (1 + .36 * (faceScale - 1))).toFixed(4))),
-    '--hair-x': String(Number(((p.hairVolume / 100) * (1 + .36 * (faceScale - 1))).toFixed(4))),
+    '--ear-shift': `${landmarks.earShift.toFixed(2)}px`,
+    '--hair-structure-x': String(Number(((p.hairVolume / 100) * (1 + .78 * (faceScale - 1))).toFixed(4))),
+    '--hair-x': String(Number(((p.hairVolume / 100) * (1 + .78 * (faceScale - 1))).toFixed(4))),
     '--eye-offset': `${p.eyeSpacing}px`,
     '--nose-x': String(p.noseWidth / 100),
     '--mouth-x': String(p.mouthWidth / 100),
@@ -31,7 +35,45 @@ export function derivePortraitStyle(raw) {
     '--shadow-x': `${(72 - 44 * light01).toFixed(1)}%`,
     '--shadow-left-opacity': shadowLeft.toFixed(4),
     '--shadow-right-opacity': shadowRight.toFixed(4),
+    '--plane-shade-left': shadowLeft.toFixed(4),
+    '--plane-shade-right': shadowRight.toFixed(4),
+    '--key-light': light01.toFixed(4),
+    '--face-cheek-scale': (1 + (p.jaw - 100) * .004).toFixed(4),
     '--nose-cast-x': `${(5 - 10 * light01).toFixed(1)}px`,
     '--forehead-shift': `${(-8 + 16 * light01).toFixed(1)}px`
+  });
+}
+
+/**
+ * Reference coordinates for styling and geometry regression checks.
+ * Pure numerical landmarks: no DOM, image, canvas, or rendering side effects.
+ */
+export function deriveHeadLandmarks(raw) {
+  const p = normalize(raw);
+  const centerX = 190.5;
+  const halfWidth = (207 * p.faceWidth / 100) / 2;
+  const eyeDelta = p.eyeSpacing;
+  // Eye white is 62px wide, with left/right insets of 24px inside a 207px face.
+  // Its center is 48.5px from the face center, prior to horizontal scaling.
+  const halfEyeGap = (48.5 + eyeDelta) * (p.faceWidth / 100);
+  const leftEye = centerX - halfEyeGap;
+  const rightEye = centerX + halfEyeGap;
+  const earShift = 103.5 * (p.faceWidth / 100 - 1);
+  return Object.freeze({
+    centerX,
+    faceLeft: centerX - halfWidth,
+    faceRight: centerX + halfWidth,
+    faceWidth: halfWidth * 2,
+    leftEye,
+    rightEye,
+    eyeSpacing: rightEye - leftEye,
+    leftEar: 89 - earShift,
+    rightEar: 294 + earShift,
+    earShift,
+    browY: 203,
+    eyeY: 244.5,
+    noseBaseY: 333,
+    mouthY: 369,
+    chinY: 395,
   });
 }

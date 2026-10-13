@@ -142,6 +142,318 @@
 .chin-shadow{opacity:.23}
 
 </style>
+  <style>
+/* Research 002 / Anatomy planes.
+   These anatomical observations are original CSS drawing decisions. They are
+   intentionally anchored in the face element's 207x304 coordinate system.
+   No bitmaps, inline SVG, canvas rasterization or remote assets. */
+
+/* Lower the contrast of the porcelain material so graphite strokes, rather
+   than blurred specular discs, describe the main face volume. */
+.portrait .face {
+  background:
+    radial-gradient(ellipse 112% 90% at var(--light-x,39%) 28%,
+      #f2ece1 0%, #dfd8cc 30%, #cbc4b9 54%, #aaa49a 82%, #77766e 100%);
+  box-shadow:
+    inset -5px -12px 16px #34383339,
+    inset 5px 5px 16px #fff8ec18,
+    0 1px 1px #302f2a2e;
+}
+.portrait .face-tones {
+  background:
+    radial-gradient(ellipse 50% 44% at var(--light-x,39%) 23%,#fffef2b0,transparent 95%),
+    radial-gradient(ellipse 45% 45% at 16% 68%,#5c625b3a,transparent 89%),
+    radial-gradient(ellipse 45% 45% at 84% 68%,#565b543e,transparent 89%),
+    radial-gradient(ellipse 94% 83% at var(--shadow-x,61%) 46%,#4f544b59,transparent 91%),
+    radial-gradient(ellipse 75% 24% at 50% 94%,#353c364d,transparent 94%);
+}
+.portrait .face-hatching { opacity:calc(var(--hatch,.62) * .26); }
+
+/* Soft bony swell of supraorbital ridge. Right and left are separated so
+   the two sides can respond individually to the same virtual light source. */
+.portrait .brow-bone {
+  top:92px; width:90px; height:57px; z-index:4;
+  border-radius:50%; pointer-events:none;
+  background:
+    radial-gradient(ellipse 90% 74% at 50% 72%,#f9f3e084,transparent 64%),
+    radial-gradient(ellipse 92% 68% at 47% 28%,#53585186,transparent 81%);
+  filter:blur(4px);
+}
+.portrait .brow-bone-left {left:5px;opacity:calc(.24 + var(--plane-shade-left,.3) * .76)}
+.portrait .brow-bone-right {right:5px;opacity:calc(.24 + var(--plane-shade-right,.3) * .76)}
+
+/* The socket is a recessed plane; eyes themselves remain legible.
+   Unlike a flat circular eyeliner, the upper lid casts a small uneven shadow. */
+.portrait .eye-socket {
+  top:121px; width:83px; height:70px; z-index:5;
+  background:
+    radial-gradient(ellipse at 50% 24%,#4d54495b 0%,#74766b37 30%,transparent 69%),
+    radial-gradient(ellipse at 53% 70%,#f5efe066,transparent 70%);
+  filter:blur(3px);
+  border-radius:50%;
+}
+.portrait .eye-socket-left {left:8px;opacity:calc(.3 + var(--plane-shade-left,.3) * .7)}
+.portrait .eye-socket-right {right:8px;opacity:calc(.3 + var(--plane-shade-right,.3) * .7)}
+
+.portrait .eye{top:139px;height:30px;filter:none}
+.portrait .eye-white {
+  left:3px;top:5px;width:58px;height:19px;
+  border-top:2.4px solid #4a4b45;
+  border-bottom:1px solid #969188;
+  border-radius:15% 74% 40% 65% / 12% 81% 73% 97%;
+  background:radial-gradient(ellipse at 49% 64%,#d5d2ca 5%,#e1ded6 56%,#8d8f84 100%);
+  transform:rotate(1deg);
+  box-shadow:inset 1px 3px 3px #40453a72,0 1px 2px #f5ede76b;
+}
+.portrait .eye-right .eye-white{transform:rotate(-1deg)}
+.portrait .iris {
+  left:26px;top:6px;width:18px;height:19px;
+  border:1px solid #666861;border-radius:50%;
+  background:radial-gradient(circle,#636960 8%,#7d8075 29%,#494f49 55%,#a4a79b 83%,#4d504a 100%);
+  box-shadow:inset 0 0 3px #343a37a0;opacity:.86;
+}
+.portrait .pupil{left:4px;top:4px;width:9px;height:10px;background:#3a3e3b}
+.portrait .glint{left:11px;top:3px;width:3px;height:4px;opacity:.66}
+.portrait .crease{left:7px;top:-5px;width:51px;border-top:1px solid #686a6066;opacity:.7}
+.portrait .lower-lid{left:11px;top:23px;width:46px;border-color:#66696075;opacity:.53}
+.portrait .under-eye{top:159px;width:56px;height:28px;filter:blur(5px)}
+.portrait .under-eye-left{left:20px}.portrait .under-eye-right{right:20px}
+
+/* Zygomatic cheek plateau: light ridge, turning plane, and cast under-eye.
+   All stroke masks follow the cheek ellipse rather than covering the face. */
+.portrait .cheek-plane {
+  top:169px;width:87px;height:102px;z-index:2;border-radius:50%;
+  background:
+    radial-gradient(ellipse 90% 46% at 50% 19%,#eee8da6f,transparent 96%),
+    radial-gradient(ellipse 92% 88% at 57% 74%,#484e4784,transparent 84%);
+  filter:blur(4px);
+  transform:scaleX(var(--face-cheek-scale,1));
+}
+.portrait .cheek-plane-left{left:-18px;opacity:calc(.21 + var(--plane-shade-left,.3) * .53)}
+.portrait .cheek-plane-right{right:-18px;opacity:calc(.21 + var(--plane-shade-right,.3) * .53)}
+.portrait .malar {
+  top:181px;width:79px;height:35px;z-index:3;
+  background:radial-gradient(ellipse at 50% 23%,#fffbec8c,transparent 68%);
+  filter:blur(3.5px);border-radius:50%;opacity:.7;
+}
+.portrait .malar-left{left:6px;transform:rotate(-11deg)}
+.portrait .malar-right{right:6px;transform:rotate(11deg)}
+
+/* Nasal side planes slope outward and fall under the alar cartilages.
+   A small asymmetric ink accent suggests nostril shadow instead of two discs. */
+.portrait .nasal-plane {
+  top:170px;width:29px;height:91px;z-index:7;
+  border-radius:30% 60% 80% 45%;
+  background:linear-gradient(90deg,transparent,#51584d68 58%,transparent 100%);
+  filter:blur(5px);
+}
+.portrait .nasal-plane-left{left:73px;transform:rotate(7deg);opacity:calc(.12 + var(--plane-shade-left,.3) * .55)}
+.portrait .nasal-plane-right{right:71px;transform:rotate(-7deg);opacity:calc(.12 + var(--plane-shade-right,.3) * .55)}
+.portrait .nose-bridge {
+  top:2px;left:24px;width:23px;height:70px;
+  background:linear-gradient(90deg,#55594e38 0%,#ddd6c837 33%,#fcf9eaa1 61%,#807d7464 99%);
+  box-shadow:var(--nose-cast-x,2.5px) 6px 10px #383c3461;
+  filter:blur(3.7px);
+}
+.portrait .nose-tip {
+  left:22px;top:56px;width:29px;height:17px;
+  background:radial-gradient(ellipse 80% 86% at var(--light-x,39%) 32%,#f1ebdd9a 0%,#c6c1b3a2 49%,transparent 94%);
+  filter:blur(3px);
+}
+.portrait .nose-left,.portrait .nose-right {
+  top:59px;width:24px;height:16px;
+  background:radial-gradient(ellipse at 54% 45%,#a7a49778,transparent 83%);
+  opacity:.62;filter:blur(2.2px);
+}
+.portrait .nostril{top:69px;width:13px;height:6px;border-bottom:1.3px solid #494943;opacity:.55}
+.portrait .nostril-left{left:10px;transform:rotate(9deg)}
+.portrait .nostril-right{right:8px;transform:rotate(-9deg)}
+
+/* Orbicularis oris and mentalis: three graphite values form the lips.
+   Mouth retains the original independent width parameter. */
+.portrait .philtrum {top:249px;opacity:.45}
+.portrait .mouth{top:259px;left:55px;width:99px;height:49px}
+.portrait .upper-lip {
+  left:5px;top:7px;width:89px;height:21px;
+  clip-path:polygon(0% 72%,16% 51%,37% 34%,50% 49%,62% 34%,83% 48%,100% 72%,83% 80%,65% 71%,50% 77%,34% 68%,17% 81%);
+  background:linear-gradient(#756f68b8,#4e514a91);
+  opacity:.75;filter:blur(.5px);
+}
+.portrait .lip-line{left:7px;top:20px;width:85px;height:13px;border-top:1.7px solid #575951;border-radius:40% 40% 62% 62%;opacity:.68}
+.portrait .lower-lip {
+  left:18px;top:24px;width:65px;height:17px;
+  border-radius:12% 14% 75% 80% / 10% 10% 96% 100%;
+  background:radial-gradient(ellipse 95% 75% at 51% 9%,#acaaa0a9 12%,#c9c2b3a0 65%,transparent 84%);
+  border-bottom:1px solid #77766d6b;
+  filter:blur(.75px);opacity:.78;
+}
+.portrait .chin-shadow {top:43px;width:59px;left:20px;height:6px;opacity:.32}
+.portrait .chin-plane {
+  top:270px;left:42px;width:125px;height:43px;z-index:3;pointer-events:none;
+  border-radius:50%;
+  background:radial-gradient(ellipse 78% 67% at 50% 5%,#f9f3e087 0%,transparent 76%);
+  opacity:.45;filter:blur(7px);
+}
+.portrait .jaw-plane {
+  top:222px;width:47px;height:81px;z-index:2;
+  border-radius:40% 50% 35% 72%;
+  background:radial-gradient(ellipse at 69% 51%,#454a455d,transparent 75%);
+  filter:blur(8px);
+}
+.portrait .jaw-plane-left{left:3px;transform:rotate(-14deg);opacity:calc(.15 + var(--plane-shade-left,.3) * .48)}
+.portrait .jaw-plane-right{right:3px;transform:rotate(14deg);opacity:calc(.15 + var(--plane-shade-right,.3) * .48)}
+
+</style>
+  <style>
+/* Research 002 / Form-following dry graphite strokes.
+   Texture is drawn with gradients and masks and contains no images.
+   Small shifts of angle, length, and opacity across anatomical regions aim
+   to imply a human pencil pass instead of one tiled linear pattern. */
+
+/* Subtle paper tooth on skin; the stronger rhythm is delegated to
+   direction-specific hatch patches and hair strands below. */
+.portrait .face::before {
+  background:radial-gradient(circle,#383c351b .34px,transparent .9px) 0 0 / 4px 3.8px;
+  opacity:calc(var(--hatch,.62) * .33);
+}
+.portrait .face-hatching{
+  background:
+    repeating-linear-gradient(36deg,transparent 0 5.1px,#484c4351 5.1px 5.55px,transparent 5.55px 10px),
+    repeating-linear-gradient(148deg,transparent 0 11px,#4b4e4740 11px 11.35px,transparent 11.35px 16px);
+  mask-image:
+    radial-gradient(ellipse 31% 45% at 12% 64%,black,transparent 93%),
+    radial-gradient(ellipse 34% 44% at 90% 57%,black,transparent 92%),
+    radial-gradient(ellipse 42% 21% at 51% 89%,black,transparent 96%);
+  -webkit-mask-image:
+    radial-gradient(ellipse 31% 45% at 12% 64%,black,transparent 93%),
+    radial-gradient(ellipse 34% 44% at 90% 57%,black,transparent 92%),
+    radial-gradient(ellipse 42% 21% at 51% 89%,black,transparent 96%);
+  opacity:calc(var(--hatch,.62) * .43);
+}
+
+/* Oblique short strokes curl around the zygoma; reverse on far cheek.
+   Each hatching patch uses its own geometry and illuminated-side strength. */
+.portrait .cheek-plane::after {
+  content:"";inset:4px 0 4px 2px;border-radius:45%;
+  background:repeating-linear-gradient(44deg,transparent 0 5.2px,#3439317a 5.2px 5.7px,transparent 5.7px 10.4px);
+  mask-image:radial-gradient(ellipse 81% 70% at 45% 65%,black,transparent 79%);
+  -webkit-mask-image:radial-gradient(ellipse 81% 70% at 45% 65%,black,transparent 79%);
+  opacity:calc(var(--hatch,.62) * .58);
+}
+.portrait .cheek-plane-right::after{transform:scaleX(-1) rotate(-12deg)}
+.portrait .cheek-plane-left::after{transform:rotate(-8deg)}
+.portrait .eye-socket::after {
+  content:"";inset:4px 10px 11px 6px;
+  background:repeating-linear-gradient(119deg,transparent 0 2.6px,#31382e63 2.6px 3px,transparent 3px 7px);
+  mask-image:radial-gradient(ellipse at 54% 29%,black,transparent 72%);
+  -webkit-mask-image:radial-gradient(ellipse at 54% 29%,black,transparent 72%);
+  opacity:calc(var(--hatch,.62) * .46);
+}
+.portrait .eye-socket-right::after{transform:scaleX(-1)}
+.portrait .nose-bridge::after{
+  content:"";left:1px;top:14px;width:12px;height:51px;
+  border-radius:30%;background:repeating-linear-gradient(155deg,#4b504765 0 .42px,transparent .42px 3.8px);
+  mask-image:linear-gradient(0deg,transparent,black 36% 71%,transparent);
+  -webkit-mask-image:linear-gradient(0deg,transparent,black 36% 71%,transparent);
+  opacity:calc(var(--hatch,.62) * .48);
+}
+.portrait .jaw-plane::after{
+  content:"";inset:12px 2px 7px 2px;
+  background:repeating-linear-gradient(23deg,#3b3e3763 0 .44px,transparent .44px 4.4px);
+  mask-image:radial-gradient(ellipse at 50% 67%,black,transparent 76%);
+  -webkit-mask-image:radial-gradient(ellipse at 50% 67%,black,transparent 76%);
+  opacity:calc(var(--hatch,.62) * .52);
+}
+.portrait .jaw-plane-right::after{transform:scaleX(-1)}
+.portrait .chin-plane::after{
+  content:"";left:18px;top:18px;width:90px;height:26px;
+  border-radius:50%;
+  background:repeating-linear-gradient(103deg,#47484052 0 .4px,transparent .4px 5.5px);
+  mask-image:radial-gradient(ellipse,black,transparent 76%);
+  -webkit-mask-image:radial-gradient(ellipse,black,transparent 76%);
+  opacity:calc(var(--hatch,.62) * .32);
+}
+.portrait[data-study="structure"] .cheek-plane::after,
+.portrait[data-study="structure"] .eye-socket::after,
+.portrait[data-study="structure"] .jaw-plane::after,
+.portrait[data-study="structure"] .chin-plane::after{opacity:0}
+
+/* Larger black masses keep the hair silhouette while irregularly spaced
+   graphite highlights suggest bundles turning rather than straight stripes. */
+.portrait .hair-behind {
+  background:
+    radial-gradient(ellipse 130% 63% at 55% 44%,#62665b40,transparent 74%),
+    repeating-linear-gradient(101deg,#292d28 0 3px,#41443d 4.4px,#33372f 6.1px,#55564e 7px,#282d29 10.9px,#40433c 12px,#2e332c 15.5px);
+}
+.portrait .hair-cap{
+  background:
+    radial-gradient(ellipse 52% 83% at 29% 25%,#95998a54,transparent 85%),
+    repeating-linear-gradient(109deg,#242925 0 2.5px,#484b43 3.4px,#2b302a 5.2px,#66695d 7.9px,#30352e 10.2px,#3b4038 13.8px);
+}
+.portrait .hair-lock{
+  background:
+    radial-gradient(ellipse at 24% 25%,#888a7954,transparent 70%),
+    repeating-linear-gradient(96deg,#252b27 0 3.2px,#343a33 4.1px,#5c5f56 5.9px,#333932 8.2px,#65665b 9.5px,#282f2a 13px);
+  box-shadow:inset -10px 0 12px #141a1761,inset 9px 2px 7px #a9a78a19,2px 3px 5px #30352d50;
+}
+.portrait .hair-strands {
+  background:repeating-linear-gradient(98deg,transparent 0 6.2px,#b2b29a23 6.2px 6.7px,transparent 6.7px 11.4px);
+  opacity:.62;
+}
+
+/* A sparse set of drawn C-curves follows the outside edge of each hair mass.
+   Width, height, rotation and opacity differ by stroke; no procedural bitmap. */
+.portrait .hair-sweep{
+  z-index:13;border-radius:52% 39% 48% 49%;
+  border-style:solid;border-color:transparent;
+  border-left-color:#d6d1ba5a;
+  border-width:0 0 0 1.1px;
+  box-shadow:-1px 0 .5px #11181436;
+  pointer-events:none;
+  opacity:calc(.26 + var(--hatch,.62) * .55);
+}
+.portrait .sweep-left-one{left:79px;top:111px;width:33px;height:176px;transform:rotate(13deg)}
+.portrait .sweep-left-two{left:66px;top:139px;width:49px;height:222px;transform:rotate(4deg);opacity:.34}
+.portrait .sweep-left-three{left:54px;top:229px;width:48px;height:162px;transform:rotate(-16deg);opacity:.24}
+.portrait .sweep-right-one{right:77px;top:114px;width:35px;height:177px;transform:scaleX(-1) rotate(12deg)}
+.portrait .sweep-right-two{right:63px;top:165px;width:43px;height:215px;transform:scaleX(-1) rotate(3deg);opacity:.35}
+.portrait .sweep-right-three{right:54px;top:244px;width:40px;height:155px;transform:scaleX(-1) rotate(-12deg);opacity:.24}
+.portrait[data-study="structure"] .hair-sweep{opacity:.09}
+
+/* Dark, continuous masses with very restrained micro-strokes.
+   The prior uniform bright bars made the hair look like a repeating texture
+   rather than pencil-drawn bundles. Broad value dominates the thin lines. */
+.portrait .hair-back {
+  background:
+    radial-gradient(ellipse 84% 83% at 38% 21%,#757a6b58,transparent 69%),
+    radial-gradient(ellipse 72% 84% at 80% 80%,#0f1713ad,transparent 88%),
+    #323a33;
+}
+.portrait .hair-behind {
+  background:
+    radial-gradient(ellipse 42% 85% at 31% 47%,#747a6859,transparent 79%),
+    radial-gradient(ellipse 84% 75% at 95% 75%,#151e18ac,transparent 87%),
+    repeating-linear-gradient(103deg,#292f2a 0 4.8px,#333a32 6.7px,#2b322b 9.8px,#373d34 12px,#2a302a 16.4px);
+}
+.portrait .hair-cap {
+  background:
+    radial-gradient(ellipse 63% 90% at 27% 32%,#777e6c6f,transparent 76%),
+    repeating-linear-gradient(107deg,#2b332b 0 4px,#353d34 5.2px,#2d342d 7.8px,#40443a 11px,#293028 14.2px);
+}
+.portrait .hair-lock {
+  background:
+    radial-gradient(ellipse 45% 83% at 22% 48%,#777b6d5b,transparent 86%),
+    radial-gradient(ellipse 61% 85% at 92% 56%,#111a16b2,transparent 85%),
+    repeating-linear-gradient(98deg,#2a312b 0 3.9px,#343b34 5.5px,#2f362f 9px,#393f36 11.2px,#2b322a 14px);
+}
+.portrait .hair-strands {
+  background:
+    repeating-linear-gradient(96deg,transparent 0 9.6px,#a0a18f28 9.7px 10.1px,transparent 10.1px 18px);
+  opacity:.65;
+}
+.portrait .hair-sweep{opacity:calc(.37 + var(--hatch,.62) * .44)}
+
+</style>
   <script type="module">
 const DEFINITIONS = Object.freeze({
   faceWidth: { min: 80, max: 120, step: 1, value: 100, group: 'geometry', unit: '%' },
@@ -203,11 +515,15 @@ function derivePortraitStyle(raw) {
   const ink = p.graphite / 100;
   const shadowLeft = (0.19 + 0.66 * light01) * ink;
   const shadowRight = (0.19 + 0.66 * (1 - light01)) * ink;
+  // Landmarks in the unscaled 380 x 500 CSS portrait coordinate system.
+  // These are a deliberate drawing reference, not a claim of medical anatomy.
+  const landmarks = deriveHeadLandmarks(p);
   return Object.freeze({
     '--face-x': String(faceScale),
     '--face-half-delta': `${halfDelta.toFixed(2)}px`,
-    '--hair-structure-x': String(Number(((p.hairVolume / 100) * (1 + .36 * (faceScale - 1))).toFixed(4))),
-    '--hair-x': String(Number(((p.hairVolume / 100) * (1 + .36 * (faceScale - 1))).toFixed(4))),
+    '--ear-shift': `${landmarks.earShift.toFixed(2)}px`,
+    '--hair-structure-x': String(Number(((p.hairVolume / 100) * (1 + .78 * (faceScale - 1))).toFixed(4))),
+    '--hair-x': String(Number(((p.hairVolume / 100) * (1 + .78 * (faceScale - 1))).toFixed(4))),
     '--eye-offset': `${p.eyeSpacing}px`,
     '--nose-x': String(p.noseWidth / 100),
     '--mouth-x': String(p.mouthWidth / 100),
@@ -219,8 +535,46 @@ function derivePortraitStyle(raw) {
     '--shadow-x': `${(72 - 44 * light01).toFixed(1)}%`,
     '--shadow-left-opacity': shadowLeft.toFixed(4),
     '--shadow-right-opacity': shadowRight.toFixed(4),
+    '--plane-shade-left': shadowLeft.toFixed(4),
+    '--plane-shade-right': shadowRight.toFixed(4),
+    '--key-light': light01.toFixed(4),
+    '--face-cheek-scale': (1 + (p.jaw - 100) * .004).toFixed(4),
     '--nose-cast-x': `${(5 - 10 * light01).toFixed(1)}px`,
     '--forehead-shift': `${(-8 + 16 * light01).toFixed(1)}px`
+  });
+}
+
+/**
+ * Reference coordinates for styling and geometry regression checks.
+ * Pure numerical landmarks: no DOM, image, canvas, or rendering side effects.
+ */
+function deriveHeadLandmarks(raw) {
+  const p = normalize(raw);
+  const centerX = 190.5;
+  const halfWidth = (207 * p.faceWidth / 100) / 2;
+  const eyeDelta = p.eyeSpacing;
+  // Eye white is 62px wide, with left/right insets of 24px inside a 207px face.
+  // Its center is 48.5px from the face center, prior to horizontal scaling.
+  const halfEyeGap = (48.5 + eyeDelta) * (p.faceWidth / 100);
+  const leftEye = centerX - halfEyeGap;
+  const rightEye = centerX + halfEyeGap;
+  const earShift = 103.5 * (p.faceWidth / 100 - 1);
+  return Object.freeze({
+    centerX,
+    faceLeft: centerX - halfWidth,
+    faceRight: centerX + halfWidth,
+    faceWidth: halfWidth * 2,
+    leftEye,
+    rightEye,
+    eyeSpacing: rightEye - leftEye,
+    leftEar: 89 - earShift,
+    rightEar: 294 + earShift,
+    earShift,
+    browY: 203,
+    eyeY: 244.5,
+    noseBaseY: 333,
+    mouthY: 369,
+    chinY: 395,
   });
 }
 
@@ -469,6 +823,14 @@ updateScale();
                 <div class="side-shadow side-shadow-left"></div>
                 <div class="side-shadow side-shadow-right"></div>
                 <div class="face-hatching"></div>
+                <div class="cheek-plane cheek-plane-left"></div>
+                <div class="cheek-plane cheek-plane-right"></div>
+                <div class="jaw-plane jaw-plane-left"></div>
+                <div class="jaw-plane jaw-plane-right"></div>
+                <div class="brow-bone brow-bone-left"></div>
+                <div class="brow-bone brow-bone-right"></div>
+                <div class="eye-socket eye-socket-left"></div>
+                <div class="eye-socket eye-socket-right"></div>
                 <div class="forehead-light"></div>
                 <div class="temple temple-left"></div>
                 <div class="temple temple-right"></div>
@@ -478,9 +840,14 @@ updateScale();
                 <div class="eye eye-right"><span class="eye-white"></span><span class="iris"><i class="pupil"></i><i class="glint"></i></span><span class="lower-lid"></span><span class="crease"></span></div>
                 <div class="under-eye under-eye-left"></div>
                 <div class="under-eye under-eye-right"></div>
+                <div class="malar malar-left"></div>
+                <div class="malar malar-right"></div>
+                <div class="nasal-plane nasal-plane-left"></div>
+                <div class="nasal-plane nasal-plane-right"></div>
                 <div class="nose"><span class="nose-bridge"></span><span class="nose-left"></span><span class="nose-right"></span><span class="nose-tip"></span><span class="nostril nostril-left"></span><span class="nostril nostril-right"></span></div>
                 <div class="philtrum"></div>
                 <div class="mouth"><div class="upper-lip"></div><div class="lip-line"></div><div class="lower-lip"></div><div class="chin-shadow"></div></div>
+                <div class="chin-plane"></div>
                 <div class="cheek-hatch cheek-hatch-left"></div>
                 <div class="cheek-hatch cheek-hatch-right"></div>
                 <div class="jawline jawline-left"></div>
@@ -494,6 +861,12 @@ updateScale();
               <div class="hair-lock lock-right-b"></div>
               <div class="hair-strands strands-left"></div>
               <div class="hair-strands strands-right"></div>
+              <div class="hair-sweep sweep-left-one"></div>
+              <div class="hair-sweep sweep-left-two"></div>
+              <div class="hair-sweep sweep-left-three"></div>
+              <div class="hair-sweep sweep-right-one"></div>
+              <div class="hair-sweep sweep-right-two"></div>
+              <div class="hair-sweep sweep-right-three"></div>
               <div class="construction-guides" aria-hidden="true">
                 <div class="construction-ellipse"></div><div class="construction-axis"></div>
                 <div class="construction-line guide-brow"></div>
