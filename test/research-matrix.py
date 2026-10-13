@@ -12,7 +12,7 @@ from PIL import Image, ImageOps, ImageDraw, ImageFont, ImageStat, ImageChops
 from playwright.async_api import async_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = ROOT / 'test-results' / 'research-002'
+OUTPUT = Path(os.environ.get('PORTRAIT_MATRIX_DIR', str(ROOT / 'test-results' / 'research-003')))
 WIDTHS = (80, 100, 120)
 LIGHTS = (-60, 0, 60)
 

@@ -48,16 +48,20 @@ export function derivePortraitStyle(raw) {
  * Reference coordinates for styling and geometry regression checks.
  * Pure numerical landmarks: no DOM, image, canvas, or rendering side effects.
  */
+function faceScale(p) { return p.faceWidth / 100; }
+
 export function deriveHeadLandmarks(raw) {
   const p = normalize(raw);
   const centerX = 190.5;
   const halfWidth = (207 * p.faceWidth / 100) / 2;
   const eyeDelta = p.eyeSpacing;
-  // Eye white is 62px wide, with left/right insets of 24px inside a 207px face.
-  // Its center is 48.5px from the face center, prior to horizontal scaling.
-  const halfEyeGap = (48.5 + eyeDelta) * (p.faceWidth / 100);
-  const leftEye = centerX - halfEyeGap;
-  const rightEye = centerX + halfEyeGap;
+  // Research 003: slightly different eye insets are intentional.  The
+  // CSS eye groups are 57px wide, inset 29px (left) and 30px (right).
+  // Avoid claiming perfect bilateral symmetry for an asymmetrical drawing.
+  const leftHalfGap = (46 + eyeDelta) * faceScale(p);
+  const rightHalfGap = (45 + eyeDelta) * faceScale(p);
+  const leftEye = centerX - leftHalfGap;
+  const rightEye = centerX + rightHalfGap;
   const earShift = 103.5 * (p.faceWidth / 100 - 1);
   return Object.freeze({
     centerX,
@@ -70,10 +74,10 @@ export function deriveHeadLandmarks(raw) {
     leftEar: 89 - earShift,
     rightEar: 294 + earShift,
     earShift,
-    browY: 203,
-    eyeY: 244.5,
+    browY: 214,
+    eyeY: 249.5,
     noseBaseY: 333,
-    mouthY: 369,
+    mouthY: 373,
     chinY: 395,
   });
 }

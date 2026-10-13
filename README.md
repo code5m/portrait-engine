@@ -82,3 +82,7 @@ python3 test/research-matrix.py
 See `docs/RESEARCH-002.md` for the study log and honest visual limitations.
 The portraits are still stylized; the nine render checks certify neither
 human anatomical accuracy nor artistic realism.
+
+## Research 003: face likeness and QA fidelity
+
+Research 003 adds `styles/likeness.css`: intentionally asymmetric eye construction, a softer hairline, adjusted cheek/jaw volume, and reworked nostril/lip marks. `docs/RESEARCH-003.md` records browser-rendered evidence and the key limitation: this remains a stylized drawing, not professional graphite portrait realism. The nine-case real-browser matrix is archived as CI evidence, not used as a rendering asset.

@@ -48,3 +48,12 @@ pencil likeness. It still relies on a single identity topology and stylized
 nasal/ocular geometry; the nine matrix images show controlled variations,
 not nine independent identities. No artist blind review has been conducted.
 The research issue remains open until that evidence exists.
+
+## Research 003 additions
+
+- [x] Intentional facial asymmetry and corrected eye-group landmark model.
+- [x] Hairline and long rear-hair proportions adjusted after visual inspection.
+- [x] Browser QA must inline all drawing CSS, preventing false passes with stale art.
+- [x] 3 x 3 real Chromium rendering with structural and lighting pixel invariants.
+- [ ] Independent art-quality blind review: still missing.
+- [ ] Professional naturalistic graphite portrait: not achieved; no claims of photorealism.

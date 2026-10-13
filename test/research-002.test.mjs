@@ -14,9 +14,9 @@ test('canonical facial landmarks agree with CSS coordinate system', () => {
   assert.equal(p.centerX, 190.5);
   assert.equal(p.leftEar, 89);
   assert.equal(p.rightEar, 294);
-  assert.equal(p.leftEye, 142);
-  assert.equal(p.rightEye, 239);
-  assert.equal(p.eyeY, 244.5);
+  assert.equal(p.leftEye, 144.5);
+  assert.equal(p.rightEye, 235.5);
+  assert.equal(p.eyeY, 249.5);
   assert.ok(p.noseBaseY > p.eyeY && p.mouthY > p.noseBaseY && p.chinY > p.mouthY);
 });
 

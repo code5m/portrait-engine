@@ -1,0 +1,345 @@
+/* Research 003 — perceived likeness, not decoration.
+   An intentional, original CSS-only drawing study of a single adult face.
+   Three decisions: break bilateral mirroring, open the forehead/cheeks, and
+   describe forms with tapered edges rather than paired perfect circles.
+   The HTML/DOM remains inspectable; no image / SVG / canvas / URL assets. */
+
+/* 1. The face should read as a skull under skin, not a flat ellipsoid.
+   Preserve the public jaw-width CSS variables and the existing geometry API. */
+.portrait .face {
+  border-radius:
+    48% 47% var(--jaw-radius-right, 48%) var(--jaw-radius-left, 50%) /
+    36% 35% 61% 59%;
+  background:
+    radial-gradient(ellipse 82% 35% at 52% 14%, #f6f1e5c7, transparent 93%),
+    radial-gradient(ellipse 55% 48% at 22% 64%, #b4b0a6bd, transparent 91%),
+    radial-gradient(ellipse 55% 48% at 85% 60%, #a39e95ba, transparent 93%),
+    radial-gradient(ellipse 106% 97% at var(--light-x, 39%) 34%,
+      #e7e2d9 0%, #d6d0c5 40%, #b2ada3 74%, #77756e 100%);
+  box-shadow: inset -8px -8px 14px #33362f34, inset 7px 2px 12px #faf7eb16;
+}
+/* Break the perfect porcelain sheen: subtle uneven graphite tooth. */
+.portrait .face::before {
+  content: "";
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(circle at 20% 27%,#55564e28 .55px,transparent .92px) 0 0 / 7px 6px,
+    radial-gradient(circle at 73% 61%,#3339321e .45px,transparent .92px) 0 0 / 4px 5px;
+  opacity:calc(.35 + var(--hatch,.62) * .42);
+  pointer-events:none;
+  z-index: 1;
+}
+.portrait .face-tones {
+  background:
+    radial-gradient(ellipse 65% 52% at var(--shadow-x, 60%) 51%, #3f433d40, transparent 87%),
+    radial-gradient(ellipse 47% 37% at 4% 59%, #4b50463e,transparent 85%),
+    radial-gradient(ellipse 48% 35% at 97% 61%, #4a4e4542,transparent 86%),
+    radial-gradient(ellipse 63% 35% at 51% 94%, #4b4d4245,transparent 90%);
+}
+.portrait .jaw-plane-left { transform: rotate(-18deg); }
+.portrait .jaw-plane-right { transform: rotate(12deg); top: 227px; }
+.portrait .cheek-plane-left { top: 173px; width: 77px; }
+.portrait .cheek-plane-right { top: 178px; width: 81px; }
+.portrait .malar-left { transform: rotate(-14deg); }
+.portrait .malar-right { transform: rotate(8deg); top: 184px; }
+
+/* 2. Eye anatomy. Each eye is a tapered palpebral fissure; the upper lid
+   occludes the iris so two whole circular marbles are never exposed. Small
+   hand-chosen differences are a drawing decision, not random noise. */
+.portrait .eye {
+  top: 142px;
+  width: 57px;
+  height: 34px;
+  z-index: 8;
+  overflow: visible;
+  filter: none;
+}
+.portrait .eye-left {
+  left: 29px;
+  transform: translateX(calc(-1 * var(--eye-offset))) rotate(-1deg);
+}
+.portrait .eye-right {
+  right: 30px;
+  top: 143.5px;
+  transform: translateX(var(--eye-offset)) rotate(.9deg);
+}
+.portrait .eye-white,
+.portrait .eye-right .eye-white {
+  left: 1px;
+  top: 7px;
+  width: 56px;
+  height: 19px;
+  background:radial-gradient(ellipse at 50% 72%,#d9d9d2 4%,#c6c6bd 71%,#77796f 100%);
+  border:none;
+  border-radius: 8% 83% 19% 85% / 25% 91% 42% 90%;
+  clip-path:polygon(0 61%,8% 39%,20% 20%,44% 10%,66% 16%,87% 40%,100% 67%,80% 81%,51% 96%,24% 87%,10% 77%);
+  box-shadow:inset 0 5px 5px #44473c7c;
+  transform:none;
+}
+.portrait .eye-right .eye-white {
+  left: 2px;
+  width: 55px;
+  clip-path:polygon(0 64%,14% 34%,40% 15%,63% 11%,83% 33%,100% 65%,85% 86%,55% 94%,22% 79%);
+}
+.portrait .iris {
+  left: 25px;
+  top: 9px;
+  width: 17px;
+  height: 17px;
+  border: .8px solid #676a62;
+  background:radial-gradient(circle at 53% 56%,#454b44 0 17%,#656a60 18% 49%,#9c9d90 67%,#4b4c46 100%);
+  box-shadow:inset 0 0 3px #454841a8;
+  opacity:.83;
+  clip-path:ellipse(49% 47% at 50% 50%);
+}
+.portrait .eye-right .iris {left: 20.5px;top: 9.5px;width: 16px;height: 16px;}
+.portrait .pupil {width: 7px;height: 8px;left: 4px;top: 4px;background:#3c403c;}
+.portrait .glint {width: 2.5px;height: 3px;left: 10.5px;top: 3.5px;opacity:.47;}
+.portrait .eye::after {
+  content:"";
+  z-index: 8;
+  left: 0;
+  top: 3px;
+  width: 56px;
+  height: 12px;
+  background:linear-gradient(180deg,#b4aea4 0%,#b3aea500 96%);
+  border-bottom:1.35px solid #5c5d56;
+  border-radius: 18% 61% 62% 48% / 43% 60% 53% 47%;
+  transform:rotate(-2.4deg);
+  opacity:.9;
+  box-shadow:0 2px 3px #5a5c5155;
+}
+.portrait .eye-right::after {
+  left:2px;
+  width:54px;
+  top:3.7px;
+  border-radius:54% 15% 52% 62% / 57% 48% 59% 46%;
+  transform:rotate(2.8deg);
+}
+.portrait .crease {
+  left: 6px;
+  top: 0;
+  width: 47px;
+  height: 9px;
+  border-top:1.1px solid #5558516e;
+  border-radius: 67% 55% 0 0;
+  transform: rotate(-4deg);
+  opacity:.62;
+}
+.portrait .eye-right .crease {left:5px;width:49px;transform:rotate(3deg);top:-.6px;opacity:.49;}
+.portrait .lower-lid {left:7px;top:26px;width:43px;opacity:.37;border-bottom:1px solid #6b6b627d;}
+.portrait .eye-right .lower-lid {left:10px;width:39px;top:25px;}
+.portrait .eye-socket-left {left: 10px;top:125px;opacity:calc(.28 + var(--plane-shade-left,.3)*.68);}
+.portrait .eye-socket-right {right:11px;top:127px;opacity:calc(.26 + var(--plane-shade-right,.3)*.69);}
+.portrait .eyebrow {
+  top: 115px;
+  width: 51px;
+  height: 13px;
+  border-top: 4px solid #4f504a;
+  opacity:.72;
+  filter:none;
+}
+.portrait .eyebrow-left {left: 28px; transform:rotate(-5deg);}
+.portrait .eyebrow-right {right: 32px; top:117px; width:53px; transform: scaleX(-1) rotate(2deg);opacity:.66;}
+.portrait .eyebrow i {width:49px;top:-4px;opacity:.6;}
+.portrait .under-eye-left {left:27px;top:169px;width:48px;opacity:.44;}
+.portrait .under-eye-right {right:26px;top:169px;width:47px;opacity:.53;}
+
+/* 3. Nose: asymmetric alar shadows, a subdued supratip and a fine
+   columella. No two identical shiny circles on either side. */
+.portrait .nose {top: 169px;left: 72px;}
+.portrait .nose-bridge {
+  top: -2px;
+  left: 27px;
+  width: 19px;
+  height: 72px;
+  border-radius: 46% 49% 38% 28%;
+  filter:blur(4px);
+  background:linear-gradient(90deg,#4e554a3b,#eae4d739 34%,#f5efdf9d 60%,#656a5c64 100%);
+  box-shadow: var(--nose-cast-x,3px) 5px 9px #45483b36;
+}
+.portrait .nasal-plane-left {left:77px;top:176px;transform:rotate(10deg);width:25px;}
+.portrait .nasal-plane-right {right:71px;top:180px;transform:rotate(-9deg);width:24px;}
+.portrait .nose-left {left: 9px;top: 59px;width:26px;height:18px;transform:rotate(-13deg);opacity:.46;}
+.portrait .nose-right {right:6px;top: 62px;width:24px;height:14px;transform:rotate(17deg);opacity:.56;}
+.portrait .nose-tip {
+  left: 25px;
+  top: 54px;
+  width: 26px;
+  height: 17px;
+  filter: blur(3px);
+  background:radial-gradient(ellipse 88% 83% at 38% 31%,#f0e9d78c,transparent 92%);
+}
+.portrait .nostril {border-bottom:1.05px solid #3e443dbb;opacity:.61;top:71px;height:5px;}
+.portrait .nostril-left {left:11px;width:12px;transform:rotate(13deg);}
+.portrait .nostril-right {right:9px;width:10px;transform:rotate(-7deg);top:70px;}
+.portrait .nose::after {
+  content:"";
+  left:34px;
+  top:73px;
+  width:7px;
+  height:9px;
+  border-radius:50%;
+  background:radial-gradient(ellipse at 56% 5%,#50554b64,transparent 80%);
+  filter:blur(1.6px);
+}
+
+/* 4. Perioral muscles and a subtly unequal corner height.
+   The line is neither a straight bar nor an exaggerated bow. */
+.portrait .mouth {
+  left: 54px;
+  top: 259px;
+  width: 99px;
+  transform:scaleX(var(--mouth-x,1)) rotate(-.8deg);
+}
+.portrait .upper-lip {
+  top:10px;
+  left:8px;
+  width:86px;
+  height:17px;
+  clip-path:polygon(0 75%,7% 63%,22% 46%,39% 31%,51% 44%,60% 28%,75% 38%,91% 61%,100% 79%,90% 82%,72% 77%,51% 70%,34% 75%,16% 85%);
+  background:linear-gradient(#98928780,#595e5599 96%);
+  filter:blur(.4px);
+  opacity:.76;
+}
+.portrait .lip-line {
+  left: 7px;
+  top: 22px;
+  width: 87px;
+  height: 9px;
+  transform:rotate(.4deg);
+  border-top:1.25px solid #4d534b;
+  border-radius:18% 27% 72% 71% / 35% 59% 72% 78%;
+  opacity:.68;
+}
+.portrait .lower-lip {
+  left:19px;
+  top:25px;
+  width:66px;
+  height:13px;
+  border:none;
+  border-radius:22% 18% 78% 65% / 18% 25% 83% 80%;
+  background:radial-gradient(ellipse 90% 80% at 52% 12%,#928e82ad 0%,#bfb9ab7a 55%,transparent 90%);
+  opacity:.65;
+  filter:blur(.7px);
+}
+.portrait .mouth::before,
+.portrait .mouth::after {
+  content:"";
+  top:21px;
+  width:10px;
+  height:8px;
+  background:radial-gradient(ellipse,#4b50488b,transparent 76%);
+  filter:blur(1.5px);
+  z-index:4;
+}
+.portrait .mouth::before {left:3px;transform:rotate(12deg);}
+.portrait .mouth::after {right:0;top:22.5px;transform:rotate(-6deg);opacity:.83;}
+.portrait .chin-plane {top:281px;left:43px;width:119px;opacity:.27;}
+.portrait .chin-shadow {top:39px;height:7px;width:47px;left:25px;opacity:.18;}
+
+/* 5. Hairline and contour: remove the sharp symmetrical V and the opaque
+   curtains crossing the cheek. We want recognizable hair mass with a
+   controlled side part, irregular taper and visible zygomatic contours. */
+.portrait .hair-cap {
+  left:74px;
+  top:53px;
+  width:236px;
+  height:157px;
+  clip-path:polygon(1% 52%,7% 26%,16% 14%,32% 6%,46% 2%,60% 5%,77% 9%,91% 22%,100% 60%,89% 60%,80% 46%,73% 42%,64% 36%,57% 33%,51% 27%,44% 36%,34% 43%,22% 48%,10% 69%);
+  background:repeating-linear-gradient(113deg,#323731 0 1.2px,#464940 1.6px 2.3px,#373a33 2.7px 5px,#54554c 5.6px 6px);
+  opacity:.91;
+}
+.portrait .part-line {left:196px;top:75px;width:2px;height:21px;transform:rotate(12deg);opacity:.52;}
+.portrait .lock-left-a {
+  left:57px;
+  top:99px;
+  width:63px;
+  height:242px;
+  border-radius:69% 36% 60% 29% / 32% 53% 60% 67%;
+  clip-path:polygon(57% 0,92% 3%,87% 22%,72% 38%,66% 55%,90% 76%,67% 100%,25% 95%,9% 63%,11% 32%);
+  transform:rotate(4deg) scaleX(var(--hair-structure-x,1));
+}
+.portrait .lock-left-b {
+  left:49px;
+  top:174px;
+  width:58px;
+  height:200px;
+  clip-path:polygon(52% 0,86% 10%,72% 39%,91% 75%,61% 100%,17% 93%,6% 43%);
+  transform:rotate(-4deg) scaleX(var(--hair-structure-x,1));
+  opacity:.88;
+}
+.portrait .lock-right-a {
+  right:58px;
+  top:105px;
+  width:59px;
+  height:246px;
+  clip-path:polygon(12% 0,60% 4%,92% 23%,88% 52%,67% 70%,84% 98%,29% 100%,8% 72%,24% 39%);
+  transform:rotate(-6deg) scaleX(var(--hair-structure-x,1));
+}
+.portrait .lock-right-b {
+  right:46px;
+  top:174px;
+  width:62px;
+  height:210px;
+  clip-path:polygon(22% 0,81% 2%,96% 48%,76% 73%,87% 94%,46% 100%,9% 82%,17% 38%);
+  transform:rotate(4deg) scaleX(var(--hair-structure-x,1));
+  opacity:.91;
+}
+.portrait .hair-strands {width:62px;height:229px;opacity:.5;}
+.portrait .strands-left {left:50px;top:113px;transform:rotate(-3deg);}
+.portrait .strands-right {right:53px;top:112px;transform:rotate(7deg);}
+.portrait .hair-sweep {opacity:calc(.16 + var(--hatch,.62)*.27);}
+.portrait .sweep-left-one {left:69px;top:96px;}
+.portrait .sweep-right-one {right:65px;top:96px;}
+
+/* CSS construction lines intentionally remain tied to the original 380x500
+   drawing coordinate system. They can be overlaid in study mode. */
+.portrait[data-study="structure"] .eye::after{opacity:.4}
+.portrait[data-study="structure"] .face::before{opacity:.08}
+
+/* Artist review 003a: first browser capture looked sleepy. Expose more of the
+   iris, bring the brow closer to its orbital roof and soften the lip slab. */
+.portrait .eye::after {
+  top:2px;
+  height:8px;
+  border-radius:25% 48% 62% 39% / 41% 49% 68% 50%;
+  box-shadow:0 1px 2px #595a515a;
+}
+.portrait .eye-right::after {
+  top:2.4px;
+  height:9px;
+  border-radius:51% 31% 47% 66% / 44% 65% 49% 62%;
+}
+.portrait .eyebrow-left {top:123px;transform:rotate(-6deg);}
+.portrait .eyebrow-right {top:123.7px;transform:scaleX(-1) rotate(1.5deg);}
+.portrait .eye-left .iris {top:8px;}
+.portrait .eye-right .iris {top:8.5px;}
+.portrait .mouth .upper-lip {opacity:.50; filter:blur(.7px);}
+.portrait .mouth .lip-line {opacity:.55;}
+.portrait .mouth .lower-lip {opacity:.48; filter:blur(1.2px);}
+.portrait .mouth::before,.portrait .mouth::after {opacity:.45;filter:blur(2px);}
+
+/* Artist review 003b: the first nine-case contact sheet still looked like a
+   heavy symmetrical helmet. Narrow the back masses and tilt the part so more
+   skull/ear silhouette shows while keeping the hair tied to face width. */
+.portrait .hair-back {
+  left:71px;top:49px;width:244px;height:319px;
+  border-radius:52% 49% 45% 40% / 27% 29% 54% 55%;
+}
+.portrait .hair-behind-left {
+  left:52px;top:101px;width:105px;height:309px;
+  border-radius:68% 17% 44% 71% / 26% 19% 82% 70%;
+  transform:rotate(5deg) scaleX(var(--hair-structure-x,1));
+}
+.portrait .hair-behind-right {
+  left:231px;top:114px;width:107px;height:322px;
+  border-radius:22% 79% 64% 27% / 29% 32% 71% 75%;
+  transform:rotate(-7deg) scaleX(var(--hair-structure-x,1));
+}
+.portrait .hair-cap {
+  clip-path: polygon(1% 55%,8% 24%,20% 11%,39% 3%,58% 4%,77% 10%,93% 28%,100% 66%,89% 61%,77% 44%,66% 40%,56% 39%,49% 37%,41% 42%,32% 46%,23% 51%,11% 66%);
+}
+.portrait .lock-left-b {height:179px;top:181px;opacity:.83;}
+.portrait .lock-right-b {height:190px;top:183px;opacity:.89;}

@@ -58,3 +58,7 @@ paint remains CSS-only.
 The nine-image browser matrix and JSON DOM measurements are **technical
 invariants**. Human visual inspection remains necessary for proportion,
 expression, gestural line quality, and perceived identity.
+
+## Research 003 / landmarks vs render geometry
+
+`styles/likeness.css` is loaded last and contains coherent overrides for face proportions, eyelid overlap, nose, lips, and side-part hair. `deriveHeadLandmarks()` now maps the actual unequal left and right eye group centers rather than a fictitious symmetric center. This is a 2D drawing approximation, not a physically correct anatomical rig. The offline bundler, browser QA in-memory loader, and main page must include every CSS layer; unit tests enforce the same drawing source.

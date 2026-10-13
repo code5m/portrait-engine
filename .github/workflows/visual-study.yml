@@ -38,7 +38,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: research-002-css-portrait-matrix
-          path: test-results/research-002/
+          name: research-003-css-portrait-matrix
+          path: test-results/research-003/
           if-no-files-found: warn
           retention-days: 21

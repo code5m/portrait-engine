@@ -12,9 +12,10 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 
 def embedded_page():
     html = (ROOT / 'index.html').read_text()
-    for name in ('layout', 'portrait', 'anatomy', 'graphite'):
+    for name in ('layout', 'portrait', 'anatomy', 'graphite', 'likeness'):
         css = (ROOT / 'styles' / f'{name}.css').read_text()
         html = html.replace(f'<link rel="stylesheet" href="./styles/{name}.css">', f'<style>{css}</style>')
+    assert '<link rel="stylesheet"' not in html, 'QA did not inline every CSS file'
     code = '\n'.join(re.sub(r'^export ', '', (ROOT / 'src' / f'{name}.mjs').read_text(), flags=re.M) for name in ('parameters','geometry','i18n','app'))
     code = re.sub(r'^import .*?;\n', '', code, flags=re.M)
     return html.replace('<script type="module" src="./src/app.mjs"></script>',f'<script type="module">{code}</script>')
