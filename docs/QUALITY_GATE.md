@@ -136,3 +136,11 @@ The research issue remains open until that evidence exists.
 - `python3 scripts/build-r010-study.py --check` verifies byte-for-byte equality of the committed *two* offline HTML files with the pinned CSS source and the evaluation modules; it also refuses changes to the R009 renderer SHA.
 - Headless Chromium must render the portable blind page *with zero network requests* and load the portable local-results interface. The GitHub workflow separately verifies the network-served original study from localhost HTTP.
 - The portable file may be sent to independent reviewers without sharing a private GitHub repository; no scores are uploaded or stored automatically. Only genuinely collected and voluntarily submitted scores count as potential human evidence.
+
+
+### R010 offline delivery gate
+- [x] Both compiled files use the locked R009 CSS source, with no external script or stylesheet.
+- [x] Cross-links target the offline HTML pair, not missing HTTP-only pages.
+- [x] Local Chromium tests the complete offline flow across all 3 lights, anonymous A/B, JSON download/import and mobile viewport; 73/73 Node tests passed locally.
+- [ ] New GitHub file-protocol browser validation: verify actual run before declaring success.
+- [ ] Five independent, voluntary human aesthetic observations: still **0**; ART_UNVERIFIED.

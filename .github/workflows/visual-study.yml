@@ -17,6 +17,7 @@ on:
       - 'test/study008-visual.py'
       - 'test/study009-visual.py'
       - 'test/study010-visual.py'
+      - 'test/study010-offline-visual.py'
       - 'study/010-*.html'
       - 'study/010-*.mjs'
       - 'src/blind010.mjs'
@@ -40,6 +41,7 @@ on:
       - 'test/study008-visual.py'
       - 'test/study009-visual.py'
       - 'test/study010-visual.py'
+      - 'test/study010-offline-visual.py'
       - 'study/010-*.html'
       - 'study/010-*.mjs'
       - 'src/blind010.mjs'
@@ -76,6 +78,7 @@ jobs:
           python test/study009-visual.py
           python scripts/build-r010-study.py --check
           python test/study010-visual.py
+          python test/study010-offline-visual.py
       - name: Upload reproducible visual evidence (not runtime assets)
         if: always()
         uses: actions/upload-artifact@v4

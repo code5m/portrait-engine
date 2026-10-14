@@ -42,6 +42,14 @@ def render_file(kind):
     script=f'<script type="module" src="./010-{kind}.mjs"></script>'
     if script not in html:raise ValueError('Study module reference changed')
     html=html.replace(script,f'<script type="module">\n{prefix}{before}\n{body}\n</script>')
+    # The distributed files must not link to unavailable HTTP/module pages.
+    if kind=='blind':
+        html=html.replace('href="010-results.html"','href="010-results-offline.html"')
+        html=html.replace('href="../index.html"','href="#experiment"')
+        html=html.replace('href="../docs/RESEARCH-010.md"','href="#experiment"')
+    else:
+        html=html.replace('href="010-blind.html"','href="010-blind-offline.html"')
+        html=html.replace('href="../docs/RESEARCH-010.md"','href="#summary"')
     return html
 
 

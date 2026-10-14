@@ -156,3 +156,7 @@ python3 -m http.server 4173
 - `python3 scripts/build-r010-study.py --check` 校验单文件与源码一致，并检查研究肖像 Git Blob SHA 防止材料被悄悄替换；`npm run verify` 与真实 Chromium 工作流纳入此检查。
 
 真实外部评价仍需实际邀请并自愿提交；本仓库没有自动伪造任何真人评价，`ART_UNVERIFIED` 状态不变。
+
+
+### Research 010: offline handoff quality gate
+Share `study/010-blind-offline.html` directly with independent observers. It opens without a local HTTP server; optionally send the matching `study/010-results-offline.html` to the researcher for fully local scoring. The links in these two pages stay within the offline kit. `python3 test/study010-offline-visual.py` tests all three lighting scenes, genuine browser rendering, download/upload, smartphone layout, and zero external HTTP requests. GitHub Visual Study must navigate the actual `file://` pages rather than an inline fallback. Scores from QA are synthetic and discarded; actual human ratings remain zero.
