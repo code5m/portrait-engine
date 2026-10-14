@@ -12,7 +12,7 @@ source = re.sub(r'^import .*?;\n', '', source, flags=re.M)
 html = html.replace('<script type="module" src="./src/app.mjs"></script>', f'<script type="module">\n{source}\n</script>')
 # The standalone portrait remains truly single-file; the multi-file blind study
 # is intentionally available only when the repository's /study/ directory exists.
-html = html.replace('<a class="text-link" href="./study/005-blind.html">Research 005 · 独立盲评</a>', '')
+html = html.replace('          <a class="text-link" href="./study/005-blind.html">Research 005 · 独立盲评</a>\n', '')
 out = ROOT / 'standalone.html'
 out.write_text(html)
 print(f'Generated {out} ({out.stat().st_size} bytes). No external runtime assets.')
