@@ -12,7 +12,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 
 def embedded_page():
     html = (ROOT / 'index.html').read_text()
-    for name in ('layout', 'portrait', 'anatomy', 'graphite', 'likeness', 'study004'):
+    for name in ('layout', 'portrait', 'anatomy', 'graphite', 'likeness', 'study004','study005'):
         css = (ROOT / 'styles' / f'{name}.css').read_text()
         html = html.replace(f'<link rel="stylesheet" href="./styles/{name}.css">', f'<style>{css}</style>')
     assert '<link rel="stylesheet"' not in html, 'QA did not inline every CSS file'

@@ -975,6 +975,132 @@
 .portrait .eye::after {opacity:.86}
 
 </style>
+  <style>
+/* Research 005: falsifiable eye-orbit / perioral form study.
+ * The current public illustration is the control ('baseline').  We do not
+ * declare a candidate aesthetically superior until independent observers vote.
+ * No image, SVG, Canvas, or external asset is used anywhere in this file.
+ */
+
+/* Candidate B (orbital): eye balls should sit UNDER the supraorbital shelf.
+ * Shadows share the same key-light variables as the rest of the face.
+ * A softer sclera avoids the circular, doll-like white-eye appearance.
+ */
+.portrait:is([data-r005="orbital"],[data-r005="expression"]) .eye-socket-left {
+  top:120px;left:5px;width:83px;height:60px;
+  background:radial-gradient(ellipse 82% 61% at 48% 57%,
+    #343a3438 0%,#52595049 38%,#898c7b18 64%,transparent 91%);
+  opacity:calc(.37 + var(--plane-shade-left,.3) * .65);
+  filter:blur(3px);
+}
+.portrait:is([data-r005="orbital"],[data-r005="expression"]) .eye-socket-right {
+  top:121px;right:8px;width:81px;height:57px;
+  background:radial-gradient(ellipse 86% 60% at 48% 52%,
+    #31393140 0%,#60635b42 41%,#96978a1a 64%,transparent 90%);
+  opacity:calc(.36 + var(--plane-shade-right,.3) * .67);
+  filter:blur(3px);
+}
+.portrait:is([data-r005="orbital"],[data-r005="expression"]) .brow-bone-left {
+  top:95px;left:1px;width:90px;height:56px;
+  background:radial-gradient(ellipse at 52% 27%,#f6f1dd6e,#c4c4b130 44%,#646b5b4a 70%,transparent 94%);
+  opacity:calc(.39 + var(--plane-shade-left,.3)*.55);
+}
+.portrait:is([data-r005="orbital"],[data-r005="expression"]) .brow-bone-right {
+  top:97px;right:1px;width:87px;height:52px;
+  background:radial-gradient(ellipse at 42% 30%,#f6f1dd78,#b9bbad38 50%,#575e5544 75%,transparent 94%);
+  opacity:calc(.4 + var(--plane-shade-right,.3)*.52);
+}
+.portrait:is([data-r005="orbital"],[data-r005="expression"]) .eye-white {
+  left:3px;top:9px;width:54px;height:18px;
+  clip-path:polygon(0 65%,12% 43%,29% 24%,51% 14%,69% 18%,85% 35%,100% 58%,85% 77%,65% 83%,43% 87%,18% 82%);
+  background:radial-gradient(ellipse at 50% 63%,#d5d7ce,#bbbdb4 60%,#777e71 100%);
+  border-top:0;border-bottom:0;
+  box-shadow:inset 0 5px 4px #50594b70;
+}
+.portrait:is([data-r005="orbital"],[data-r005="expression"]) .eye-right .eye-white {
+  left:3px;top:8px;width:52px;height:19px;
+  clip-path:polygon(0 56%,14% 34%,35% 17%,58% 19%,77% 32%,100% 64%,79% 78%,54% 87%,27% 84%,9% 72%);
+}
+.portrait:is([data-r005="orbital"],[data-r005="expression"]) .iris {
+  width:17px;height:19px;left:23px;top:10px;
+  clip-path:ellipse(49% 44% at 49% 51%);
+  background:radial-gradient(ellipse at 49% 45%,#242923 0 25%,#555f54 31% 61%,#868c7f 85%,#535c52 100%);
+  border:1px solid #5b635b;
+}
+.portrait:is([data-r005="orbital"],[data-r005="expression"]) .eye-right .iris {
+  left:21px;top:10px;width:16px;height:18px;
+}
+.portrait:is([data-r005="orbital"],[data-r005="expression"]) .pupil {width:7px;height:8px;left:4px;top:5px;}
+.portrait:is([data-r005="orbital"],[data-r005="expression"]) .glint {width:2px;height:3px;top:3px;left:10px;opacity:.6;}
+.portrait:is([data-r005="orbital"],[data-r005="expression"]) .eye::before {
+  top:6px;left:1px;width:58px;height:15px;border-top:2px solid #464c42;
+  border-radius:67% 47% 12% 26% / 95% 73% 13% 34%;
+  transform:rotate(-2deg);opacity:.9;
+}
+.portrait:is([data-r005="orbital"],[data-r005="expression"]) .eye-right::before {
+  top:6px;left:1px;width:56px;transform:rotate(2deg);
+  border-radius:50% 65% 22% 10% / 83% 94% 29% 12%;
+}
+.portrait:is([data-r005="orbital"],[data-r005="expression"]) .eye::after {
+  top:6px;left:2px;width:56px;height:11px;
+  background:radial-gradient(ellipse at 50% 0%,#42483e8c,transparent 86%);
+  border-bottom:1px solid #666d604d;filter:blur(.45px);opacity:.75;
+}
+.portrait:is([data-r005="orbital"],[data-r005="expression"]) .lower-lid {
+  top:26px;left:10px;width:42px;border-bottom:1px solid #555d5068;
+  border-radius:0 0 50% 70%;opacity:.66;
+}
+
+/* Candidate C (expression): add asymmetry around the oral commissures and
+ * build volume with an upper-lip plane, not a dark lipstick line.
+ */
+.portrait[data-r005="expression"] .mouth {
+  left:54px;top:262px;width:98px;
+  transform:scaleX(var(--mouth-x,1)) rotate(-1.4deg);
+}
+.portrait[data-r005="expression"] .upper-lip {
+  left:7px;top:8px;width:83px;height:16px;
+  background:linear-gradient(180deg,#777c704c,#76776e5e 55%,#b9b5a537);
+  clip-path:polygon(0 85%,15% 54%,29% 31%,42% 42%,50% 59%,60% 40%,75% 39%,91% 57%,100% 74%,88% 77%,69% 82%,50% 85%,31% 83%,13% 89%);
+  opacity:.60;filter:blur(.5px);
+}
+.portrait[data-r005="expression"] .lip-line {
+  left:8px;top:19px;width:83px;height:12px;
+  border-top:1px solid #555d526e;border-radius:18% 22% 62% 75% / 38% 35% 78% 64%;
+  opacity:.76;transform:rotate(.35deg);
+}
+.portrait[data-r005="expression"] .lower-lip {
+  left:18px;top:23px;width:65px;height:15px;border:0;
+  background:radial-gradient(ellipse 95% 94% at 53% 15%,#9da0929c,#cecbbd75 62%,transparent 85%);
+  opacity:.67;filter:blur(.9px);
+}
+.portrait[data-r005="expression"] .mouth::before {left:6px;top:19px;opacity:.6;transform:rotate(-5deg);}
+.portrait[data-r005="expression"] .mouth::after {right:2px;top:17px;opacity:.52;transform:rotate(-12deg);}
+.portrait[data-r005="expression"] .chin-plane {
+  top:279px;opacity:calc(.22 + var(--plane-shade-right,.3)*.23);
+  transform:translateY(2px) scaleX(.96);
+}
+.portrait[data-r005="expression"] .philtrum {opacity:.46;filter:blur(2.4px)}
+
+/* The independent observer sees only the same drawing paper for all options.
+ * Controls and explanation are hidden in EMBED mode, not deleted from source.
+ */
+body[data-r005-embed="1"] {background:#dedbd1;margin:0;overflow:hidden;}
+body[data-r005-embed="1"] .app-shell {padding:0;max-width:none;min-height:0;width:100vw;height:100vh;}
+body[data-r005-embed="1"] .topbar,
+body[data-r005-embed="1"] .canvas-heading,
+body[data-r005-embed="1"] .canvas-footnote,
+body[data-r005-embed="1"] .inspector,
+body[data-r005-embed="1"] .site-footer,
+body[data-r005-embed="1"] .stage-corner {display:none!important;}
+body[data-r005-embed="1"] .workspace {display:block;min-height:0;width:100%;height:100%;}
+body[data-r005-embed="1"] .canvas-panel {padding:0!important;margin:0;width:100%;height:100%;}
+body[data-r005-embed="1"] .drawing-stage {width:100%;height:100%;max-height:none;min-height:0;background:transparent;border:0;}
+body[data-r005-embed="1"] .drawing-stage::after {display:none;}
+body[data-r005-embed="1"] .paper {width:100%;height:100%;min-height:0;max-width:none;box-shadow:none;}
+body[data-r005-embed="1"] .drawing-signature {display:none;}
+
+</style>
   <script type="module">
 const DEFINITIONS = Object.freeze({
   faceWidth: { min: 80, max: 120, step: 1, value: 100, group: 'geometry', unit: '%' },
@@ -1153,6 +1279,14 @@ const root = document.querySelector('#portrait');
 const paper = document.querySelector('#portrait-paper');
 const toast = document.querySelector('#toast');
 const fileInput = document.querySelector('#upload-input');
+// Research 005 candidates are isolated from saved portraits.
+// Public default stays baseline while external aesthetic ratings are absent.
+const qs = new URLSearchParams(window.location.search);
+const researchVariant = qs.get('r005');
+const acceptedResearchVariants = new Set(['baseline', 'orbital', 'expression']);
+if (acceptedResearchVariants.has(researchVariant)) root.dataset.r005 = researchVariant;
+const researchEmbed = qs.get('embed') === '1' && acceptedResearchVariants.has(researchVariant);
+if (researchEmbed) document.body.dataset.r005Embed = '1';
 const STORAGE_KEY = 'portrait-engine/parameters/v1';
 let values = defaults();
 let noticeTimer;
@@ -1275,7 +1409,7 @@ setStudyMode('graphite');
 for (const button of document.querySelectorAll('[data-study-mode]')) {
   button.addEventListener('click', () => setStudyMode(button.dataset.studyMode));
 }
-restore();
+if (!researchEmbed) restore();
 buildControls();
 apply();
 for (const button of document.querySelectorAll('[data-preset]')) {
@@ -1412,6 +1546,7 @@ updateScale();
 
         <div class="canvas-footnote">
           <div><span class="legend-swatch"></span><span data-t="footnote">Each feature is an independent CSS layer you can inspect.</span></div>
+          
           <button id="print-btn" class="text-link" type="button" data-t="print">Print artwork</button>
         </div>
       </section>

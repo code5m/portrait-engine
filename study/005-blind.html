@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Research 005 · 原创 CSS 素描匿名评价</title>
+  <style>
+    :root{font:16px/1.5 system-ui,-apple-system,"Segoe UI","Noto Sans SC",sans-serif;color:#292a27;background:#f2f0e9}
+    *{box-sizing:border-box}
+    body{margin:0}
+    header,main,footer{max-width:1460px;margin:auto;padding:24px clamp(14px,4vw,48px)}
+    header{border-bottom:1px solid #c9c9bf}
+    .eyebrow{font-size:11px;letter-spacing:.19em;text-transform:uppercase;color:#686960;font-weight:700}
+    h1{font:normal clamp(28px,4vw,46px)/1.15 Georgia,"Noto Serif SC",serif;letter-spacing:-.02em;margin:12px 0}
+    h2{font:normal 21px Georgia,serif;margin:0 0 6px}
+    p{max-width:75ch;color:#55574f;margin:10px 0;font-size:14px}
+    .notice{border-left:3px solid #807660;padding:9px 14px;background:#e7e3d8;font-size:13px;line-height:1.7}
+    .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin:27px 0}
+    .candidate{border:1px solid #c0c2b8;background:#fdfcf8;box-shadow:0 10px 34px #171a1608;min-width:0}
+    .candidate-head{padding:15px 17px;border-bottom:1px solid #e1e1d8;display:flex;justify-content:space-between;align-items:center}
+    .candidate-label{font:600 13px system-ui;letter-spacing:.14em}
+    .candidate-number{font-size:11px;color:#8d8b80}
+    iframe{display:block;width:100%;height:440px;border:0;background:#d8d7d0}
+    fieldset{margin:0;padding:15px 17px 19px;border:0;display:grid;gap:11px}
+    label{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px}
+    label span{max-width:60%}
+    select,input{font:inherit;background:white;color:#282e2a;border:1px solid #a4a69c;border-radius:4px;padding:7px;max-width:100%}
+    select{width:152px}
+    .footer-panel{border-top:1px solid #cecec4;padding-top:20px;margin-top:10px}
+    .footer-panel label{justify-content:flex-start;flex-wrap:wrap}
+    input{width:min(100%,300px)}
+    button{font:600 13px system-ui;background:#26312a;color:white;border:0;border-radius:5px;padding:13px 20px;cursor:pointer;margin-top:20px}
+    button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #9f7342;outline-offset:3px}
+    .secondary{background:transparent;color:#303731;border:1px solid #737c72;margin-left:9px}
+    .footnote{font-size:12px;color:#6f756f}
+    @media(max-width:980px){.grid{grid-template-columns:1fr 1fr}iframe{height:440px}}
+    @media(max-width:660px){.grid{grid-template-columns:1fr}iframe{height:435px}header,main,footer{padding:19px 14px}}
+  </style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">Portrait Engine / independent study 005</div>
+  <h1>哪一张更像真实的铅笔肖像？</h1>
+  <p>三张人像都由浏览器直接使用 HTML + CSS 绘制。人物参数、光线和尺寸一致，只有眼窝与嘴部的局部形体方案不同。</p>
+  <div class="notice">请不要查看源码或 URL，也不要与其他评价者讨论。分别给三张画打分；不必强行选出赢家。评分只保存在你的设备，不会自动发送给任何服务器。</div>
+</header>
+<main>
+  <form id="rating-form">
+    <div class="grid" id="candidates" aria-label="三张匿名人脸素描候选"></div>
+    <div class="footer-panel">
+      <h2>提交你的独立观察</h2>
+      <p>每一项满分 5 分：1 = 很不自然；3 = 一般；5 = 很自然。可以出现相同分数。</p>
+      <label for="reviewer">评价者代号（可选，不要填写真实姓名）<input id="reviewer" maxlength="40" autocomplete="off" placeholder="例如：observer-01"></label>
+      <button type="submit">导出匿名评分 JSON</button>
+      <button class="secondary" type="button" id="reshuffle">换一组匿名顺序</button>
+      <p class="footnote" role="status" id="message">观察者评分尚未收集；自动截图不能代替人类审美判断。</p>
+    </div>
+  </form>
+</main>
+<footer class="footnote">研究编号：R005 · 绘画素材：0 张 · 此页面不会上传任何评分。请将导出的 JSON 交给研究者后再进行汇总。</footer>
+<script>
+(() => {
+  'use strict';
+  const variants = ['baseline', 'orbital', 'expression'];
+  const metrics = [
+    ['orbit', '眼窝与眼神的自然度'],
+    ['mouth', '嘴唇与嘴角的自然度'],
+    ['whole', '整体像真人素描的程度']
+  ];
+  const container = document.querySelector('#candidates');
+  const msg = document.querySelector('#message');
+  let ordered = [];
+  function shuffle() {
+    ordered = [...variants];
+    for (let i = ordered.length - 1; i > 0; i--) {
+      const raw = new Uint32Array(1);
+      crypto.getRandomValues(raw);
+      const j = raw[0] % (i + 1);
+      [ordered[i], ordered[j]] = [ordered[j], ordered[i]];
+    }
+    render();
+  }
+  function render() {
+    container.replaceChildren();
+    ordered.forEach((variant, index) => {
+      const card = document.createElement('section');
+      card.className = 'candidate';
+      const title = String.fromCharCode(65 + index);
+      const head = document.createElement('div');
+      head.className = 'candidate-head';
+      const label = document.createElement('strong');
+      label.className = 'candidate-label';
+      label.textContent = '方案 ' + title;
+      const ordinal = document.createElement('span');
+      ordinal.className = 'candidate-number';
+      ordinal.textContent = `${index + 1} / 3`;
+      head.append(label, ordinal);
+      const frame = document.createElement('iframe');
+      frame.title = `匿名方案 ${title}，纯 CSS 人脸素描`;
+      frame.src = '../standalone.html?r005=' + encodeURIComponent(variant) + '&embed=1';
+      frame.setAttribute('referrerpolicy', 'no-referrer');
+      const fields = document.createElement('fieldset');
+      const legend = document.createElement('legend');
+      legend.textContent = `方案 ${title} 的评分`;
+      fields.append(legend);
+      for (const [key, description] of metrics) {
+        const row = document.createElement('label');
+        const span = document.createElement('span');
+        span.textContent = description;
+        const choice = document.createElement('select');
+        choice.name = `${title}-${key}`;
+        choice.setAttribute('aria-label', `方案 ${title}：${description}`);
+        choice.required = true;
+        const placeholder = document.createElement('option');
+        placeholder.value = '';
+        placeholder.textContent = '请选择';
+        choice.append(placeholder);
+        for (let n = 1; n <= 5; n++) {
+          const option = document.createElement('option');
+          option.value = String(n);
+          option.textContent = `${n} / 5`;
+          choice.append(option);
+        }
+        row.append(span, choice);
+        fields.append(row);
+      }
+      card.append(head, frame, fields);
+      container.append(card);
+    });
+    msg.textContent = '已随机安排三个匿名方案；尚未收集评分。';
+  }
+  document.querySelector('#reshuffle').addEventListener('click', shuffle);
+  document.querySelector('#rating-form').addEventListener('submit', event => {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const cards = ordered.map((variant, index) => {
+      const label = String.fromCharCode(65 + index);
+      const scores = Object.fromEntries(metrics.map(([key]) => [key, Number(form.get(`${label}-${key}`))]));
+      if (Object.values(scores).some(n => !Number.isInteger(n) || n < 1 || n > 5)) throw new Error('Score out of range');
+      return {blind_label:label, actual_variant:variant, scores};
+    });
+    const record = {protocol:'portrait-engine-blind-r005',version:1,
+      reviewer:document.querySelector('#reviewer').value.trim().slice(0,40),
+      created_at:new Date().toISOString(),
+      consent_note:'Local manual export only; no automatic transmission',
+      controlled:{faceWidth:100,lightDirection:-30,allParameters:'default',rendering:'HTML/CSS'},
+      conditions:cards};
+    const blob = new Blob([JSON.stringify(record,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const link=document.createElement('a');
+    link.href=url;link.download='portrait-r005-blind-rating.json';
+    document.body.append(link);link.click();link.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    msg.textContent='评分 JSON 已导出到本地。只有研究者收到文件后才能进行汇总。';
+  });
+  shuffle();
+})();
+</script>
+</body>
+</html>

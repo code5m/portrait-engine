@@ -35,11 +35,14 @@ jobs:
           PORTRAIT_QA_DIR=test-results/research-002 python test/browser-qa.py
           python test/research-matrix.py
           python test/hair-probe.py
+          python test/study005-visual.py
       - name: Upload reproducible visual evidence (not runtime assets)
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: research-004-css-portrait-matrix
-          path: test-results/research-004/
+          name: research-005-css-anatomy-and-blind-protocol
+          path: |
+            test-results/research-004/
+            test-results/research-005/
           if-no-files-found: warn
           retention-days: 21

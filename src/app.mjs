@@ -6,6 +6,14 @@ const root = document.querySelector('#portrait');
 const paper = document.querySelector('#portrait-paper');
 const toast = document.querySelector('#toast');
 const fileInput = document.querySelector('#upload-input');
+// Research 005 candidates are isolated from saved portraits.
+// Public default stays baseline while external aesthetic ratings are absent.
+const qs = new URLSearchParams(window.location.search);
+const researchVariant = qs.get('r005');
+const acceptedResearchVariants = new Set(['baseline', 'orbital', 'expression']);
+if (acceptedResearchVariants.has(researchVariant)) root.dataset.r005 = researchVariant;
+const researchEmbed = qs.get('embed') === '1' && acceptedResearchVariants.has(researchVariant);
+if (researchEmbed) document.body.dataset.r005Embed = '1';
 const STORAGE_KEY = 'portrait-engine/parameters/v1';
 let values = defaults();
 let noticeTimer;
@@ -128,7 +136,7 @@ setStudyMode('graphite');
 for (const button of document.querySelectorAll('[data-study-mode]')) {
   button.addEventListener('click', () => setStudyMode(button.dataset.studyMode));
 }
-restore();
+if (!researchEmbed) restore();
 buildControls();
 apply();
 for (const button of document.querySelectorAll('[data-preset]')) {

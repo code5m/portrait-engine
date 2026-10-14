@@ -31,8 +31,8 @@ test('Every graphite feature is an original browser primitive, never an external
 
 test('Sparse stray locks are individually inspectable and the source still has exactly two eyes', () => {
   for (const name of ['flyaway-a', 'flyaway-b', 'flyaway-c', 'flyaway-d']) {
-    assert.match(html, new RegExp('class="flyaway ' + name + '"'));
-    assert.match(css, new RegExp('\\.flyaway-' + name.slice(-1) + '\\b'));
+    assert.match(html, new RegExp(`class="flyaway ${name}"`));
+    assert.match(css, new RegExp(`\\.flyaway-${name.slice(-1)}\\b`));
   }
   assert.equal((html.match(/class="eye eye-(?:left|right)"/g) ?? []).length, 2);
   assert.equal((html.match(/class="nose"/g) ?? []).length, 1);
@@ -40,7 +40,7 @@ test('Sparse stray locks are individually inspectable and the source still has e
 
 test('Research 004 visual evidence is routed to an artifact folder and does not pollute runtime drawing', () => {
   assert.match(read('./research-matrix.py'), /research-004/);
-  assert.match(workflow, /research-004-css-portrait-matrix/);
+  assert.match(workflow, /test-results\/research-004\//);
   assert.match(workflow, /python test\/hair-probe\.py/);
   assert.doesNotMatch(html, /(?:test-results|\.png|\.jpg|\.svg)/i);
 });

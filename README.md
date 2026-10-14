@@ -92,3 +92,13 @@ Research 003 adds `styles/likeness.css`: intentionally asymmetric eye constructi
 本轮缩窄并打破规则的头发暗块，加强眼睑、鼻翼、嘴角的相互关系，将周期性网格纸纹改为微弱纸张颗粒。**从单张 CSS 艺术品向高写实素描迈进仍未完成。** 研究和四组发型试验、九组 Chromium 截图见 [研究记录](docs/RESEARCH-004.md)，可复现运行 `python3 test/hair-probe.py` 与 `python3 test/research-matrix.py`。
 
 工程测试与艺术审核分开：浏览器渲染和无外部图像素材检查能自动化；美术写实度仍需要真人盲评，未通过、不得以 CI 绿灯冒充通过。
+
+## Research 005：真正的对照研究（尚未获得人类评分）
+
+不复制其他作品、不用图片、SVG 或 Canvas 渲染头像。为眼窝和嘴角提出两个**隔离的 CSS 绘画候选**，保留 Research 004 原版作为公平对照，不擅自把新版宣布为写实优胜者。
+
+- 浏览器匿名对比：打开 [`study/005-blind.html`](study/005-blind.html)，三幅同参数人脸随机重排；每幅分别评估眼窝、嘴唇、整体可信度，并导出本地 JSON。该页面不上传评分。
+- 自动化验证：`npm run verify`，然后运行 `python3 test/study005-visual.py`；实测浏览器绘制候选画面与 JSON 下载流程。
+- 完整过程、反证标准和真实欠缺见 [`docs/RESEARCH-005.md`](docs/RESEARCH-005.md)。
+
+**目前没有独立真人盲评数据，也没有证据能宣布哪幅更写实。**
