@@ -1,0 +1,30 @@
+/* Research 008: the R007 anchors now define R008 2.5D relief sampling.
+   CSS renders all paint; JS supplies only parametric custom properties.
+   Legacy branch uses the SAME geometry/volume as R007 for a fair A/B. */
+.portrait .sf-nose-cast {display:none;pointer-events:none}
+.portrait[data-r008="field"] .sf-nose-cast {
+  display:block;z-index:6;
+  left:calc(var(--sf-cast-center) - 25px);
+  top:var(--sf-cast-y);
+  width:50px;height:19px;
+  border-radius:50%;
+  transform:translateX(var(--sf-cast-x)) rotate(-4deg);
+  background:radial-gradient(ellipse at 51% 30%,#3439329c 0%,#64645863 27%,transparent 76%);
+  filter:blur(4px);
+  opacity:var(--sf-cast-opacity,0);
+}
+/* Cheek hatch follows the tangent from malar plane to mandibular turn.
+   R006 uses the same 36-degree hatch regardless of jaw anatomy. */
+.portrait[data-r008="field"] .v-cheek-left::after,
+.portrait[data-r008="field"] .v-cheek-right::after {
+  transform:none;
+  background:repeating-linear-gradient(var(--sf-hatch-left-angle,96deg),
+    #343a3450 0 0.55px,transparent 0.55px 5.8px);
+  opacity:var(--sf-hatch-opacity,0.1);
+}
+.portrait[data-r008="field"] .v-cheek-right::after {
+  background:repeating-linear-gradient(var(--sf-hatch-right-angle,84deg),
+    #343a3450 0 0.55px,transparent 0.55px 5.8px);
+}
+/* In diagnostic structure mode, show only anatomy construction/plane guides. */
+.portrait[data-r008="field"][data-study="structure"] .sf-nose-cast {display:none}

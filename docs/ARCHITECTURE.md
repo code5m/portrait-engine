@@ -74,3 +74,13 @@ expression, gestural line quality, and perceived identity.
 新增 `src/face-model.mjs`：参照 `.face` 的 207×304 逻辑尺寸，输出 16 个二维解剖参考点和 32 个 CSS 变量，不触及任何像素、DOM/Canvas/图片绘制。`styles/study007.css` 只在 `data-r007="structured"` 时读取这些变量，把眼窝/眼睛/眉弓、鼻翼/鼻侧、颧骨/下颌等模块联动；基线与候选两边都使用 Research 006 的既有同光源模型。原先 `src/geometry.mjs` 的页面整体参考点保留，`src/face-model.mjs` 专注于内部细节，**两层并不重复控制同一个坐标值**。
 
 **仍为二维经验比例**，不是三维拓扑/颅骨推导/身份特征语言。独立 URL 参数 `?r007=structured` 显式开启，旧 JSON v1 与默认绘图行为不受影响。参见 [RESEARCH-007](RESEARCH-007.md) 和 [研究连续性 ADR](ADR-001-RESEARCH-CONTINUITY.md)。
+
+## Research 008：面部局部浮雕场（可撤销的实验）
+
+`src/face-model.mjs` 的 16 个锚点不变。新的 `src/surface-field.mjs` 把眉弓、眼窝、鼻根/鼻底、鼻翼、颧骨、下颌、嘴部与下巴解释成连续的 2.5D 高斯起伏场，通过高度梯度估算面部局部法线，并复用 R006 的 `lightVector()` 投射同一方向光照。没有 raster 像素处理。
+
+流程：**9 项已验证参数 → R007 FaceGeometry → 连续浮雕高度与梯度 → CSS 属性（12 区明暗/高光、鼻部投影位移、颊颌切线排线）→ HTML/CSS 原生绘制**。`?r008=legacy|field` 比较两种明暗方案，均使用相同结构，区别仅在是否用新计算结果覆盖体面着色；无参数时继续使用过去的默认 CSS 绘画。旧存档不添加研究版本或新字段。
+
+多文件页面、`standalone.html` 与测试内存页必须按相同次序内嵌 `study008.css` 和 `surface-field.mjs`。离线打包器拼接 ES 模块会丢失模块词法边界；研究中发现 `const clamp` 命名碰撞，现独立运行 `scripts/check-standalone.py`，校验**最终生成的 JS**，而非只检查源码语法。
+
+算法是原创的二维经验拟合，**不构成独立人脸身份模型/新 DSL/真实三维透视系统**。如将来对照实验没有改善艺术可信度，应保留或回退候选，绝不取代既有默认画面。

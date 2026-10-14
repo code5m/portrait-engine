@@ -1378,6 +1378,39 @@ body[data-r005-embed="1"] .drawing-signature {display:none;}
 }
 
 </style>
+  <style>
+/* Research 008: the R007 anchors now define R008 2.5D relief sampling.
+   CSS renders all paint; JS supplies only parametric custom properties.
+   Legacy branch uses the SAME geometry/volume as R007 for a fair A/B. */
+.portrait .sf-nose-cast {display:none;pointer-events:none}
+.portrait[data-r008="field"] .sf-nose-cast {
+  display:block;z-index:6;
+  left:calc(var(--sf-cast-center) - 25px);
+  top:var(--sf-cast-y);
+  width:50px;height:19px;
+  border-radius:50%;
+  transform:translateX(var(--sf-cast-x)) rotate(-4deg);
+  background:radial-gradient(ellipse at 51% 30%,#3439329c 0%,#64645863 27%,transparent 76%);
+  filter:blur(4px);
+  opacity:var(--sf-cast-opacity,0);
+}
+/* Cheek hatch follows the tangent from malar plane to mandibular turn.
+   R006 uses the same 36-degree hatch regardless of jaw anatomy. */
+.portrait[data-r008="field"] .v-cheek-left::after,
+.portrait[data-r008="field"] .v-cheek-right::after {
+  transform:none;
+  background:repeating-linear-gradient(var(--sf-hatch-left-angle,96deg),
+    #343a3450 0 0.55px,transparent 0.55px 5.8px);
+  opacity:var(--sf-hatch-opacity,0.1);
+}
+.portrait[data-r008="field"] .v-cheek-right::after {
+  background:repeating-linear-gradient(var(--sf-hatch-right-angle,84deg),
+    #343a3450 0 0.55px,transparent 0.55px 5.8px);
+}
+/* In diagnostic structure mode, show only anatomy construction/plane guides. */
+.portrait[data-r008="field"][data-study="structure"] .sf-nose-cast {display:none}
+
+</style>
   <script type="module">
 const DEFINITIONS = Object.freeze({
   faceWidth: { min: 80, max: 120, step: 1, value: 100, group: 'geometry', unit: '%' },
@@ -1651,6 +1684,114 @@ function deriveFaceStructureStyle(raw) {
   return Object.freeze(variables);
 }
 
+/**
+ * Research 008: continuous FACE-LOCAL relief and directional value probes.
+ * This is a falsifiable 2.5D sketch hypothesis, not 3D anatomy/photogrammetry.
+ * JavaScript returns geometry/light CSS variables; the DOM + CSS paint art.
+ * It is gated behind ?r008=field; existing saved portraits remain untouched.
+ */
+
+const clampField = (x, min = 0, max = 1) => Math.min(max, Math.max(min, x));
+const gaussian = (x, y, cx, cy, sx, sy) =>
+  Math.exp(-0.5 * (((x-cx)/sx)**2 + ((y-cy)/sy)**2));
+const rad = degrees => degrees * Math.PI / 180;
+
+/** Signed relief in logical face pixels. Higher numbers protrude toward viewer. */
+function deriveRelief(raw) {
+  const p = normalize(raw);
+  const face = deriveFaceGeometry(p);
+  const a = face.anchors;
+  const lobes = [
+    // The same landmarks that position CSS organs define the depth field.
+    [a.leftBrow, 7, 29, 16], [a.rightBrow, 7, 29, 16],
+    [a.leftOrbit, -13, 27, 20], [a.rightOrbit, -13, 27, 20],
+    [a.noseRoot, 15, 20, 52], [a.noseBase, 13, 19 * p.noseWidth/100, 16],
+    [a.leftAla, 5, 14, 12], [a.rightAla, 5, 14, 12],
+    [a.leftCheek, 10, 30, 35], [a.rightCheek, 10, 30, 35],
+    [a.leftJaw, -3, 27, 31], [a.rightJaw, -3, 27, 31],
+    [a.mouth, 4, 40 * p.mouthWidth/100, 15],
+    [a.chin, 6, 32, 24]
+  ];
+  const heightAt = (x, y) => lobes.reduce((sum, [c, h, sx, sy]) =>
+    sum + h * gaussian(x, y, c.x, c.y, sx, sy), 0);
+  // Analytic finite differences, not pixels sampled from a screenshot.
+  const normalAt = (x, y) => {
+    const dx = (heightAt(x + 1, y) - heightAt(x - 1, y)) / 2;
+    const dy = (heightAt(x, y + 1) - heightAt(x, y - 1)) / 2;
+    const v = [-2.0 * dx, -2.0 * dy, 1];
+    const magnitude = Math.hypot(...v);
+    return Object.freeze(v.map(n => n / magnitude));
+  };
+  return Object.freeze({ face, heightAt, normalAt });
+}
+
+/** Distinct shading probes at the flanks, not the feature's geometric center. */
+function deriveSurfaceField(raw) {
+  const p = normalize(raw);
+  const field = deriveRelief(p);
+  const a = field.face.anchors;
+  const points = {
+    browLeft: [a.leftBrow.x - 9, a.leftBrow.y + 7],
+    browRight: [a.rightBrow.x + 9, a.rightBrow.y + 7],
+    orbitLeft: [a.leftOrbit.x - 13, a.leftOrbit.y + 5],
+    orbitRight: [a.rightOrbit.x + 13, a.rightOrbit.y + 5],
+    noseLeft: [a.leftAla.x - 6, a.noseBase.y - 20],
+    noseRight: [a.rightAla.x + 6, a.noseBase.y - 20],
+    cheekLeft: [a.leftCheek.x - 17, a.leftCheek.y + 6],
+    cheekRight: [a.rightCheek.x + 17, a.rightCheek.y + 6],
+    jawLeft: [a.leftJaw.x - 10, a.leftJaw.y - 7],
+    jawRight: [a.rightJaw.x + 10, a.rightJaw.y - 7],
+    chin: [a.chin.x, a.chin.y - 9],
+    forehead: [(a.leftBrow.x + a.rightBrow.x) / 2, a.leftBrow.y - 56]
+  };
+  const light = lightVector(p.lightDirection);
+  const values = {};
+  for (const [region, [x, y]] of Object.entries(points)) {
+    const normal = field.normalAt(x, y);
+    const diffuse = clampField(normal.reduce((sum, n, i) => sum + n * light[i], 0));
+    const tone = 0.18 + (1 - diffuse) * 0.96;
+    const shade = clampField(tone * (0.3 + 0.7 * p.graphite / 100), 0.05, 0.83);
+    values[region] = Object.freeze({ normal, diffuse, shade,
+      lightness: clampField(diffuse**3 * (0.23 - p.graphite / 900)) });
+  }
+  const degrees = p.lightDirection;
+  const castX = -Math.sin(rad(degrees)) * (14 + p.noseWidth * 0.06);
+  const noseCast = Object.freeze({
+    x: castX,
+    y: a.noseBase.y + 2,
+    centerX: a.noseBase.x,
+    opacity: clampField((0.10 + 0.20 * Math.abs(Math.sin(rad(degrees)))) * (p.graphite / 100), 0.02, 0.35)
+  });
+  const cheekAngle = (side) => {
+    const c = side === 'left' ? a.leftCheek : a.rightCheek;
+    const j = side === 'left' ? a.leftJaw : a.rightJaw;
+    return Math.atan2(j.y - c.y, j.x - c.x) * 180 / Math.PI;
+  };
+  return Object.freeze({
+    values: Object.freeze(values), noseCast,
+    cheekAngles: Object.freeze({left: cheekAngle('left'), right: cheekAngle('right')}),
+    face: field.face
+  });
+}
+
+function deriveSurfaceFieldStyle(raw) {
+  const p = normalize(raw);
+  const field = deriveSurfaceField(p);
+  const css = {};
+  for (const [name, value] of Object.entries(field.values)) {
+    css[`--v-${name}-shade`] = value.shade.toFixed(4);
+    css[`--v-${name}-light`] = value.lightness.toFixed(4);
+  }
+  css['--sf-cast-x'] = `${field.noseCast.x.toFixed(2)}px`;
+  css['--sf-cast-y'] = `${field.noseCast.y.toFixed(2)}px`;
+  css['--sf-cast-center'] = `${field.noseCast.centerX.toFixed(2)}px`;
+  css['--sf-cast-opacity'] = field.noseCast.opacity.toFixed(4);
+  css['--sf-hatch-left-angle'] = `${field.cheekAngles.left.toFixed(2)}deg`;
+  css['--sf-hatch-right-angle'] = `${field.cheekAngles.right.toFixed(2)}deg`;
+  css['--sf-hatch-opacity'] = (p.hatching / 100 * .18).toFixed(4);
+  return Object.freeze(css);
+}
+
 // This file uses Unicode escapes to keep the portable source ASCII-only.
 const zh = {
   status:'\u539f\u521b\u4f5c\u54c1 / \u65e0\u56fe\u7247\u7d20\u6750',
@@ -1707,12 +1848,16 @@ const qs = new URLSearchParams(window.location.search);
 const researchVariant = qs.get('r005');
 const volumeVariant = qs.get('r006');
 const faceVariant = qs.get('r007');
-const faceStudy = faceVariant === 'baseline' || faceVariant === 'structured';
+const surfaceVariant = qs.get('r008');
+const surfaceStudy = surfaceVariant === 'legacy' || surfaceVariant === 'field';
+const faceStudy = faceVariant === 'baseline' || faceVariant === 'structured' || surfaceStudy;
 // Research 006 is opt-in until independent visual quality evidence exists.
 // It never changes saved nine-parameter JSON or the public default.
 const volumeStudy = volumeVariant === 'volume' || volumeVariant === 'baseline' || faceStudy;
 if (volumeVariant === 'volume' || faceStudy) root.dataset.r006 = 'volume';
-if (faceStudy) root.dataset.r007 = faceVariant;
+if (faceVariant === 'baseline' || faceVariant === 'structured') root.dataset.r007 = faceVariant;
+if (surfaceStudy) root.dataset.r007 = 'structured';
+if (surfaceStudy) root.dataset.r008 = surfaceVariant;
 const acceptedResearchVariants = new Set(['baseline', 'orbital', 'expression']);
 if (acceptedResearchVariants.has(researchVariant)) root.dataset.r005 = researchVariant;
 const researchEmbed = qs.get('embed') === '1' && (acceptedResearchVariants.has(researchVariant) || volumeStudy);
@@ -1780,6 +1925,9 @@ function apply() {
   }
   if (faceStudy) {
     for (const [name, value] of Object.entries(deriveFaceStructureStyle(values))) root.style.setProperty(name, value);
+  }
+  if (surfaceVariant === 'field') {
+    for (const [name, value] of Object.entries(deriveSurfaceFieldStyle(values))) root.style.setProperty(name, value);
   }
   for (const key of KEYS) {
     const def = DEFINITIONS[key];
@@ -1916,6 +2064,7 @@ updateScale();
               <div class="ear ear-right"><span></span></div>
               <div class="face">
                 <div class="face-tones"></div>
+                <div class="sf-nose-cast" aria-hidden="true"></div>
                 <div class="volume-field" aria-hidden="true">
                   <span class="v-plane v-forehead"></span>
                   <span class="v-plane v-brow-left"></span>

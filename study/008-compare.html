@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Research 008 · 形体派生光照实验</title>
+<style>
+body{margin:0;background:#e8e4dc;color:#232823;font:16px/1.65 system-ui,sans-serif}main{max-width:1300px;margin:auto;padding:20px}
+h1{font-size:clamp(23px,3vw,35px);margin:5px 0}p{max-width:75ch}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+article{background:#f6f3ec;border:1px solid #aaa69a;border-radius:12px;padding:12px}h2{font-size:18px;margin:0 0 8px}
+iframe{width:100%;height:720px;border:1px solid #b0b0a2;border-radius:6px;background:white}code{background:#faf6ed;padding:3px}
+@media(max-width:800px){.grid{grid-template-columns:1fr}iframe{height:680px}}
+</style></head><body><main>
+<p>PORTRAIT ENGINE / RESEARCH 008 / CSS ONLY</p><h1>结构生成光照与局部笔触：A/B</h1>
+<p>两组使用同一 FaceGeometry 锚点及相同参数。A 为 Research 007 固定法线，B 用共享局部起伏曲面的法线计算明暗并导出鼻部投影与颧骨排线方向。此处未做盲法；艺术状态：<strong>ART_UNVERIFIED</strong>。</p>
+<div class="grid"><article><h2>A：固定体面法线（旧研究基线）</h2><iframe loading="eager" title="固定体面法线 CSS 人脸" src="../standalone.html?r008=legacy&amp;embed=1"></iframe></article><article><h2>B：面部局部浮雕场（候选）</h2><iframe loading="eager" title="面部局部浮雕场 CSS 人脸" src="../standalone.html?r008=field&amp;embed=1"></iframe></article></div>
+<p>测试：改变两侧页面的眼距、鼻宽、脸宽、下颌和光向，检查脸部结构与阴影是否同步。评价不自动上传，不把工程测试看作真人写实度结论。</p>
+</main></body></html>

@@ -8,11 +8,14 @@ on:
       - 'src/geometry.mjs'
       - 'src/volume.mjs'
       - 'src/face-model.mjs'
+      - 'src/surface-field.mjs'
       - 'src/app.mjs'
       - 'index.html'
       - 'scripts/build-standalone.py'
       - 'test/study007-visual.py'
+      - 'test/study008-visual.py'
       - 'study/007-*.html'
+      - 'study/008-*.html'
       - 'test/research-matrix.py'
       - 'test/browser-qa.py'
   pull_request:
@@ -21,11 +24,14 @@ on:
       - 'src/geometry.mjs'
       - 'src/volume.mjs'
       - 'src/face-model.mjs'
+      - 'src/surface-field.mjs'
       - 'src/app.mjs'
       - 'index.html'
       - 'scripts/build-standalone.py'
       - 'test/study007-visual.py'
+      - 'test/study008-visual.py'
       - 'study/007-*.html'
+      - 'study/008-*.html'
       - 'test/research-matrix.py'
       - 'test/browser-qa.py'
 permissions:
@@ -52,15 +58,17 @@ jobs:
           python test/study005-visual.py
           python test/study006-visual.py
           python test/study007-visual.py
+          python test/study008-visual.py
       - name: Upload reproducible visual evidence (not runtime assets)
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: research-007-css-face-geometry-study
+          name: research-008-css-surface-field-study
           path: |
             test-results/research-004/
             test-results/research-005/
             test-results/research-006/
             test-results/research-007/
+            test-results/research-008/
           if-no-files-found: warn
           retention-days: 21

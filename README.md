@@ -118,3 +118,15 @@ Research 003 adds `styles/likeness.css`: intentionally asymmetric eye constructi
 通过浏览器打开 `standalone.html?r007=baseline`（固定坐标）和 `standalone.html?r007=structured`（共享锚点）比较；两边共用 Research 006 体面光源。若在仓库的 HTTP 服务下运行，可访问 [`study/007-compare.html`](study/007-compare.html) 对照以及 [`study/007-blind.html`](study/007-blind.html) 进行独立匿名评价。它们不会上传评分数据，也不会更改之前的人物存档。
 
 复现 **54 张真实 CSS 浏览器渲染**与联动测试：`npm run verify && python3 test/study007-visual.py`。技术详情、反证标准、局限性与实验记录见 [`docs/RESEARCH-007.md`](docs/RESEARCH-007.md)；保留前六轮成果的架构原则见 [`docs/ADR-001-RESEARCH-CONTINUITY.md`](docs/ADR-001-RESEARCH-CONTINUITY.md)。目前仍是风格化肖像，独立真人艺术评分 **0**，状态 `ART_UNVERIFIED`。
+
+## Research 008：共享结构生成局部明暗和铅笔纹理（可回退候选）
+
+Research 007 的 16 个面部锚点，进一步定义一个连续的二维高斯基函数浮雕场。每个面部区域不再使用固定法线：`src/surface-field.mjs` 在共享位置上计算高度梯度，导出法线、明暗、鼻下投影位移与沿颊颌走向的排线角度。**这不是医学解剖模型、三维网格或真正的光线追踪。**
+
+- `standalone.html?r008=legacy`：既有 R007 结构 + R006 固定法线（公平对照）。
+- `standalone.html?r008=field`：同一结构、同一参数下，候选新明暗与结构排线。
+- 本地服务中的 [`study/008-compare.html`](study/008-compare.html)：并排可交互检查两套画法。
+- `npm run verify`：包含新增加的**打包 JavaScript 语法门禁**，防止各个源码文件都合法但拼接为单文件后重复声明而崩溃。
+- `python3 test/study008-visual.py`：真实 Chromium 产生 36 张 A/B 对照图，检查光向、几何关系、遮挡位移与移动端。
+
+默认肖像和所有旧角色 JSON v1 均保持不变；无图片、SVG、Canvas 或 AI 生图素材参与运行时绘制。完整试验、边界和视觉不足见 [`docs/RESEARCH-008.md`](docs/RESEARCH-008.md)。**美术写实度未经独立真人盲评，仍为 `ART_UNVERIFIED`，不能因为自动测试通过而宣称艺术进步。**
