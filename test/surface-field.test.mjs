@@ -49,6 +49,15 @@ test('R008 changing jaw geometry also changes form normals and stroke angles', (
   assert.ok(Math.abs(slim.face.anchors.leftJaw.x-wide.face.anchors.leftJaw.x)>5);
 });
 
+test('R008 horizontal face-scale affects relief normals, not just CSS drawing width', () => {
+  const slim=deriveSurfaceField({faceWidth:80,lightDirection:-60});
+  const wide=deriveSurfaceField({faceWidth:120,lightDirection:-60});
+  assert.notEqual(slim.values.noseLeft.shade,wide.values.noseLeft.shade);
+  assert.notEqual(slim.values.cheekLeft.shade,wide.values.cheekLeft.shade);
+  assert.equal(slim.face.anchors.noseBase.x,wide.face.anchors.noseBase.x,
+    'landmarks remain in unscaled face-local coordinates');
+});
+
 test('R008 nose width controls protrusion footprint and cast; eye spacing shapes the orbital field', () => {
   const a=deriveSurfaceField({noseWidth:80,eyeSpacing:-16,lightDirection:-60});
   const b=deriveSurfaceField({noseWidth:125,eyeSpacing:16,lightDirection:-60});
@@ -91,7 +100,7 @@ test('R008 candidate is opt-in and does not modify existing character JSON contr
   const css=read('styles/study008.css');
   assert.match(css,/\.portrait \.(?:sf-nose-cast) \{display:none/);
   const study=read('study/008-compare.html');
-  assert.match(study,/r008=legacy&amp;embed=1/);
-  assert.match(study,/r008=field&amp;embed=1/);
+  assert.match(study,/r008=legacy/);
+  assert.match(study,/r008=field/);
   assert.match(study,/ART_UNVERIFIED/);
 });

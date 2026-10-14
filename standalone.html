@@ -1718,7 +1718,9 @@ function deriveRelief(raw) {
   const normalAt = (x, y) => {
     const dx = (heightAt(x + 1, y) - heightAt(x - 1, y)) / 2;
     const dy = (heightAt(x, y + 1) - heightAt(x, y - 1)) / 2;
-    const v = [-2.0 * dx, -2.0 * dy, 1];
+    // The CSS face is horizontally stretched by faceScale; compensate the
+    // local x-slope in world coordinates so width changes alter shading.
+    const v = [-2.0 * dx / face.faceScale, -2.0 * dy, 1];
     const magnitude = Math.hypot(...v);
     return Object.freeze(v.map(n => n / magnitude));
   };

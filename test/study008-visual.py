@@ -50,7 +50,7 @@ async def run():
                     page.on('pageerror', lambda e: exceptions.append(str(e)))
                     if not fallback:
                         try:
-                            await page.goto(f'{origin}/standalone.html?r008={arm}&embed=1', wait_until='load')
+                            await page.goto(f'{origin}/standalone.html?r008={arm}', wait_until='load')
                         except Exception as exc:
                             if 'ERR_BLOCKED_BY_ADMINISTRATOR' not in str(exc):
                                 raise
@@ -69,6 +69,7 @@ async def run():
                     assert await root.get_attribute('data-r006') == 'volume'
                     assert await page.locator('#portrait img, #portrait svg, #portrait canvas').count() == 0
                     assert await page.locator('input[type=range]').count() == 9
+                    assert await page.locator('#param-faceWidth').is_visible(), 'real HTTP study must expose interactive controls'
                     assert await page.locator('.volume-field .v-plane').count() == 12
                     assert await page.locator('.sf-nose-cast').count() == 1
                     cast_display = await page.locator('.sf-nose-cast').evaluate('e=>getComputedStyle(e).display')
