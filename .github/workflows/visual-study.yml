@@ -74,6 +74,7 @@ jobs:
           python test/study007-visual.py
           python test/study008-visual.py
           python test/study009-visual.py
+          python scripts/build-r010-study.py --check
           python test/study010-visual.py
       - name: Upload reproducible visual evidence (not runtime assets)
         if: always()

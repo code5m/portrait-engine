@@ -130,3 +130,9 @@ The research issue remains open until that evidence exists.
 - **至少五位独立真人观察者**的自愿评分尚未获得时，`INSUFFICIENT_HUMAN_EVIDENCE / ART_UNVERIFIED`；计算机填写的评分永远不得计入。重复 session 去重不等于身份验证。
 - 75% 观察者偏好新排线、整体可信度中位差至少 +1 且关键形体指标无明显负增益，最多得到 `PROMISING_NEEDS_REPLICATION`；不能自动将候选设为默认，不能宣称达到专业写实水平。
 - 完整预注册过程见 [RESEARCH-010.md](RESEARCH-010.md)。
+
+### Research 010 — Portable experiment verification
+
+- `python3 scripts/build-r010-study.py --check` verifies byte-for-byte equality of the committed *two* offline HTML files with the pinned CSS source and the evaluation modules; it also refuses changes to the R009 renderer SHA.
+- Headless Chromium must render the portable blind page *with zero network requests* and load the portable local-results interface. The GitHub workflow separately verifies the network-served original study from localhost HTTP.
+- The portable file may be sent to independent reviewers without sharing a private GitHub repository; no scores are uploaded or stored automatically. Only genuinely collected and voluntarily submitted scores count as potential human evidence.

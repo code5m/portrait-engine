@@ -148,3 +148,11 @@ python3 -m http.server 4173
 ```
 
 研究使用 GitHub `f6e9488` 的**锁定 CSS 绘制快照** `study/010-renderer.html`，不会因为未来默认作品更新而悄悄改变受测材料；Git 对象与原 `standalone.html` 完全相同。详见 [Research 010 预注册方案](docs/RESEARCH-010.md) 与 [GitHub Issue #4](https://github.com/code5m/portrait-engine/issues/4)。当前真实观察者 **0 人**，美术真实度 **ART_UNVERIFIED**；工程测试通过不代表审美评价通过，不改变公开默认作品。
+
+### Research 010：离线分发（无需 GitHub 权限）
+
+- [下载 `study/010-blind-offline.html`](study/010-blind-offline.html)：这是一份已包含**锁定版纯 CSS 人物、随机盲评和全部交互**的单个 HTML 文件。发给独立观察者，对方无需访问私有仓库、安装软件、联网或启动服务，双击即可评分，完成后自愿把匿名 JSON 发给研究者。
+- [下载 `study/010-results-offline.html`](study/010-results-offline.html)：研究者直接打开此文件，选择收到的 JSON，浏览器离线汇总并导出匿名统计。不上传数据。**文件数量至少五份也不能自动证明是五位不同真人**。
+- `python3 scripts/build-r010-study.py --check` 校验单文件与源码一致，并检查研究肖像 Git Blob SHA 防止材料被悄悄替换；`npm run verify` 与真实 Chromium 工作流纳入此检查。
+
+真实外部评价仍需实际邀请并自愿提交；本仓库没有自动伪造任何真人评价，`ART_UNVERIFIED` 状态不变。

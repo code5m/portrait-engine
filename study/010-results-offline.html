@@ -1,0 +1,178 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Portrait Engine Research 010 / Offline Results</title>
+<style>
+body{margin:0;background:#ecebe5;color:#263529;font:16px/1.6 system-ui,sans-serif}main{max-width:900px;margin:auto;padding:35px 20px}
+h1{font:normal clamp(28px,4vw,40px) Georgia,serif}section{padding:22px;background:#fafaf5;border:1px solid #b6b9ab;border-radius:8px;margin:15px 0}
+button{background:#2b4737;color:white;border:0;padding:11px 17px;border-radius:5px;cursor:pointer}button:disabled{background:#8b9e92}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#e0e4db;padding:14px}input{max-width:100%}
+</style></head><body><main>
+<small>PORTRAIT ENGINE / RESEARCH 010</small><h1>Local anonymous evaluation</h1>
+<p>Choose JSON files that individual observers voluntarily shared with you. The browser reads them locally; nothing is uploaded, and no reviewer identity is verified. Automated QA records do not qualify. One session contributes one vote regardless of the number of lighting scenes.</p>
+<section><label>Human-evaluation JSON files (minimum five independent observers required for any directional decision)
+<input type="file" id="files" accept="application/json,.json" multiple></label>
+<p><button type="button" id="analyze">Analyze locally</button> <button type="button" id="download" disabled>Export aggregate only</button></p>
+<p id="status" role="status"></p><pre id="summary" aria-live="polite">No files inspected. ART_UNVERIFIED.</pre></section>
+<p>The only potentially positive decision is <code>PROMISING_NEEDS_REPLICATION</code>. It is not a claim of statistical significance or photorealism. The production/default renderer stays unchanged until further independent evidence.</p>
+<p><a href="010-blind.html">Return to anonymous study</a> / <a href="../docs/RESEARCH-010.md">Research protocol</a></p>
+</main><script type="module">
+/** Research 010: preregistered, privacy-preserving blinded CSS paint comparison.
+ * Pure protocol code: usable by the study UI, browser test, analyzer, and CLI.
+ * Browser captures and synthetic tests are NOT human aesthetic evidence.
+ */
+const PROTOCOL = 'portrait-engine-r010-blind';
+const VERSION = 1;
+const VARIANTS = Object.freeze(['tonal', 'strokes']);
+const METRICS = Object.freeze(['orbit', 'nose', 'structure', 'graphite', 'credibility']);
+const SCENES = Object.freeze([
+  Object.freeze({ id: 'left-light', lightDirection: -60 }),
+  Object.freeze({ id: 'frontal-light', lightDirection: 0 }),
+  Object.freeze({ id: 'right-light', lightDirection: 60 })
+]);
+const CONTROLLED = Object.freeze({
+  faceWidth: 100, eyeSpacing: 0, noseWidth: 100, jaw: 100,
+  graphite: 65, hatching: 62, hairVolume: 100, mouthWidth: 100
+});
+const HUMAN_MIN = 5;
+
+function requireCondition(ok, why) { if (!ok) throw new Error(why); }
+const hasOwn = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key);
+const object = x => x && typeof x === 'object' && !Array.isArray(x);
+const median = xs => { const s = [...xs].sort((a,b)=>a-b); return s.length % 2 ? s[(s.length-1)/2] : (s[s.length/2-1] + s[s.length/2])/2; };
+const round = n => Math.round(n * 1000) / 1000;
+
+/** Inject random bytes to make order testable without changing browser randomization. */
+function makeTrialPlan(bytes) {
+  requireCondition(bytes && bytes.length >= 4 && [...bytes].every(x=>Number.isInteger(x) && x>=0 && x<=255), 'Four random bytes required');
+  const order = [...SCENES];
+  for (let i=order.length-1;i>0;i--) {
+    const j = bytes[2-i] % (i+1);
+    [order[i],order[j]] = [order[j],order[i]];
+  }
+  const startWithStrokes = bytes[2] % 2 === 1;
+  return Object.freeze(order.map((scene,index) => Object.freeze({
+    sceneId: scene.id,
+    lightDirection: scene.lightDirection,
+    left: (index % 2 === 0) === startWithStrokes ? 'strokes' : 'tonal',
+    right: (index % 2 === 0) === startWithStrokes ? 'tonal' : 'strokes'
+  })));
+}
+
+function validateTrial(t) {
+  requireCondition(object(t), 'Each trial must be an object');
+  const scene = SCENES.find(x=>x.id===t.sceneId);
+  requireCondition(scene && t.lightDirection===scene.lightDirection, 'Unrecognized or modified light scene');
+  requireCondition(object(t.fixed) && Object.keys(CONTROLLED).length===Object.keys(t.fixed).length &&
+    Object.entries(CONTROLLED).every(([key,val])=>t.fixed[key]===val), 'Fixed subject parameters changed');
+  requireCondition(Array.isArray(t.candidates) && t.candidates.length===2, 'Each trial needs two candidates');
+  requireCondition(t.candidates[0].label==='A' && t.candidates[1].label==='B', 'Blind labels A/B required');
+  requireCondition(new Set(t.candidates.map(x=>x.variant)).size===2 &&
+    t.candidates.every(x=>VARIANTS.includes(x.variant)), 'Invalid or duplicate paint variants');
+  for (const c of t.candidates) {
+    requireCondition(object(c.scores) && Object.keys(c.scores).length===METRICS.length &&
+      METRICS.every(key=>hasOwn(c.scores,key)&&Number.isInteger(c.scores[key])&&c.scores[key]>=1&&c.scores[key]<=5),
+      'Every candidate needs five integer scores in 1..5');
+  }
+  requireCondition(['A','B','tie'].includes(t.preference), 'A, B or tie preference required');
+  return t;
+}
+
+/** Only complete self-declared human records enter the evaluation cohort.
+ * This validates provenance claims; it CANNOT authenticate humans/independence.
+ */
+function validateResponse(x) {
+  requireCondition(object(x), 'A rating JSON object is required');
+  requireCondition(x.protocol===PROTOCOL && x.version===VERSION, 'Incompatible protocol/version');
+  requireCondition(x.source==='self_reported_human' && x.independent===true, 'Automated or undeclared responses are excluded');
+  requireCondition(typeof x.sessionId==='string' && /^[a-z0-9-]{16,64}$/i.test(x.sessionId), 'Random session id required');
+  requireCondition(typeof x.createdAt==='string' && !Number.isNaN(Date.parse(x.createdAt)), 'ISO recording time required');
+  requireCondition(Array.isArray(x.trials) && x.trials.length===SCENES.length, 'Three fully scored light scenes required');
+  const seen = new Set();
+  for (const trial of x.trials) {
+    validateTrial(trial);
+    requireCondition(!seen.has(trial.sceneId), 'Duplicate scene');
+    seen.add(trial.sceneId);
+  }
+  requireCondition(SCENES.every(scene=>seen.has(scene.id)), 'Missing required light scene');
+  return x;
+}
+
+function createResponse({ sessionId, trials, createdAt = new Date().toISOString(), independent }) {
+  const result = { protocol:PROTOCOL,version:VERSION,source:'self_reported_human',
+    independent:independent === true,sessionId,createdAt,trials };
+  validateResponse(result);
+  return result;
+}
+
+/** Three correlated trials are reduced to ONE vote + one mean delta per observer. */
+function summarize(records) {
+  requireCondition(Array.isArray(records), 'An array of submissions is required');
+  const used = new Set();
+  const rejected = [];
+  const reviewers = [];
+  for (const [i, raw] of records.entries()) {
+    try {
+      const x = validateResponse(raw);
+      requireCondition(!used.has(x.sessionId), 'Duplicate session id');
+      used.add(x.sessionId);
+      const choices = {tonal:0,strokes:0,tie:0};
+      const deltas = Object.fromEntries(METRICS.map(m=>[m,[]]));
+      for (const t of x.trials) {
+        const a = t.candidates.find(c=>c.variant==='tonal');
+        const b = t.candidates.find(c=>c.variant==='strokes');
+        for (const metric of METRICS) deltas[metric].push(b.scores[metric]-a.scores[metric]);
+        choices[t.preference==='tie'?'tie':t.candidates.find(c=>c.label===t.preference).variant]++;
+      }
+      const vote = choices.strokes>choices.tonal?'strokes':choices.tonal>choices.strokes?'tonal':'tie';
+      reviewers.push({vote,deltas:Object.fromEntries(METRICS.map(m=>[m,round(deltas[m].reduce((a,b)=>a+b,0)/SCENES.length)]))});
+    } catch (e) {
+      rejected.push({index:i+1,reason:String(e.message).slice(0,120)});
+    }
+  }
+  const n=reviewers.length;
+  const votes = {tonal:0,strokes:0,tie:0};
+  for (const r of reviewers) votes[r.vote]++;
+  const medianDeltas = Object.fromEntries(METRICS.map(m=>[m,n?round(median(reviewers.map(r=>r.deltas[m]))):null]));
+  let decision='INSUFFICIENT_HUMAN_EVIDENCE';
+  if (n>=HUMAN_MIN) {
+    if (votes.strokes/n>=0.75 && medianDeltas.credibility>=1 &&
+      ['orbit','nose','structure'].every(key=>medianDeltas[key]>=-0.5)) decision='PROMISING_NEEDS_REPLICATION';
+    else if (votes.tonal/n>=0.6) decision='STROKES_NOT_SUPPORTED';
+    else decision='NO_DEMONSTRATED_ART_GAIN';
+  }
+  return {
+    protocol:'portrait-engine-r010-summary',version:VERSION,
+    evaluatedSessions:n,rejectedCount:rejected.length,rejected,
+    observerVotes:votes,medianPerObserverScoreDeltaStrokesMinusTonal:medianDeltas,
+    decision,minObservers:HUMAN_MIN,comparisonBaseline:'tonal',productionDefault:'unchanged',
+    independenceVerified:false,statisticalSignificanceClaimed:false,
+    note:'A signed-in browser or exported JSON cannot prove reviewer identity, independence, or artistic quality. The experiment baseline is tonal; the public default remains unchanged.'
+  };
+}
+
+const input=document.querySelector('#files');
+const text=document.querySelector('#summary');
+const status=document.querySelector('#status');
+const download=document.querySelector('#download');
+let last=null;
+document.querySelector('#analyze').addEventListener('click',async()=>{
+  const files=[...input.files];
+  if(files.length>500){status.textContent='Limit: 500 files';return;}
+  const parsed=[];
+  for(const file of files){
+    if(file.size>128*1024){parsed.push({fileTooLarge:true});continue;}
+    try{parsed.push(JSON.parse(await file.text()));}
+    catch{parsed.push({invalidJSON:true});}
+  }
+  last=summarize(parsed);
+  text.textContent=JSON.stringify(last,null,2);
+  status.textContent=`Read ${files.length} files locally. Accepted ${last.evaluatedSessions}; excluded ${last.rejectedCount}. Human identity/independence cannot be technically verified.`;
+  download.disabled=false;
+});
+download.addEventListener('click',()=>{
+  if(!last)return;
+  const url=URL.createObjectURL(new Blob([JSON.stringify(last,null,2)+'\n'],{type:'application/json'}));
+  const a=document.createElement('a');a.href=url;a.download='portrait-r010-aggregate-only.json';document.body.append(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1500);
+});
+
+</script></body></html>

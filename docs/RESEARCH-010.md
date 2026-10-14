@@ -26,7 +26,21 @@ The three light-scene order is randomly permuted per session. Left/right identit
 
 The rating page [study/010-blind.html](../study/010-blind.html) neither uploads nor stores ratings in a database, local storage, or cookies. After three fully scored scenes, an observer must check an explicit self-report and voluntarily download their JSON. The file contains only a random session ID, timestamp, controlled conditions, anonymous A/B candidate mapping and scores. No name, address, login, or network identifiers are intentionally collected. The evaluator independently decides whether to send that JSON to the researcher. **The browser cannot verify human identity or observer independence.**
 
-### Run the study
+### Distribute without giving anyone private GitHub access
+
+The repository also contains **two fully standalone HTML deliverables**, generated deterministically from the pinned CSS renderer and the same protocol source:
+
+- `study/010-blind-offline.html`: send this one local HTML file to each independent observer; double-click/open it in a normal browser, complete all three lighting conditions, and export the anonymous JSON. No GitHub login, HTTP server, external assets, internet, or application installation is needed.
+- `study/010-results-offline.html`: open this one local HTML file on the researcher's computer, select the voluntarily received JSON files, and export an aggregate. The page has **zero external network requests**; individual raw session identifiers are excluded from the aggregate.
+
+```bash
+python3 scripts/build-r010-study.py          # rebuild both portable HTML files
+python3 scripts/build-r010-study.py --check  # byte-for-byte reproducibility gate
+```
+
+The builder checks the frozen Git blob SHA and fails rather than silently updating the research stimulus. `npm run verify` includes the offline-output equality gate. The headless browser checks offline iframe rendering and verifies that there are no network requests.
+
+### Run the study directly from the repository
 
 ```bash
 # In the repository root:

@@ -5,7 +5,6 @@ Only an external human can provide evidence of aesthetic preference.
 import asyncio
 import json
 import os
-import re
 import tempfile
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -18,27 +17,10 @@ ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'test-results'/'research-010'
 
 def offline_bundle(page_name):
-    # This browser environment blocks all navigations, even locally routed
-    # localhost. Use actual Chromium rendering from identical CSS/JS sources.
-    # GitHub CI must run the real HTTP/iframe integration (no fallback).
-    source=(ROOT/'src'/'blind010.mjs').read_text()
-    source=re.sub(r'(?m)^export ', '', source)
-    js=(ROOT/'study'/f'010-{page_name}.mjs').read_text()
-    js=re.sub(r"(?m)^import .*?;\n",'',js)
-    if page_name=='blind':
-        standalone=(ROOT/'study'/'010-renderer.html').read_text()
-        literal=json.dumps(standalone).replace('<','\\u003c').replace('>','\\u003e')
-        prefix=f'const INLINED_HTML = {literal};\n'
-        old='frame.src=`./010-renderer.html?r009=${encodeURIComponent(variant)}&embed=1`;'
-        new='frame.srcdoc=INLINED_HTML.replace("const strokeVariant = qs.get(\'r009\');", "const strokeVariant = \'"+variant+"\';").replace("const researchEmbed = qs.get(\'embed\') === \'1\'", "const researchEmbed = true");'
-        assert old in js
-        js=js.replace(old,new)
-        js=js.replace('crypto.randomUUID()',"'synthetic-browser-test-session-00001'")
-    else:prefix=''
-    html=(ROOT/'study'/f'010-{page_name}.html').read_text()
-    script=f'<script type="module" src="./010-{page_name}.mjs"></script>'
-    assert script in html
-    return html.replace(script,f'<script type="module">\n{prefix}{source}\n{js}\n</script>')
+    # The same generated offline file is distributable to independent reviewers.
+    # No synthetic renderer or alternative drawing implementation exists here.
+    path=ROOT/'study'/f'010-{page_name}-offline.html'
+    return path.read_text(encoding='utf-8')
 
 async def run():
     OUT.mkdir(parents=True,exist_ok=True)
@@ -133,13 +115,28 @@ async def run():
             frame=page.locator('.card').first.locator('iframe')
             assert await frame.evaluate('el=>el.clientWidth')==410
             await page.screenshot(path=str(OUT/'blind-mobile.png'),full_page=True)
+            # Public distributable single-file version MUST work without
+            # any external module, HTTP fetch, iframe navigation or telemetry.
+            portable=await browser.new_page(viewport={'width':1080,'height':900})
+            offline_requests=[]
+            portable.on('request',lambda request: offline_requests.append(request.url))
+            portable.on('pageerror',lambda exc:errors.append(str(exc)))
+            await portable.set_content(offline_bundle('blind'))
+            await portable.locator('#next:not([disabled])').wait_for(timeout=25000)
+            assert await portable.locator('.card iframe').count()==2
+            assert not offline_requests, f'Offline reviewer attempted network I/O: {offline_requests}'
+            await portable.screenshot(path=str(OUT/'offline-desktop.png'),full_page=True)
+            await portable.set_content(offline_bundle('results'))
+            assert await portable.locator('#analyze').is_visible()
+            assert not offline_requests, f'Offline results analyzer attempted network I/O: {offline_requests}'
+            await portable.close()
             assert not errors,errors
             await browser.close()
     finally:
         server.shutdown()
     if os.environ.get('GITHUB_ACTIONS')=='true' and inline_fallback:
         raise AssertionError('GitHub CI must exercise real HTTP navigation, not a fallback')
-    payload={'browser':'Chromium','scenes':cases,'inlineFallback':inline_fallback,'dummyRatingsRetained':False,
+    payload={'browser':'Chromium','scenes':cases,'inlineFallback':inline_fallback,'offlineNetworkRequests':0,'dummyRatingsRetained':False,
         'realHumanRatings':0,'artQuality':'ART_UNVERIFIED',
         'description':'Browser form testing and CSS pixel differences do not prove independent human aesthetic preference.'}
     (OUT/'metrics.json').write_text(json.dumps(payload,indent=2)+'\n')

@@ -12,7 +12,10 @@ const metricNames={
 const random = new Uint8Array(4);
 crypto.getRandomValues(random);
 const plan = makeTrialPlan(random);
-const sessionId = crypto.randomUUID();
+// crypto.randomUUID may be absent on file:// or opaque offline origins.
+// getRandomValues is available there and still supplies 128 random bits.
+const sessionId = typeof crypto.randomUUID === 'function' ? crypto.randomUUID() :
+  Array.from(crypto.getRandomValues(new Uint8Array(16)), x=>x.toString(16).padStart(2,'0')).join('');
 const trials=[];
 let trialIndex=0;
 const form=document.querySelector('#rating-form');
