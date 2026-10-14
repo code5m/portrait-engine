@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Portrait Engine / Research 010 / Blind CSS portrait study</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#e9e8e1;color:#1d271f;font:15px/1.55 system-ui,sans-serif}
+header,main,footer{max-width:1030px;padding:18px 22px;margin:auto}h1{font:normal clamp(25px,4vw,40px)/1.2 Georgia,serif;margin:9px 0}
+h2{font-size:18px;margin:0 0 10px}p{max-width:86ch}.small{font-size:12px;color:#4d5b52}
+.notice{padding:14px;background:#f9f7ef;border-left:4px solid #92734b;margin:14px 0}
+.status{font-weight:650;padding:12px 0;min-height:46px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.card{min-width:0;background:#f9f8f4;border:1px solid #adae9e;border-radius:9px;padding:14px}
+.preview{overflow-x:auto;background:#dddcd5;max-width:100%;padding:0;margin:0 auto 14px}
+iframe{display:block;border:0;width:410px;height:535px;background:#edece5;pointer-events:none}
+fieldset{border:0;margin:0;padding:0}legend{font-weight:650;padding-bottom:8px}
+.metric{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:8px 0}
+.metric select{min-width:94px;padding:6px;border:1px solid #647365;border-radius:4px;background:white}
+.preference{padding:15px;background:#f9f8f4;margin:18px 0;border-radius:7px}.preference label{display:inline-flex;align-items:center;margin:10px 18px 4px 0;gap:6px}
+button{padding:12px 18px;border:0;border-radius:5px;background:#263e32;color:#fff;font:600 15px system-ui;cursor:pointer}
+button:disabled{background:#96a39b;cursor:not-allowed}input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid #d09a45;outline-offset:2px}
+.progress{color:#47584b;font-weight:650}.export{background:#f8faf5;padding:20px;border:1px solid #b5c3b5}
+[hidden]{display:none!important}@media(max-width:920px){.grid{grid-template-columns:1fr}.card{max-width:550px}header,main,footer{padding:14px}}
+</style>
+</head><body>
+<header><small>PORTRAIT ENGINE / RESEARCH 010 / HUMAN EVALUATION</small>
+<h1>Which CSS portrait is more convincing?</h1>
+<p>Two anonymous rendering techniques, three fixed lighting conditions, and the same face geometry. Look at anatomy and expression, not interface polish. You may score a tie.</p>
+<div class="notice"><strong>Independent evaluation:</strong> Please do not inspect developer tools, discuss the images with other observers, or look up variant names before exporting your scores. This is a limited single-blind study, not a double-blind clinical experiment. There is no automatic submission or analytics. Your device stores the exported JSON until you choose to share it.</div>
+</header>
+<main>
+<section id="experiment" aria-labelledby="progress">
+<p id="progress" class="progress" aria-live="polite">Preparing fixed comparison scenes...</p>
+<p class="small">Fixed comparison viewport: 410 x 535 CSS pixels per candidate. Left/right position alternates across three randomly ordered scenes; lighting is identical for both candidates within each scene. Preview scrolling on a narrow screen does not change the viewport size.</p>
+<div id="status" class="status" role="status" aria-live="polite">Loading the original CSS renderer...</div>
+<form id="rating-form">
+<div class="grid" id="cards"></div>
+<fieldset class="preference"><legend>Which portrait feels more credible overall in this lighting?</legend>
+<label><input type="radio" name="preference" value="A" required> Candidate A</label>
+<label><input type="radio" name="preference" value="B"> Candidate B</label>
+<label><input type="radio" name="preference" value="tie"> No clear difference / tie</label>
+</fieldset>
+<button type="submit" id="next" disabled>Record scores and continue</button>
+</form>
+</section>
+<section id="finished" class="export" hidden>
+<h2>All three lighting scenes have been recorded locally.</h2>
+<p>No data has been transmitted. Do not export computer-generated answers as human ratings.</p>
+<label><input id="independent" type="checkbox"> I am a real observer and completed these ratings independently, without consulting the variant mapping.</label>
+<p><button id="download" disabled>Download anonymous JSON evaluation</button></p>
+<p id="final-status" role="status" aria-live="polite"></p>
+</section>
+<p class="small"><a href="../index.html">Portrait Engine</a> / <a href="010-results.html">Local results analyzer</a> / <a href="../docs/RESEARCH-010.md">Research protocol</a></p>
+</main>
+<footer class="small">No names, no accounts, no cookie, no telemetry. Embedded painting uses DOM/CSS only, not images, SVG, Canvas, or AI-generated art. Test submissions never count as human evidence.</footer>
+<script type="module" src="./010-blind.mjs"></script>
+</body></html>

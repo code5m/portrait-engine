@@ -1,0 +1,17 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Portrait Engine Research 010 / Offline Results</title>
+<style>
+body{margin:0;background:#ecebe5;color:#263529;font:16px/1.6 system-ui,sans-serif}main{max-width:900px;margin:auto;padding:35px 20px}
+h1{font:normal clamp(28px,4vw,40px) Georgia,serif}section{padding:22px;background:#fafaf5;border:1px solid #b6b9ab;border-radius:8px;margin:15px 0}
+button{background:#2b4737;color:white;border:0;padding:11px 17px;border-radius:5px;cursor:pointer}button:disabled{background:#8b9e92}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#e0e4db;padding:14px}input{max-width:100%}
+</style></head><body><main>
+<small>PORTRAIT ENGINE / RESEARCH 010</small><h1>Local anonymous evaluation</h1>
+<p>Choose JSON files that individual observers voluntarily shared with you. The browser reads them locally; nothing is uploaded, and no reviewer identity is verified. Automated QA records do not qualify. One session contributes one vote regardless of the number of lighting scenes.</p>
+<section><label>Human-evaluation JSON files (minimum five independent observers required for any directional decision)
+<input type="file" id="files" accept="application/json,.json" multiple></label>
+<p><button type="button" id="analyze">Analyze locally</button> <button type="button" id="download" disabled>Export aggregate only</button></p>
+<p id="status" role="status"></p><pre id="summary" aria-live="polite">No files inspected. ART_UNVERIFIED.</pre></section>
+<p>The only potentially positive decision is <code>PROMISING_NEEDS_REPLICATION</code>. It is not a claim of statistical significance or photorealism. The production/default renderer stays unchanged until further independent evidence.</p>
+<p><a href="010-blind.html">Return to anonymous study</a> / <a href="../docs/RESEARCH-010.md">Research protocol</a></p>
+</main><script type="module" src="./010-results.mjs"></script></body></html>

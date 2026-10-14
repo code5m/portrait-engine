@@ -121,3 +121,12 @@ The research issue remains open until that evidence exists.
 - [x] `test/stroke-field.test.mjs` 对角度界限、受光反转、零排线值和默认旧协议做回归。
 - [ ] `test/study009-visual.py` 浏览器帧检查 / `GitHub Visual Study`：以当次实际运行状态为准。
 - [ ] 真人盲评仍为 0。较密线条可能显得机械；**工程通过不是 ART_PASS**。
+
+## Research 010 — 盲评数据不能由自动测试替代
+
+- 固定渲染器为 `study/010-renderer.html`，Git Blob SHA 为 `673e76657792a3c808c4a51c4f0f09c659624b9f`；`test/blind010.test.mjs` 锁定这个字节级源材料。
+- `npm run verify` 覆盖不可变场景、匿名 A/B、完整的 5 项评分、修改条件、重复 Session、离线汇总和预先约定的判定门槛。
+- `python3 test/study010-visual.py` 使用真实 Chromium 跑三种光照的六张纯 CSS 绘画、导出/导入评分和移动端布局；本地受限环境的 `inlineFallback` 必须公开记录，GitHub CI 必须使用真实 HTTP 导航。
+- **至少五位独立真人观察者**的自愿评分尚未获得时，`INSUFFICIENT_HUMAN_EVIDENCE / ART_UNVERIFIED`；计算机填写的评分永远不得计入。重复 session 去重不等于身份验证。
+- 75% 观察者偏好新排线、整体可信度中位差至少 +1 且关键形体指标无明显负增益，最多得到 `PROMISING_NEEDS_REPLICATION`；不能自动将候选设为默认，不能宣称达到专业写实水平。
+- 完整预注册过程见 [RESEARCH-010.md](RESEARCH-010.md)。

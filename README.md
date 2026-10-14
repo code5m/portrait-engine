@@ -137,3 +137,14 @@ Research 007 的 16 个面部锚点，进一步定义一个连续的二维高斯
 为正视角色已有的“塑料浮雕感”，新增 **同一 R008 浮雕场的纯 CSS 明暗 A/B**：`?r009=tonal` 是原有平滑阴影，`?r009=strokes` 使用共享法线决定 11 个局部区域的排线方向，光源决定线条可见度，同时适度降低模糊蒙层的强度。对比页：[study/009-compare.html](study/009-compare.html)，研究报告：[docs/RESEARCH-009.md](docs/RESEARCH-009.md)。
 
 **只证明不同画法可以保留同一结构、动态响应光线；没有外部盲评，不能宣称哪张更像真人。** 默认人物、原 9 项参数和独立单文件 HTML 保持不变。
+
+## Research 010 — 独立匿名审美评价（仍需真人评分）
+
+目前已经提供可重复的 **3 种光照 × 2 种画法**匿名评价实验：`study/010-blind.html`。页面随机顺序与 A/B 左右位置、锁定全部 9 项人物参数、保持固定 410×535 CSS 像素视口，并支持平局、五维评分和仅在本地导出的匿名 JSON。研究者可在 `study/010-results.html` 本地汇总，也可以使用 `node scripts/analyze-r010.mjs <评价目录> --out aggregate.json`。数据不自动上传。
+
+```bash
+python3 -m http.server 4173
+# Open http://127.0.0.1:4173/study/010-blind.html
+```
+
+研究使用 GitHub `f6e9488` 的**锁定 CSS 绘制快照** `study/010-renderer.html`，不会因为未来默认作品更新而悄悄改变受测材料；Git 对象与原 `standalone.html` 完全相同。详见 [Research 010 预注册方案](docs/RESEARCH-010.md) 与 [GitHub Issue #4](https://github.com/code5m/portrait-engine/issues/4)。当前真实观察者 **0 人**，美术真实度 **ART_UNVERIFIED**；工程测试通过不代表审美评价通过，不改变公开默认作品。
