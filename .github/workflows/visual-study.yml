@@ -9,11 +9,14 @@ on:
       - 'src/volume.mjs'
       - 'src/face-model.mjs'
       - 'src/surface-field.mjs'
+      - 'src/stroke-field.mjs'
       - 'src/app.mjs'
       - 'index.html'
       - 'scripts/build-standalone.py'
       - 'test/study007-visual.py'
       - 'test/study008-visual.py'
+      - 'test/study009-visual.py'
+      - 'study/009-*.html'
       - 'study/007-*.html'
       - 'study/008-*.html'
       - 'test/research-matrix.py'
@@ -25,11 +28,14 @@ on:
       - 'src/volume.mjs'
       - 'src/face-model.mjs'
       - 'src/surface-field.mjs'
+      - 'src/stroke-field.mjs'
       - 'src/app.mjs'
       - 'index.html'
       - 'scripts/build-standalone.py'
       - 'test/study007-visual.py'
       - 'test/study008-visual.py'
+      - 'test/study009-visual.py'
+      - 'study/009-*.html'
       - 'study/007-*.html'
       - 'study/008-*.html'
       - 'test/research-matrix.py'
@@ -59,16 +65,18 @@ jobs:
           python test/study006-visual.py
           python test/study007-visual.py
           python test/study008-visual.py
+          python test/study009-visual.py
       - name: Upload reproducible visual evidence (not runtime assets)
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: research-008-css-surface-field-study
+          name: research-009-css-stroke-field-study
           path: |
             test-results/research-004/
             test-results/research-005/
             test-results/research-006/
             test-results/research-007/
             test-results/research-008/
+            test-results/research-009/
           if-no-files-found: warn
           retention-days: 21

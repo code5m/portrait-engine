@@ -1411,6 +1411,131 @@ body[data-r005-embed="1"] .drawing-signature {display:none;}
 .portrait[data-r008="field"][data-study="structure"] .sf-nose-cast {display:none}
 
 </style>
+  <style>
+/* Research 009: opt-in contour-following graphite instead of an extra grey mask.
+   Source of truth is Research 008 surface-field normals + R007 facial anchors.
+   No SVG, Canvas, raster images, JavaScript pixel drawing, or remote assets. */
+.portrait .stroke-field {display:none;pointer-events:none}
+.portrait[data-r009="strokes"] .stroke-field {
+  display:block;inset:0;z-index:6;overflow:hidden;border-radius:inherit;
+  pointer-events:none;
+}
+.portrait[data-r009="strokes"] .stroke-field .sf-stroke {
+  display:block;position:absolute;border-radius:47%;overflow:hidden;
+  pointer-events:none;
+  opacity:var(--r009-stroke-opacity,0);
+}
+/* Each patch has a real face-geometry position, a relief-gradient angle,
+   and independent light-derived stroke density. Feathered masks prevent
+   box-shaped edges and keep the graphite paper tooth visible. */
+.portrait[data-r009="strokes"] .sf-stroke::before,
+.portrait[data-r009="strokes"] .sf-stroke::after {
+  content:"";position:absolute;inset:3px;border-radius:inherit;
+  background:repeating-linear-gradient(var(--r009-stroke-angle,90deg),
+    #232d2678 0 .47px,transparent .47px 6.6px);
+  -webkit-mask-image:radial-gradient(ellipse 67% 68% at 48% 51%,#000 5%,transparent 84%);
+  mask-image:radial-gradient(ellipse 67% 68% at 48% 51%,#000 5%,transparent 84%);
+}
+.portrait[data-r009="strokes"] .sf-stroke::after {
+  background:repeating-linear-gradient(calc(var(--r009-stroke-angle,90deg) + 63deg),
+    #292f2870 0 .37px,transparent .37px 9.7px);
+  opacity:.46;
+}
+.portrait[data-r009="strokes"] .sf-stroke-browLeft,
+.portrait[data-r009="strokes"] .sf-stroke-browRight {
+  top:calc(var(--fg-leftBrow-y) - 17px);width:67px;height:32px;
+}
+.portrait[data-r009="strokes"] .sf-stroke-browLeft {left:calc(var(--fg-leftBrow-x) - 34px)}
+.portrait[data-r009="strokes"] .sf-stroke-browRight {left:calc(var(--fg-rightBrow-x) - 34px);top:calc(var(--fg-rightBrow-y) - 17px)}
+.portrait[data-r009="strokes"] .sf-stroke-orbitLeft,
+.portrait[data-r009="strokes"] .sf-stroke-orbitRight {
+  width:74px;height:50px;top:calc(var(--fg-leftOrbit-y) - 17px);
+}
+.portrait[data-r009="strokes"] .sf-stroke-orbitLeft {left:calc(var(--fg-leftOrbit-x) - 36px)}
+.portrait[data-r009="strokes"] .sf-stroke-orbitRight {left:calc(var(--fg-rightOrbit-x) - 36px);top:calc(var(--fg-rightOrbit-y) - 17px)}
+.portrait[data-r009="strokes"] .sf-stroke-noseLeft,
+.portrait[data-r009="strokes"] .sf-stroke-noseRight {
+  width:36px;height:78px;top:calc(var(--fg-noseRoot-y) - 4px);
+}
+.portrait[data-r009="strokes"] .sf-stroke-noseLeft {left:calc(var(--fg-leftAla-x) - 12px)}
+.portrait[data-r009="strokes"] .sf-stroke-noseRight {left:calc(var(--fg-rightAla-x) - 24px)}
+.portrait[data-r009="strokes"] .sf-stroke-cheekLeft,
+.portrait[data-r009="strokes"] .sf-stroke-cheekRight {
+  width:95px;height:94px;top:calc(var(--fg-leftCheek-y) - 34px);
+}
+.portrait[data-r009="strokes"] .sf-stroke-cheekLeft {left:calc(var(--fg-leftCheek-x) - 50px)}
+.portrait[data-r009="strokes"] .sf-stroke-cheekRight {left:calc(var(--fg-rightCheek-x) - 47px);top:calc(var(--fg-rightCheek-y) - 34px)}
+.portrait[data-r009="strokes"] .sf-stroke-jawLeft,
+.portrait[data-r009="strokes"] .sf-stroke-jawRight {
+  width:80px;height:79px;top:calc(var(--fg-leftJaw-y) - 27px);
+}
+.portrait[data-r009="strokes"] .sf-stroke-jawLeft {left:calc(var(--fg-leftJaw-x) - 33px)}
+.portrait[data-r009="strokes"] .sf-stroke-jawRight {left:calc(var(--fg-rightJaw-x) - 47px);top:calc(var(--fg-rightJaw-y) - 27px)}
+.portrait[data-r009="strokes"] .sf-stroke-chin {
+  width:91px;height:36px;
+  left:calc(var(--fg-chin-x) - 46px);
+  top:calc(var(--fg-chin-y) - 23px);
+}
+/* Attach the numeric per-patch contract once and keep CSS authored paint. */
+.portrait[data-r009="strokes"] .sf-stroke-browLeft {
+  --r009-stroke-angle:var(--r009-browLeft-angle,90deg);
+  --r009-stroke-opacity:var(--r009-browLeft-opacity,0);
+}
+.portrait[data-r009="strokes"] .sf-stroke-browRight {
+  --r009-stroke-angle:var(--r009-browRight-angle,90deg);
+  --r009-stroke-opacity:var(--r009-browRight-opacity,0);
+}
+.portrait[data-r009="strokes"] .sf-stroke-orbitLeft {
+  --r009-stroke-angle:var(--r009-orbitLeft-angle,90deg);
+  --r009-stroke-opacity:var(--r009-orbitLeft-opacity,0);
+}
+.portrait[data-r009="strokes"] .sf-stroke-orbitRight {
+  --r009-stroke-angle:var(--r009-orbitRight-angle,90deg);
+  --r009-stroke-opacity:var(--r009-orbitRight-opacity,0);
+}
+.portrait[data-r009="strokes"] .sf-stroke-noseLeft {
+  --r009-stroke-angle:var(--r009-noseLeft-angle,90deg);
+  --r009-stroke-opacity:var(--r009-noseLeft-opacity,0);
+}
+.portrait[data-r009="strokes"] .sf-stroke-noseRight {
+  --r009-stroke-angle:var(--r009-noseRight-angle,90deg);
+  --r009-stroke-opacity:var(--r009-noseRight-opacity,0);
+}
+.portrait[data-r009="strokes"] .sf-stroke-cheekLeft {
+  --r009-stroke-angle:var(--r009-cheekLeft-angle,90deg);
+  --r009-stroke-opacity:var(--r009-cheekLeft-opacity,0);
+}
+.portrait[data-r009="strokes"] .sf-stroke-cheekRight {
+  --r009-stroke-angle:var(--r009-cheekRight-angle,90deg);
+  --r009-stroke-opacity:var(--r009-cheekRight-opacity,0);
+}
+.portrait[data-r009="strokes"] .sf-stroke-jawLeft {
+  --r009-stroke-angle:var(--r009-jawLeft-angle,90deg);
+  --r009-stroke-opacity:var(--r009-jawLeft-opacity,0);
+}
+.portrait[data-r009="strokes"] .sf-stroke-jawRight {
+  --r009-stroke-angle:var(--r009-jawRight-angle,90deg);
+  --r009-stroke-opacity:var(--r009-jawRight-opacity,0);
+}
+.portrait[data-r009="strokes"] .sf-stroke-chin {
+  --r009-stroke-angle:var(--r009-chin-angle,90deg);
+  --r009-stroke-opacity:var(--r009-chin-opacity,0);
+}
+
+/* Opt-in hypothesis: trade a modest amount of the smooth airbrush overlay
+   for pressure-modulated lines. Reject this arm if human viewers prefer tonal. */
+.portrait[data-r009="strokes"] .v-cheek-left {opacity:calc(var(--v-cheekLeft-shade,.35) * .70)}
+.portrait[data-r009="strokes"] .v-cheek-right {opacity:calc(var(--v-cheekRight-shade,.35) * .70)}
+.portrait[data-r009="strokes"] .v-orbit-left {opacity:calc(var(--v-orbitLeft-shade,.35) * .83)}
+.portrait[data-r009="strokes"] .v-orbit-right {opacity:calc(var(--v-orbitRight-shade,.35) * .83)}
+.portrait[data-r009="strokes"] .v-jaw-left {opacity:calc(var(--v-jawLeft-shade,.35) * .79)}
+.portrait[data-r009="strokes"] .v-jaw-right {opacity:calc(var(--v-jawRight-shade,.35) * .79)}
+.portrait[data-r009="strokes"] .v-cheek-left::after,
+.portrait[data-r009="strokes"] .v-cheek-right::after {opacity:0}
+.portrait[data-r009="strokes"] .face-hatching {opacity:calc(var(--hatch,.62) * .22)}
+.portrait[data-r009="strokes"][data-study="structure"] .stroke-field {display:none}
+
+</style>
   <script type="module">
 const DEFINITIONS = Object.freeze({
   faceWidth: { min: 80, max: 120, step: 1, value: 100, group: 'geometry', unit: '%' },
@@ -1794,6 +1919,55 @@ function deriveSurfaceFieldStyle(raw) {
   return Object.freeze(css);
 }
 
+/**
+ * Research 009 / Surface-bound graphite strokes, NOT a true drawing engine.
+ * Same 12 relief-derived normals and one directional light as Research 008.
+ * Numeric values only: actual marks are CSS repeating-gradients and masks.
+ * The field is a small artistic study, not measured human anatomy.
+ */
+
+const STROKE_REGIONS = Object.freeze([
+  'browLeft','browRight','orbitLeft','orbitRight',
+  'noseLeft','noseRight','cheekLeft','cheekRight',
+  'jawLeft','jawRight','chin'
+]);
+const clampStroke = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+
+/** Gradient axis follows surface height derivative; hatch lines are its isoheight tangent. */
+function deriveStrokeField(raw) {
+  const p = normalize(raw);
+  const field = deriveSurfaceField(p);
+  const patches = {};
+  for (const name of STROKE_REGIONS) {
+    const { normal, shade } = field.values[name];
+    // atan2(x, -y) uses CSS gradient coordinates (0deg is up, 90deg right).
+    // The positive/negative half-turn paints identical physical stroke axes.
+    const radians = Math.atan2(-normal[0], normal[1]);
+    let angle = radians * (180 / Math.PI);
+    if (!Number.isFinite(angle)) angle = 0;
+    angle = ((angle + 180) % 180 + 180) % 180;
+    // Paper remains visible even at maximal pencil density; lit areas remain quiet.
+    const opacity = clampStroke((shade - 0.16) * 0.68, 0, 0.39) * p.hatching / 100;
+    patches[name] = Object.freeze({
+      angle: Number(angle.toFixed(2)),
+      opacity: Number(opacity.toFixed(4)),
+      shade: Number(shade.toFixed(4))
+    });
+  }
+  return Object.freeze(patches);
+}
+
+/** Names deliberately match face-local DOM region classes in study009.css. */
+function deriveStrokeFieldStyle(raw) {
+  const field = deriveStrokeField(raw);
+  const variables = {};
+  for (const [name, {angle, opacity}] of Object.entries(field)) {
+    variables[`--r009-${name}-angle`] = `${angle.toFixed(2)}deg`;
+    variables[`--r009-${name}-opacity`] = opacity.toFixed(4);
+  }
+  return Object.freeze(variables);
+}
+
 // This file uses Unicode escapes to keep the portable source ASCII-only.
 const zh = {
   status:'\u539f\u521b\u4f5c\u54c1 / \u65e0\u56fe\u7247\u7d20\u6750',
@@ -1850,7 +2024,10 @@ const qs = new URLSearchParams(window.location.search);
 const researchVariant = qs.get('r005');
 const volumeVariant = qs.get('r006');
 const faceVariant = qs.get('r007');
-const surfaceVariant = qs.get('r008');
+// Research 009 inherits the exact Research 008 surface so only paint differs.
+const strokeVariant = qs.get('r009');
+const strokeStudy = strokeVariant === 'tonal' || strokeVariant === 'strokes';
+const surfaceVariant = strokeStudy ? 'field' : qs.get('r008');
 const surfaceStudy = surfaceVariant === 'legacy' || surfaceVariant === 'field';
 const faceStudy = faceVariant === 'baseline' || faceVariant === 'structured' || surfaceStudy;
 // Research 006 is opt-in until independent visual quality evidence exists.
@@ -1860,6 +2037,7 @@ if (volumeVariant === 'volume' || faceStudy) root.dataset.r006 = 'volume';
 if (faceVariant === 'baseline' || faceVariant === 'structured') root.dataset.r007 = faceVariant;
 if (surfaceStudy) root.dataset.r007 = 'structured';
 if (surfaceStudy) root.dataset.r008 = surfaceVariant;
+if (strokeStudy) root.dataset.r009 = strokeVariant;
 const acceptedResearchVariants = new Set(['baseline', 'orbital', 'expression']);
 if (acceptedResearchVariants.has(researchVariant)) root.dataset.r005 = researchVariant;
 const researchEmbed = qs.get('embed') === '1' && (acceptedResearchVariants.has(researchVariant) || volumeStudy);
@@ -1930,6 +2108,9 @@ function apply() {
   }
   if (surfaceVariant === 'field') {
     for (const [name, value] of Object.entries(deriveSurfaceFieldStyle(values))) root.style.setProperty(name, value);
+  }
+  if (strokeVariant === 'strokes') {
+    for (const [name, value] of Object.entries(deriveStrokeFieldStyle(values))) root.style.setProperty(name, value);
   }
   for (const key of KEYS) {
     const def = DEFINITIONS[key];
@@ -2080,6 +2261,19 @@ updateScale();
                   <span class="v-plane v-jaw-left"></span>
                   <span class="v-plane v-jaw-right"></span>
                   <span class="v-plane v-chin"></span>
+                </div>
+                <div class="stroke-field" aria-hidden="true">
+                  <span class="sf-stroke sf-stroke-browLeft"></span>
+                  <span class="sf-stroke sf-stroke-browRight"></span>
+                  <span class="sf-stroke sf-stroke-orbitLeft"></span>
+                  <span class="sf-stroke sf-stroke-orbitRight"></span>
+                  <span class="sf-stroke sf-stroke-noseLeft"></span>
+                  <span class="sf-stroke sf-stroke-noseRight"></span>
+                  <span class="sf-stroke sf-stroke-cheekLeft"></span>
+                  <span class="sf-stroke sf-stroke-cheekRight"></span>
+                  <span class="sf-stroke sf-stroke-jawLeft"></span>
+                  <span class="sf-stroke sf-stroke-jawRight"></span>
+                  <span class="sf-stroke sf-stroke-chin"></span>
                 </div>
                 <div class="side-shadow side-shadow-left"></div>
                 <div class="side-shadow side-shadow-right"></div>

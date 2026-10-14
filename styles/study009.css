@@ -1,0 +1,122 @@
+/* Research 009: opt-in contour-following graphite instead of an extra grey mask.
+   Source of truth is Research 008 surface-field normals + R007 facial anchors.
+   No SVG, Canvas, raster images, JavaScript pixel drawing, or remote assets. */
+.portrait .stroke-field {display:none;pointer-events:none}
+.portrait[data-r009="strokes"] .stroke-field {
+  display:block;inset:0;z-index:6;overflow:hidden;border-radius:inherit;
+  pointer-events:none;
+}
+.portrait[data-r009="strokes"] .stroke-field .sf-stroke {
+  display:block;position:absolute;border-radius:47%;overflow:hidden;
+  pointer-events:none;
+  opacity:var(--r009-stroke-opacity,0);
+}
+/* Each patch has a real face-geometry position, a relief-gradient angle,
+   and independent light-derived stroke density. Feathered masks prevent
+   box-shaped edges and keep the graphite paper tooth visible. */
+.portrait[data-r009="strokes"] .sf-stroke::before,
+.portrait[data-r009="strokes"] .sf-stroke::after {
+  content:"";position:absolute;inset:3px;border-radius:inherit;
+  background:repeating-linear-gradient(var(--r009-stroke-angle,90deg),
+    #232d2678 0 .47px,transparent .47px 6.6px);
+  -webkit-mask-image:radial-gradient(ellipse 67% 68% at 48% 51%,#000 5%,transparent 84%);
+  mask-image:radial-gradient(ellipse 67% 68% at 48% 51%,#000 5%,transparent 84%);
+}
+.portrait[data-r009="strokes"] .sf-stroke::after {
+  background:repeating-linear-gradient(calc(var(--r009-stroke-angle,90deg) + 63deg),
+    #292f2870 0 .37px,transparent .37px 9.7px);
+  opacity:.46;
+}
+.portrait[data-r009="strokes"] .sf-stroke-browLeft,
+.portrait[data-r009="strokes"] .sf-stroke-browRight {
+  top:calc(var(--fg-leftBrow-y) - 17px);width:67px;height:32px;
+}
+.portrait[data-r009="strokes"] .sf-stroke-browLeft {left:calc(var(--fg-leftBrow-x) - 34px)}
+.portrait[data-r009="strokes"] .sf-stroke-browRight {left:calc(var(--fg-rightBrow-x) - 34px);top:calc(var(--fg-rightBrow-y) - 17px)}
+.portrait[data-r009="strokes"] .sf-stroke-orbitLeft,
+.portrait[data-r009="strokes"] .sf-stroke-orbitRight {
+  width:74px;height:50px;top:calc(var(--fg-leftOrbit-y) - 17px);
+}
+.portrait[data-r009="strokes"] .sf-stroke-orbitLeft {left:calc(var(--fg-leftOrbit-x) - 36px)}
+.portrait[data-r009="strokes"] .sf-stroke-orbitRight {left:calc(var(--fg-rightOrbit-x) - 36px);top:calc(var(--fg-rightOrbit-y) - 17px)}
+.portrait[data-r009="strokes"] .sf-stroke-noseLeft,
+.portrait[data-r009="strokes"] .sf-stroke-noseRight {
+  width:36px;height:78px;top:calc(var(--fg-noseRoot-y) - 4px);
+}
+.portrait[data-r009="strokes"] .sf-stroke-noseLeft {left:calc(var(--fg-leftAla-x) - 12px)}
+.portrait[data-r009="strokes"] .sf-stroke-noseRight {left:calc(var(--fg-rightAla-x) - 24px)}
+.portrait[data-r009="strokes"] .sf-stroke-cheekLeft,
+.portrait[data-r009="strokes"] .sf-stroke-cheekRight {
+  width:95px;height:94px;top:calc(var(--fg-leftCheek-y) - 34px);
+}
+.portrait[data-r009="strokes"] .sf-stroke-cheekLeft {left:calc(var(--fg-leftCheek-x) - 50px)}
+.portrait[data-r009="strokes"] .sf-stroke-cheekRight {left:calc(var(--fg-rightCheek-x) - 47px);top:calc(var(--fg-rightCheek-y) - 34px)}
+.portrait[data-r009="strokes"] .sf-stroke-jawLeft,
+.portrait[data-r009="strokes"] .sf-stroke-jawRight {
+  width:80px;height:79px;top:calc(var(--fg-leftJaw-y) - 27px);
+}
+.portrait[data-r009="strokes"] .sf-stroke-jawLeft {left:calc(var(--fg-leftJaw-x) - 33px)}
+.portrait[data-r009="strokes"] .sf-stroke-jawRight {left:calc(var(--fg-rightJaw-x) - 47px);top:calc(var(--fg-rightJaw-y) - 27px)}
+.portrait[data-r009="strokes"] .sf-stroke-chin {
+  width:91px;height:36px;
+  left:calc(var(--fg-chin-x) - 46px);
+  top:calc(var(--fg-chin-y) - 23px);
+}
+/* Attach the numeric per-patch contract once and keep CSS authored paint. */
+.portrait[data-r009="strokes"] .sf-stroke-browLeft {
+  --r009-stroke-angle:var(--r009-browLeft-angle,90deg);
+  --r009-stroke-opacity:var(--r009-browLeft-opacity,0);
+}
+.portrait[data-r009="strokes"] .sf-stroke-browRight {
+  --r009-stroke-angle:var(--r009-browRight-angle,90deg);
+  --r009-stroke-opacity:var(--r009-browRight-opacity,0);
+}
+.portrait[data-r009="strokes"] .sf-stroke-orbitLeft {
+  --r009-stroke-angle:var(--r009-orbitLeft-angle,90deg);
+  --r009-stroke-opacity:var(--r009-orbitLeft-opacity,0);
+}
+.portrait[data-r009="strokes"] .sf-stroke-orbitRight {
+  --r009-stroke-angle:var(--r009-orbitRight-angle,90deg);
+  --r009-stroke-opacity:var(--r009-orbitRight-opacity,0);
+}
+.portrait[data-r009="strokes"] .sf-stroke-noseLeft {
+  --r009-stroke-angle:var(--r009-noseLeft-angle,90deg);
+  --r009-stroke-opacity:var(--r009-noseLeft-opacity,0);
+}
+.portrait[data-r009="strokes"] .sf-stroke-noseRight {
+  --r009-stroke-angle:var(--r009-noseRight-angle,90deg);
+  --r009-stroke-opacity:var(--r009-noseRight-opacity,0);
+}
+.portrait[data-r009="strokes"] .sf-stroke-cheekLeft {
+  --r009-stroke-angle:var(--r009-cheekLeft-angle,90deg);
+  --r009-stroke-opacity:var(--r009-cheekLeft-opacity,0);
+}
+.portrait[data-r009="strokes"] .sf-stroke-cheekRight {
+  --r009-stroke-angle:var(--r009-cheekRight-angle,90deg);
+  --r009-stroke-opacity:var(--r009-cheekRight-opacity,0);
+}
+.portrait[data-r009="strokes"] .sf-stroke-jawLeft {
+  --r009-stroke-angle:var(--r009-jawLeft-angle,90deg);
+  --r009-stroke-opacity:var(--r009-jawLeft-opacity,0);
+}
+.portrait[data-r009="strokes"] .sf-stroke-jawRight {
+  --r009-stroke-angle:var(--r009-jawRight-angle,90deg);
+  --r009-stroke-opacity:var(--r009-jawRight-opacity,0);
+}
+.portrait[data-r009="strokes"] .sf-stroke-chin {
+  --r009-stroke-angle:var(--r009-chin-angle,90deg);
+  --r009-stroke-opacity:var(--r009-chin-opacity,0);
+}
+
+/* Opt-in hypothesis: trade a modest amount of the smooth airbrush overlay
+   for pressure-modulated lines. Reject this arm if human viewers prefer tonal. */
+.portrait[data-r009="strokes"] .v-cheek-left {opacity:calc(var(--v-cheekLeft-shade,.35) * .70)}
+.portrait[data-r009="strokes"] .v-cheek-right {opacity:calc(var(--v-cheekRight-shade,.35) * .70)}
+.portrait[data-r009="strokes"] .v-orbit-left {opacity:calc(var(--v-orbitLeft-shade,.35) * .83)}
+.portrait[data-r009="strokes"] .v-orbit-right {opacity:calc(var(--v-orbitRight-shade,.35) * .83)}
+.portrait[data-r009="strokes"] .v-jaw-left {opacity:calc(var(--v-jawLeft-shade,.35) * .79)}
+.portrait[data-r009="strokes"] .v-jaw-right {opacity:calc(var(--v-jawRight-shade,.35) * .79)}
+.portrait[data-r009="strokes"] .v-cheek-left::after,
+.portrait[data-r009="strokes"] .v-cheek-right::after {opacity:0}
+.portrait[data-r009="strokes"] .face-hatching {opacity:calc(var(--hatch,.62) * .22)}
+.portrait[data-r009="strokes"][data-study="structure"] .stroke-field {display:none}

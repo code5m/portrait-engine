@@ -84,3 +84,8 @@ expression, gestural line quality, and perceived identity.
 多文件页面、`standalone.html` 与测试内存页必须按相同次序内嵌 `study008.css` 和 `surface-field.mjs`。离线打包器拼接 ES 模块会丢失模块词法边界；研究中发现 `const clamp` 命名碰撞，现独立运行 `scripts/check-standalone.py`，校验**最终生成的 JS**，而非只检查源码语法。
 
 算法是原创的二维经验拟合，**不构成独立人脸身份模型/新 DSL/真实三维透视系统**。如将来对照实验没有改善艺术可信度，应保留或回退候选，绝不取代既有默认画面。
+
+
+## Research 009 · 形体排线（独立渲染分支）
+
+`src/stroke-field.mjs` **只读取** `src/surface-field.mjs` 的同一批正面法线/阴影值，生成 11 个区域的 CSS 角度和不透明度；`styles/study009.css` 再用与面部 R007 锚点绑定的伪元素画出铅笔纹理。所有计算可独立单元测试，不加载 PNG/SVG/Canvas、不修改照片像素。仅 `?r009=strokes` 激活，`?r009=tonal` 是共享几何的基线。原默认没有变更，仓库源码和单文件构建仍是同一事实源。详见 [RESEARCH-009](RESEARCH-009.md)。

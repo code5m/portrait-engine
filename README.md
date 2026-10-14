@@ -130,3 +130,10 @@ Research 007 的 16 个面部锚点，进一步定义一个连续的二维高斯
 - `python3 test/study008-visual.py`：真实 Chromium 产生 36 张 A/B 对照图，检查光向、几何关系、遮挡位移与移动端。
 
 默认肖像和所有旧角色 JSON v1 均保持不变；无图片、SVG、Canvas 或 AI 生图素材参与运行时绘制。完整试验、边界和视觉不足见 [`docs/RESEARCH-008.md`](docs/RESEARCH-008.md)。**美术写实度未经独立真人盲评，仍为 `ART_UNVERIFIED`，不能因为自动测试通过而宣称艺术进步。**
+
+
+## Research 009 — 形体派生铅笔线（独立候选）
+
+为正视角色已有的“塑料浮雕感”，新增 **同一 R008 浮雕场的纯 CSS 明暗 A/B**：`?r009=tonal` 是原有平滑阴影，`?r009=strokes` 使用共享法线决定 11 个局部区域的排线方向，光源决定线条可见度，同时适度降低模糊蒙层的强度。对比页：[study/009-compare.html](study/009-compare.html)，研究报告：[docs/RESEARCH-009.md](docs/RESEARCH-009.md)。
+
+**只证明不同画法可以保留同一结构、动态响应光线；没有外部盲评，不能宣称哪张更像真人。** 默认人物、原 9 项参数和独立单文件 HTML 保持不变。

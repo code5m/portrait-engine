@@ -4,6 +4,7 @@ import { derivePortraitStyle } from './geometry.mjs';
 import { deriveVolumeStyle } from './volume.mjs';
 import { deriveFaceStructureStyle } from './face-model.mjs';
 import { deriveSurfaceFieldStyle } from './surface-field.mjs';
+import { deriveStrokeFieldStyle } from './stroke-field.mjs';
 
 const root = document.querySelector('#portrait');
 const paper = document.querySelector('#portrait-paper');
@@ -15,7 +16,10 @@ const qs = new URLSearchParams(window.location.search);
 const researchVariant = qs.get('r005');
 const volumeVariant = qs.get('r006');
 const faceVariant = qs.get('r007');
-const surfaceVariant = qs.get('r008');
+// Research 009 inherits the exact Research 008 surface so only paint differs.
+const strokeVariant = qs.get('r009');
+const strokeStudy = strokeVariant === 'tonal' || strokeVariant === 'strokes';
+const surfaceVariant = strokeStudy ? 'field' : qs.get('r008');
 const surfaceStudy = surfaceVariant === 'legacy' || surfaceVariant === 'field';
 const faceStudy = faceVariant === 'baseline' || faceVariant === 'structured' || surfaceStudy;
 // Research 006 is opt-in until independent visual quality evidence exists.
@@ -25,6 +29,7 @@ if (volumeVariant === 'volume' || faceStudy) root.dataset.r006 = 'volume';
 if (faceVariant === 'baseline' || faceVariant === 'structured') root.dataset.r007 = faceVariant;
 if (surfaceStudy) root.dataset.r007 = 'structured';
 if (surfaceStudy) root.dataset.r008 = surfaceVariant;
+if (strokeStudy) root.dataset.r009 = strokeVariant;
 const acceptedResearchVariants = new Set(['baseline', 'orbital', 'expression']);
 if (acceptedResearchVariants.has(researchVariant)) root.dataset.r005 = researchVariant;
 const researchEmbed = qs.get('embed') === '1' && (acceptedResearchVariants.has(researchVariant) || volumeStudy);
@@ -95,6 +100,9 @@ function apply() {
   }
   if (surfaceVariant === 'field') {
     for (const [name, value] of Object.entries(deriveSurfaceFieldStyle(values))) root.style.setProperty(name, value);
+  }
+  if (strokeVariant === 'strokes') {
+    for (const [name, value] of Object.entries(deriveStrokeFieldStyle(values))) root.style.setProperty(name, value);
   }
   for (const key of KEYS) {
     const def = DEFINITIONS[key];

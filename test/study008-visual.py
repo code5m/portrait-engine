@@ -60,8 +60,8 @@ async def run():
                             page.on('pageerror', lambda e: exceptions.append(str(e)))
                     if fallback:
                         html = (ROOT / 'standalone.html').read_text(encoding='utf8')
-                        assert "const surfaceVariant = qs.get('r008');" in html
-                        html = html.replace("const surfaceVariant = qs.get('r008');", f"const surfaceVariant = '{arm}';")
+                        assert "const surfaceVariant = strokeStudy ? 'field' : qs.get('r008');" in html
+                        html = html.replace("const surfaceVariant = strokeStudy ? 'field' : qs.get('r008');", f"const surfaceVariant = strokeStudy ? 'field' : '{arm}';")
                         await page.set_content(html, wait_until='load')
                     root = page.locator('#portrait')
                     assert await root.get_attribute('data-r008') == arm

@@ -1,0 +1,19 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Research 009 · 形体排线 A/B 对比</title><style>
+body{margin:0;background:#e8e4dc;color:#232823;font:16px/1.65 system-ui,sans-serif}
+main{max-width:1340px;margin:auto;padding:20px}
+h1{font-size:clamp(23px,3vw,36px);margin:5px 0}p{max-width:83ch}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+article{background:#f6f3ec;border:1px solid #aaa69a;border-radius:12px;padding:12px;min-width:0}
+h2{font-size:18px;margin:0 0 8px}iframe{width:100%;height:730px;border:1px solid #b0b0a2;border-radius:6px;background:white}
+@media(max-width:800px){.grid{grid-template-columns:1fr}iframe{height:680px}}
+</style></head><body><main>
+<p>PORTRAIT ENGINE / RESEARCH 009 / CSS DRAWING</p><h1>相同脸部结构，改用形体排线，会更像素描吗？</h1>
+<p>两组都是 Research 008 的连续浮雕场、同一默认人物、同一光源。A 由模糊阴影表达深浅；B 降低部分模糊明暗，以法线和统一光源控制 11 个位置的铅笔线。每幅画都由浏览器原生 DOM/CSS 绘制。<strong>当前没有真人盲评，不能说 B 胜出。</strong></p>
+<div class="grid">
+<article><h2>A：平滑浮雕明暗（基线）</h2><iframe title="原有光照浮雕" loading="eager" src="../standalone.html?r009=tonal"></iframe></article>
+<article><h2>B：形体派生排线（实验）</h2><iframe title="光照与形体派生的 CSS 排线" loading="eager" src="../standalone.html?r009=strokes"></iframe></article>
+</div>
+<p>建议在两侧滑块分别设定同一个脸宽、下颌、光向与排线浓度（如 100 / 118 / -60 / 62），然后比较眼窝、颧骨、鼻根、颊颌的体积可信度与是否出现机械条纹。评价不自动采集。</p>
+<p><a href="../index.html">返回肖像工作台</a> · <a href="../docs/RESEARCH-009.md">查看实验记录</a></p>
+</main></body></html>
