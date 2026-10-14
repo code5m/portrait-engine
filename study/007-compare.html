@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Portrait Engine · Research 007 FaceGeometry</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;background:#171c18;color:#eee9de;font:15px/1.65 system-ui,sans-serif}
+    main{max-width:1160px;margin:auto;padding:24px}h1{font-size:26px}p{color:#b8c1b7}
+    .pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    article{border:1px solid #536054;background:#202821;padding:12px}
+    h2{font-size:15px;font-weight:500;margin:0 0 8px}
+    iframe{width:100%;height:660px;border:0;background:#1d2421}
+    small{color:#b8c1b7}a{color:#edc699}
+    @media(max-width:850px){.pair{grid-template-columns:1fr}iframe{height:620px}}
+  </style>
+</head>
+<body><main>
+  <h1>Research 007 · 共享面部几何对照</h1>
+  <p>同一 CSS 绘画与 Research 006 光源；左为固定绝对坐标基线，右为共享 FaceGeometry 锚点。画面固定使用默认九项参数；可到主工作台追加 ?r007=structured 调整滑块。</p>
+  <div class="pair">
+    <article><h2>A · 既有体面光照基线</h2><iframe title="基线人脸" src="../index.html?r007=baseline&amp;embed=1" loading="eager"></iframe></article>
+    <article><h2>B · FaceGeometry 统一结构</h2><iframe title="共享面部结构人脸" src="../index.html?r007=structured&amp;embed=1" loading="eager"></iframe></article>
+  </div>
+  <p><a href="007-blind.html">参与独立匿名评分</a></p>
+  <p><strong>研究状态：ART_UNVERIFIED。</strong> 无独立真人评分，不宣布 B 更真实。截图像素差不是艺术评价；候选不改变原版默认作品、用户存档或 9 参数 JSON。</p>
+  <p><small>所有头像由 HTML/CSS 绘制，不加载图片、SVG、Canvas 或 AI 图片。<a href="../index.html">返回主工作台</a></small></p>
+</main></body></html>

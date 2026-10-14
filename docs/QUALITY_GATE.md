@@ -89,3 +89,14 @@ The research issue remains open until that evidence exists.
 - [ ] **Chrome/Firefox/Safari 全兼容与严谨性能基准：未完成。**
 
 详细记录见 `docs/RESEARCH-006.md`。GitHub CI 结果必须以远端实际检查为准。
+
+## Research 007：共享 FaceGeometry 候选（不改变默认）
+
+- [x] `src/face-model.mjs` 的 16 个人脸局部锚点、跨区域依赖与参数边界有单元测试；眼部、鼻部、颧骨、下颌多个 CSS 节点真实共享 CSS 变量。
+- [x] R006 原光照算法与 R001–R006 所有源文件保持兼容；用户默认绘画与 7/9 参数 JSON 不变。
+- [x] 本地 Chromium 54 帧 A/B 画面、下颌/脸宽极值、光照、移动端边界与匿名评分导出功能已自动验证。
+- [x] `standalone.html` 采用原脚本单一事实源生成；QA 使用同一绘画源。
+- [ ] 真正的独立真人盲评数据 **0 位**，艺术真实性 `ART_UNVERIFIED`。
+- [ ] 严格跨设备性能分析、3D 解剖模型、独立身份生成和 PSL 语言仍**未实现**。
+
+详细研究结论见 [RESEARCH-007](RESEARCH-007.md)。代码 CI 绿灯只能表示工程验证通过，不能代替美术验收。

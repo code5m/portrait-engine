@@ -1,0 +1,177 @@
+/* Research 007: shared FaceGeometry anchors, NOT additional painted textures.
+   Both comparison arms use the same Research 006 light-volume model.
+   The CSS-only geometry candidate is OPT-IN via ?r007=structured.
+   Every value below derives from src/face-model.mjs; none is an image. */
+
+/* Orbit: lids, sockets and eyebrows must move as one structure. */
+.portrait[data-r007="structured"] .eye-left {
+  left:calc(var(--fg-leftEye-x) - 30.5px);
+  top:calc(var(--fg-leftEye-y) - 20px);
+  right:auto;
+  transform:rotate(-2deg);
+}
+.portrait[data-r007="structured"] .eye-right {
+  left:calc(var(--fg-rightEye-x) - 30.5px);
+  top:calc(var(--fg-rightEye-y) - 20px);
+  right:auto;
+  transform:rotate(1deg);
+}
+.portrait[data-r007="structured"] .eye-socket-left {
+  left:calc(var(--fg-leftOrbit-x) - 41.5px);
+  top:calc(var(--fg-leftOrbit-y) - 34px);
+  right:auto;
+}
+.portrait[data-r007="structured"] .eye-socket-right {
+  left:calc(var(--fg-rightOrbit-x) - 41.5px);
+  top:calc(var(--fg-rightOrbit-y) - 34px);
+  right:auto;
+}
+.portrait[data-r007="structured"] .eyebrow-left {
+  left:calc(var(--fg-leftBrow-x) - 27px);
+  top:var(--fg-leftBrow-y);
+  right:auto;
+}
+.portrait[data-r007="structured"] .eyebrow-right {
+  left:calc(var(--fg-rightBrow-x) - 27px);
+  top:var(--fg-rightBrow-y);
+  right:auto;
+}
+.portrait[data-r007="structured"] .brow-bone-left {
+  left:calc(var(--fg-leftBrow-x) - 45px);
+  top:calc(var(--fg-leftBrow-y) - 26px);
+  right:auto;
+}
+.portrait[data-r007="structured"] .brow-bone-right {
+  left:calc(var(--fg-rightBrow-x) - 45px);
+  top:calc(var(--fg-rightBrow-y) - 26px);
+  right:auto;
+}
+.portrait[data-r007="structured"] .under-eye-left {
+  left:calc(var(--fg-leftEye-x) - 28px);
+  right:auto;
+}
+.portrait[data-r007="structured"] .under-eye-right {
+  left:calc(var(--fg-rightEye-x) - 28px);
+  right:auto;
+}
+/* Nose and alae share an eye-derived midline. The basal shadows and the
+   orbit/cheek landmarks are no longer unrelated absolute positions. */
+.portrait[data-r007="structured"] .nose {
+  left:calc(var(--fg-noseRoot-x) - 32px);
+  top:var(--fg-noseRoot-y);
+}
+.portrait[data-r007="structured"] .nasal-plane-left {
+  left:calc(var(--fg-leftAla-x) - 14.5px);
+  top:calc(var(--fg-noseRoot-y) + 1px);
+  right:auto;
+}
+.portrait[data-r007="structured"] .nasal-plane-right {
+  left:calc(var(--fg-rightAla-x) - 14.5px);
+  top:calc(var(--fg-noseRoot-y) + 1px);
+  right:auto;
+}
+.portrait[data-r007="structured"] .philtrum {
+  left:calc(var(--fg-noseBase-x) - 10px);
+}
+.portrait[data-r007="structured"] .mouth {
+  left:calc(var(--fg-mouth-x) - 47.5px);
+  top:calc(var(--fg-mouth-y) + 2px);
+}
+/* Cheek and jaw receive separate computed anchors from the SAME geometry. */
+.portrait[data-r007="structured"] .cheek-plane-left,
+.portrait[data-r007="structured"] .cheek-plane-right {
+  left:calc(var(--fg-leftCheek-x) - 43.5px);
+  right:auto;
+  top:calc(var(--fg-leftCheek-y) - 30px);
+}
+.portrait[data-r007="structured"] .cheek-plane-right {
+  left:calc(var(--fg-rightCheek-x) - 43.5px);
+  top:calc(var(--fg-rightCheek-y) - 30px);
+}
+.portrait[data-r007="structured"] .malar-left,
+.portrait[data-r007="structured"] .malar-right {
+  left:calc(var(--fg-leftCheek-x) - 39.5px);
+  right:auto;
+  top:calc(var(--fg-leftCheek-y) - 17px);
+}
+.portrait[data-r007="structured"] .malar-right {
+  left:calc(var(--fg-rightCheek-x) - 39.5px);
+  top:calc(var(--fg-rightCheek-y) - 17px);
+}
+.portrait[data-r007="structured"] .jaw-plane-left,
+.portrait[data-r007="structured"] .jaw-plane-right {
+  left:calc(var(--fg-leftJaw-x) - 23.5px);
+  right:auto;
+  top:calc(var(--fg-leftJaw-y) - 40px);
+}
+.portrait[data-r007="structured"] .jaw-plane-right {
+  left:calc(var(--fg-rightJaw-x) - 23.5px);
+  top:calc(var(--fg-rightJaw-y) - 40px);
+}
+.portrait[data-r007="structured"] .jawline-left,
+.portrait[data-r007="structured"] .jawline-right {
+  left:calc(var(--fg-leftJaw-x) - 17.5px);
+  right:auto;
+  top:calc(var(--fg-leftJaw-y) - 15px);
+}
+.portrait[data-r007="structured"] .jawline-right {
+  left:calc(var(--fg-rightJaw-x) - 17.5px);
+  top:calc(var(--fg-rightJaw-y) - 15px);
+}
+.portrait[data-r007="structured"] .chin-plane {
+  left:calc(var(--fg-chin-x) - 62.5px);
+  top:calc(var(--fg-chin-y) - 9px);
+}
+/* Reuse R006's shadow opacity. Its overlay now follows the same orbit,
+   nose, cheek and jaw landmarks rather than static percentage coordinates. */
+.portrait[data-r007="structured"] .v-orbit-left,
+.portrait[data-r007="structured"] .v-orbit-right {
+  left:calc(var(--fg-leftOrbit-x) - 49.5px);
+  right:auto;
+  top:calc(var(--fg-leftOrbit-y) - 36px);
+}
+.portrait[data-r007="structured"] .v-orbit-right {
+  left:calc(var(--fg-rightOrbit-x) - 49.5px);
+  top:calc(var(--fg-rightOrbit-y) - 36px);
+}
+.portrait[data-r007="structured"] .v-nose-left,
+.portrait[data-r007="structured"] .v-nose-right {
+  left:calc(var(--fg-leftAla-x) - 22.8px);
+  top:calc(var(--fg-noseRoot-y) - 6px);
+  right:auto;
+}
+.portrait[data-r007="structured"] .v-nose-right {
+  left:calc(var(--fg-rightAla-x) - 22.8px);
+}
+.portrait[data-r007="structured"] .v-cheek-left,
+.portrait[data-r007="structured"] .v-cheek-right {
+  left:calc(var(--fg-leftCheek-x) - 69.3px);
+  right:auto;
+  top:calc(var(--fg-leftCheek-y) - 28px);
+}
+.portrait[data-r007="structured"] .v-cheek-right {
+  left:calc(var(--fg-rightCheek-x) - 69.3px);
+  top:calc(var(--fg-rightCheek-y) - 28px);
+}
+.portrait[data-r007="structured"] .v-jaw-left,
+.portrait[data-r007="structured"] .v-jaw-right {
+  left:calc(var(--fg-leftJaw-x) - 57px);
+  top:calc(var(--fg-leftJaw-y) - 37px);
+  right:auto;
+}
+.portrait[data-r007="structured"] .v-jaw-right {
+  left:calc(var(--fg-rightJaw-x) - 57px);
+  top:calc(var(--fg-rightJaw-y) - 37px);
+}
+.portrait[data-r007="structured"] .v-chin {
+  left:calc(var(--fg-chin-x) - 47.5px);
+  top:calc(var(--fg-chin-y) - 23px);
+}
+
+/* The repository workbench now has multiple research links. Prevent mobile
+   clipping without changing standalone artwork or its paint pipeline. */
+@media(max-width:800px){
+  .canvas-footnote{flex-wrap:wrap;justify-content:flex-start}
+  .canvas-footnote>div{flex:1 1 100%;min-width:0}
+  .canvas-footnote .text-link{white-space:normal;max-width:100%}
+}

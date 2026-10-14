@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Portrait Engine · Research 007 独立匿名评价</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;background:#f0eee7;color:#232722;font:15px/1.6 system-ui,sans-serif}
+    header,main,footer{max-width:1080px;margin:auto;padding:21px 24px}
+    h1{font:normal clamp(26px,4vw,39px)/1.2 Georgia,serif;margin:10px 0}
+    p{color:#596058;margin:10px 0}
+    .notice{border-left:4px solid #957b59;padding:11px 16px;background:#e3e0d5}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:26px}
+    section{min-width:0;background:#fff;border:1px solid #ccc9bd;padding:14px}
+    section h2{font-size:16px;margin:0 0 10px}iframe{display:block;width:100%;height:560px;border:0;background:#d7d7cf}
+    fieldset{border:0;margin:12px 0;padding:0}legend{font-size:13px;color:#434943;font-weight:700}
+    label{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0;font-size:13px}
+    select,input{font:inherit;border:1px solid #8b958c;border-radius:3px;padding:6px;background:#fff;color:#222}
+    select{width:132px}input{max-width:50vw}
+    button{border:0;background:#25342b;color:white;padding:11px 18px;font:600 14px system-ui;border-radius:4px;cursor:pointer}
+    button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #aa7f48;outline-offset:2px}
+    .panel{padding:20px 0}.note{font-size:12px}
+    @media(max-width:750px){.grid{grid-template-columns:1fr}header,main,footer{padding:15px}iframe{height:520px}}
+  </style>
+</head>
+<body>
+<header>
+  <small>PORTRAIT ENGINE / RESEARCH 007</small>
+  <h1>哪张人脸的结构更自然？</h1>
+  <p>两幅图均为同一组 HTML/CSS 绘画及 Research 006 光照。只有五官结构定位方法不同。</p>
+  <div class="notice">请独立观看，避免查看 URL/源码或和其他评价者讨论；允许给同分。评分**只下载到本地**，不会自动发送。请勿填写真实姓名。</div>
+</header>
+<main>
+  <form id="rating-form">
+    <div id="candidates" class="grid" aria-label="两个匿名绘画候选"></div>
+    <div class="panel">
+      <label>评价者代号（可选）<input id="reviewer" maxlength="32" autocomplete="off" placeholder="observer-01"></label>
+      <button type="submit">导出匿名评分 JSON</button>
+      <p id="message" role="status">尚未收集任何人类评分。</p>
+      <p class="note">要求至少三名互不讨论的真实观察者。自动化选择的分数仅用于测试页面功能，不算人类评价。查看浏览器开发工具可能暴露绘画方案；此页面是有限单盲，不是严格双盲。</p>
+    </div>
+  </form>
+</main>
+<footer class="note">Research 007 · ART_UNVERIFIED · 无自动评分上传 · 绘图仅使用 HTML + CSS。</footer>
+<script>
+(() => {
+  'use strict';
+  const variants = ['baseline','structured'];
+  const metrics = [
+    ['orbit','眼窝与眼神自然度'],
+    ['nose','鼻根与鼻翼连接自然度'],
+    ['jaw','颧骨与下颌协调度'],
+    ['whole','整体真人可信度']
+  ];
+  const order = [...variants];
+  const random = new Uint32Array(1);
+  crypto.getRandomValues(random);
+  if (random[0] % 2 === 1) order.reverse();
+  const host = document.querySelector('#candidates');
+  order.forEach((variant, index) => {
+    const label = String.fromCharCode(65 + index);
+    const card = document.createElement('section');
+    const title = document.createElement('h2');
+    title.textContent = '方案 ' + label;
+    const frame = document.createElement('iframe');
+    frame.title = '匿名素描方案 ' + label;
+    frame.src = '../standalone.html?r007=' + encodeURIComponent(variant) + '&embed=1';
+    frame.loading = 'eager';
+    frame.referrerPolicy = 'no-referrer';
+    const fieldset = document.createElement('fieldset');
+    const legend = document.createElement('legend');
+    legend.textContent = `方案 ${label} 评分（1 差 / 5 好）`;
+    fieldset.append(legend);
+    for (const [key,desc] of metrics) {
+      const row = document.createElement('label');
+      row.textContent = desc;
+      const select = document.createElement('select');
+      select.name = `${label}-${key}`;
+      select.required = true;
+      select.setAttribute('aria-label', `方案 ${label} ${desc}`);
+      const placeholder = document.createElement('option');
+      placeholder.textContent = '请选择';
+      placeholder.value = '';
+      select.append(placeholder);
+      for (let n=1;n<=5;n++) {
+        const opt=document.createElement('option');
+        opt.value=String(n);
+        opt.textContent=`${n} / 5`;
+        select.append(opt);
+      }
+      row.append(select);
+      fieldset.append(row);
+    }
+    card.append(title,frame,fieldset);
+    host.append(card);
+  });
+  document.querySelector('#rating-form').addEventListener('submit', event => {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const results = order.map((variant,index)=>{
+      const label=String.fromCharCode(65+index);
+      const scores=Object.fromEntries(metrics.map(([key])=>[key,Number(form.get(`${label}-${key}`))]));
+      if (Object.values(scores).some(n=>!Number.isInteger(n)||n<1||n>5)) throw new Error('Invalid rating');
+      return {blind_label:label,variant,scores};
+    });
+    const result={protocol:'portrait-engine-r007-blind',version:1,
+      created_at:new Date().toISOString(),
+      reviewer:document.querySelector('#reviewer').value.trim().slice(0,32),
+      agreement:'No automatic data transmission; independently scored',
+      controlled:{faceWidth:100,jaw:100,lightDirection:-30,renderer:'CSS',base:'Research 006 volume'},
+      candidates:results};
+    const url=URL.createObjectURL(new Blob([JSON.stringify(result,null,2)],{type:'application/json'}));
+    const a=document.createElement('a');
+    a.href=url;a.download='portrait-engine-r007-blind-rating.json';
+    document.body.append(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    document.querySelector('#message').textContent='评分已经导出到你的设备；研究者尚未自动收到任何数据。';
+  });
+})();
+</script>
+</body>
+</html>

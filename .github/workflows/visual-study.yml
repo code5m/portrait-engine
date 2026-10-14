@@ -7,6 +7,12 @@ on:
       - 'styles/**'
       - 'src/geometry.mjs'
       - 'src/volume.mjs'
+      - 'src/face-model.mjs'
+      - 'src/app.mjs'
+      - 'index.html'
+      - 'scripts/build-standalone.py'
+      - 'test/study007-visual.py'
+      - 'study/007-*.html'
       - 'test/research-matrix.py'
       - 'test/browser-qa.py'
   pull_request:
@@ -14,6 +20,12 @@ on:
       - 'styles/**'
       - 'src/geometry.mjs'
       - 'src/volume.mjs'
+      - 'src/face-model.mjs'
+      - 'src/app.mjs'
+      - 'index.html'
+      - 'scripts/build-standalone.py'
+      - 'test/study007-visual.py'
+      - 'study/007-*.html'
       - 'test/research-matrix.py'
       - 'test/browser-qa.py'
 permissions:
@@ -39,14 +51,16 @@ jobs:
           python test/hair-probe.py
           python test/study005-visual.py
           python test/study006-visual.py
+          python test/study007-visual.py
       - name: Upload reproducible visual evidence (not runtime assets)
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: research-006-css-face-value-planes
+          name: research-007-css-face-geometry-study
           path: |
             test-results/research-004/
             test-results/research-005/
             test-results/research-006/
+            test-results/research-007/
           if-no-files-found: warn
           retention-days: 21

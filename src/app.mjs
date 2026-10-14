@@ -2,6 +2,7 @@ import { DEFINITIONS, PRESETS, KEYS, defaults, normalize, equal, encode, decode 
 import { zh } from './i18n.mjs';
 import { derivePortraitStyle } from './geometry.mjs';
 import { deriveVolumeStyle } from './volume.mjs';
+import { deriveFaceStructureStyle } from './face-model.mjs';
 
 const root = document.querySelector('#portrait');
 const paper = document.querySelector('#portrait-paper');
@@ -12,10 +13,13 @@ const fileInput = document.querySelector('#upload-input');
 const qs = new URLSearchParams(window.location.search);
 const researchVariant = qs.get('r005');
 const volumeVariant = qs.get('r006');
+const faceVariant = qs.get('r007');
+const faceStudy = faceVariant === 'baseline' || faceVariant === 'structured';
 // Research 006 is opt-in until independent visual quality evidence exists.
 // It never changes saved nine-parameter JSON or the public default.
-const volumeStudy = volumeVariant === 'volume' || volumeVariant === 'baseline';
-if (volumeVariant === 'volume') root.dataset.r006 = 'volume';
+const volumeStudy = volumeVariant === 'volume' || volumeVariant === 'baseline' || faceStudy;
+if (volumeVariant === 'volume' || faceStudy) root.dataset.r006 = 'volume';
+if (faceStudy) root.dataset.r007 = faceVariant;
 const acceptedResearchVariants = new Set(['baseline', 'orbital', 'expression']);
 if (acceptedResearchVariants.has(researchVariant)) root.dataset.r005 = researchVariant;
 const researchEmbed = qs.get('embed') === '1' && (acceptedResearchVariants.has(researchVariant) || volumeStudy);
@@ -80,6 +84,9 @@ function apply() {
   for (const [name, value] of Object.entries(derivePortraitStyle(values))) root.style.setProperty(name, value);
   if (volumeStudy) {
     for (const [name, value] of Object.entries(deriveVolumeStyle(values))) root.style.setProperty(name, value);
+  }
+  if (faceStudy) {
+    for (const [name, value] of Object.entries(deriveFaceStructureStyle(values))) root.style.setProperty(name, value);
   }
   for (const key of KEYS) {
     const def = DEFINITIONS[key];

@@ -68,3 +68,9 @@ expression, gestural line quality, and perceived identity.
 `styles/study004.css` 在 `likeness.css` 之后加载，集中存放候选面部形体与少量独立发丝的 CSS 声明。`index.html`、单文件构建和 Chromium QA 使用完全相同的样式顺序。浏览器试验脚本仅临时注入四种透明度配置来进行比较，生成图片不参与任何运行时绘制。
 
 所有绘画图形仍是 HTML 元素、渐变、遮罩、阴影和边框，没有下载图片、内嵌 SVG、Canvas 或 AI 生图底图。CSS 的 2D 参数仍然是画面经验曲线，**不是**人体解剖模型或物理光线跟踪。
+
+## Research 007 / FaceGeometry 共享面部局部坐标
+
+新增 `src/face-model.mjs`：参照 `.face` 的 207×304 逻辑尺寸，输出 16 个二维解剖参考点和 32 个 CSS 变量，不触及任何像素、DOM/Canvas/图片绘制。`styles/study007.css` 只在 `data-r007="structured"` 时读取这些变量，把眼窝/眼睛/眉弓、鼻翼/鼻侧、颧骨/下颌等模块联动；基线与候选两边都使用 Research 006 的既有同光源模型。原先 `src/geometry.mjs` 的页面整体参考点保留，`src/face-model.mjs` 专注于内部细节，**两层并不重复控制同一个坐标值**。
+
+**仍为二维经验比例**，不是三维拓扑/颅骨推导/身份特征语言。独立 URL 参数 `?r007=structured` 显式开启，旧 JSON v1 与默认绘图行为不受影响。参见 [RESEARCH-007](RESEARCH-007.md) 和 [研究连续性 ADR](ADR-001-RESEARCH-CONTINUITY.md)。

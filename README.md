@@ -110,3 +110,11 @@ Research 003 adds `styles/likeness.css`: intentionally asymmetric eye constructi
 打开 `standalone.html?r006=volume` 查看纯 CSS 实验，使用 `standalone.html?r006=baseline` 作为对照。通过本地服务访问 [`study/006-compare.html`](study/006-compare.html) 可以同时查看 A/B。实验不修改用户已有存档，默认画面不变。
 
 自动化：`npm run verify`、`python3 test/study006-visual.py`（9 种脸宽/光向组合 × 2 个版本，共 18 组截图）。真实限制和美术债务见 [`docs/RESEARCH-006.md`](docs/RESEARCH-006.md)。**仍无独立真人盲评，不能断言更写实。**
+
+## Research 007：统一人脸局部结构坐标（仅实验，保持默认作品不变）
+
+新增 `src/face-model.mjs` 中的 **FaceGeometry**：16 个面部局部位置节点，让眼窝/眼睛/眉毛、鼻翼/鼻侧以及颧骨/下颌共同读取一套结构坐标。绘画仍为原创 CSS，不使用图片、SVG、Canvas 或 AI 画图素材，也没有声明发明新语言。
+
+通过浏览器打开 `standalone.html?r007=baseline`（固定坐标）和 `standalone.html?r007=structured`（共享锚点）比较；两边共用 Research 006 体面光源。若在仓库的 HTTP 服务下运行，可访问 [`study/007-compare.html`](study/007-compare.html) 对照以及 [`study/007-blind.html`](study/007-blind.html) 进行独立匿名评价。它们不会上传评分数据，也不会更改之前的人物存档。
+
+复现 **54 张真实 CSS 浏览器渲染**与联动测试：`npm run verify && python3 test/study007-visual.py`。技术详情、反证标准、局限性与实验记录见 [`docs/RESEARCH-007.md`](docs/RESEARCH-007.md)；保留前六轮成果的架构原则见 [`docs/ADR-001-RESEARCH-CONTINUITY.md`](docs/ADR-001-RESEARCH-CONTINUITY.md)。目前仍是风格化肖像，独立真人艺术评分 **0**，状态 `ART_UNVERIFIED`。

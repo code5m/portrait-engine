@@ -1198,6 +1198,186 @@ body[data-r005-embed="1"] .drawing-signature {display:none;}
 }
 
 </style>
+  <style>
+/* Research 007: shared FaceGeometry anchors, NOT additional painted textures.
+   Both comparison arms use the same Research 006 light-volume model.
+   The CSS-only geometry candidate is OPT-IN via ?r007=structured.
+   Every value below derives from src/face-model.mjs; none is an image. */
+
+/* Orbit: lids, sockets and eyebrows must move as one structure. */
+.portrait[data-r007="structured"] .eye-left {
+  left:calc(var(--fg-leftEye-x) - 30.5px);
+  top:calc(var(--fg-leftEye-y) - 20px);
+  right:auto;
+  transform:rotate(-2deg);
+}
+.portrait[data-r007="structured"] .eye-right {
+  left:calc(var(--fg-rightEye-x) - 30.5px);
+  top:calc(var(--fg-rightEye-y) - 20px);
+  right:auto;
+  transform:rotate(1deg);
+}
+.portrait[data-r007="structured"] .eye-socket-left {
+  left:calc(var(--fg-leftOrbit-x) - 41.5px);
+  top:calc(var(--fg-leftOrbit-y) - 34px);
+  right:auto;
+}
+.portrait[data-r007="structured"] .eye-socket-right {
+  left:calc(var(--fg-rightOrbit-x) - 41.5px);
+  top:calc(var(--fg-rightOrbit-y) - 34px);
+  right:auto;
+}
+.portrait[data-r007="structured"] .eyebrow-left {
+  left:calc(var(--fg-leftBrow-x) - 27px);
+  top:var(--fg-leftBrow-y);
+  right:auto;
+}
+.portrait[data-r007="structured"] .eyebrow-right {
+  left:calc(var(--fg-rightBrow-x) - 27px);
+  top:var(--fg-rightBrow-y);
+  right:auto;
+}
+.portrait[data-r007="structured"] .brow-bone-left {
+  left:calc(var(--fg-leftBrow-x) - 45px);
+  top:calc(var(--fg-leftBrow-y) - 26px);
+  right:auto;
+}
+.portrait[data-r007="structured"] .brow-bone-right {
+  left:calc(var(--fg-rightBrow-x) - 45px);
+  top:calc(var(--fg-rightBrow-y) - 26px);
+  right:auto;
+}
+.portrait[data-r007="structured"] .under-eye-left {
+  left:calc(var(--fg-leftEye-x) - 28px);
+  right:auto;
+}
+.portrait[data-r007="structured"] .under-eye-right {
+  left:calc(var(--fg-rightEye-x) - 28px);
+  right:auto;
+}
+/* Nose and alae share an eye-derived midline. The basal shadows and the
+   orbit/cheek landmarks are no longer unrelated absolute positions. */
+.portrait[data-r007="structured"] .nose {
+  left:calc(var(--fg-noseRoot-x) - 32px);
+  top:var(--fg-noseRoot-y);
+}
+.portrait[data-r007="structured"] .nasal-plane-left {
+  left:calc(var(--fg-leftAla-x) - 14.5px);
+  top:calc(var(--fg-noseRoot-y) + 1px);
+  right:auto;
+}
+.portrait[data-r007="structured"] .nasal-plane-right {
+  left:calc(var(--fg-rightAla-x) - 14.5px);
+  top:calc(var(--fg-noseRoot-y) + 1px);
+  right:auto;
+}
+.portrait[data-r007="structured"] .philtrum {
+  left:calc(var(--fg-noseBase-x) - 10px);
+}
+.portrait[data-r007="structured"] .mouth {
+  left:calc(var(--fg-mouth-x) - 47.5px);
+  top:calc(var(--fg-mouth-y) + 2px);
+}
+/* Cheek and jaw receive separate computed anchors from the SAME geometry. */
+.portrait[data-r007="structured"] .cheek-plane-left,
+.portrait[data-r007="structured"] .cheek-plane-right {
+  left:calc(var(--fg-leftCheek-x) - 43.5px);
+  right:auto;
+  top:calc(var(--fg-leftCheek-y) - 30px);
+}
+.portrait[data-r007="structured"] .cheek-plane-right {
+  left:calc(var(--fg-rightCheek-x) - 43.5px);
+  top:calc(var(--fg-rightCheek-y) - 30px);
+}
+.portrait[data-r007="structured"] .malar-left,
+.portrait[data-r007="structured"] .malar-right {
+  left:calc(var(--fg-leftCheek-x) - 39.5px);
+  right:auto;
+  top:calc(var(--fg-leftCheek-y) - 17px);
+}
+.portrait[data-r007="structured"] .malar-right {
+  left:calc(var(--fg-rightCheek-x) - 39.5px);
+  top:calc(var(--fg-rightCheek-y) - 17px);
+}
+.portrait[data-r007="structured"] .jaw-plane-left,
+.portrait[data-r007="structured"] .jaw-plane-right {
+  left:calc(var(--fg-leftJaw-x) - 23.5px);
+  right:auto;
+  top:calc(var(--fg-leftJaw-y) - 40px);
+}
+.portrait[data-r007="structured"] .jaw-plane-right {
+  left:calc(var(--fg-rightJaw-x) - 23.5px);
+  top:calc(var(--fg-rightJaw-y) - 40px);
+}
+.portrait[data-r007="structured"] .jawline-left,
+.portrait[data-r007="structured"] .jawline-right {
+  left:calc(var(--fg-leftJaw-x) - 17.5px);
+  right:auto;
+  top:calc(var(--fg-leftJaw-y) - 15px);
+}
+.portrait[data-r007="structured"] .jawline-right {
+  left:calc(var(--fg-rightJaw-x) - 17.5px);
+  top:calc(var(--fg-rightJaw-y) - 15px);
+}
+.portrait[data-r007="structured"] .chin-plane {
+  left:calc(var(--fg-chin-x) - 62.5px);
+  top:calc(var(--fg-chin-y) - 9px);
+}
+/* Reuse R006's shadow opacity. Its overlay now follows the same orbit,
+   nose, cheek and jaw landmarks rather than static percentage coordinates. */
+.portrait[data-r007="structured"] .v-orbit-left,
+.portrait[data-r007="structured"] .v-orbit-right {
+  left:calc(var(--fg-leftOrbit-x) - 49.5px);
+  right:auto;
+  top:calc(var(--fg-leftOrbit-y) - 36px);
+}
+.portrait[data-r007="structured"] .v-orbit-right {
+  left:calc(var(--fg-rightOrbit-x) - 49.5px);
+  top:calc(var(--fg-rightOrbit-y) - 36px);
+}
+.portrait[data-r007="structured"] .v-nose-left,
+.portrait[data-r007="structured"] .v-nose-right {
+  left:calc(var(--fg-leftAla-x) - 22.8px);
+  top:calc(var(--fg-noseRoot-y) - 6px);
+  right:auto;
+}
+.portrait[data-r007="structured"] .v-nose-right {
+  left:calc(var(--fg-rightAla-x) - 22.8px);
+}
+.portrait[data-r007="structured"] .v-cheek-left,
+.portrait[data-r007="structured"] .v-cheek-right {
+  left:calc(var(--fg-leftCheek-x) - 69.3px);
+  right:auto;
+  top:calc(var(--fg-leftCheek-y) - 28px);
+}
+.portrait[data-r007="structured"] .v-cheek-right {
+  left:calc(var(--fg-rightCheek-x) - 69.3px);
+  top:calc(var(--fg-rightCheek-y) - 28px);
+}
+.portrait[data-r007="structured"] .v-jaw-left,
+.portrait[data-r007="structured"] .v-jaw-right {
+  left:calc(var(--fg-leftJaw-x) - 57px);
+  top:calc(var(--fg-leftJaw-y) - 37px);
+  right:auto;
+}
+.portrait[data-r007="structured"] .v-jaw-right {
+  left:calc(var(--fg-rightJaw-x) - 57px);
+  top:calc(var(--fg-rightJaw-y) - 37px);
+}
+.portrait[data-r007="structured"] .v-chin {
+  left:calc(var(--fg-chin-x) - 47.5px);
+  top:calc(var(--fg-chin-y) - 23px);
+}
+
+/* The repository workbench now has multiple research links. Prevent mobile
+   clipping without changing standalone artwork or its paint pipeline. */
+@media(max-width:800px){
+  .canvas-footnote{flex-wrap:wrap;justify-content:flex-start}
+  .canvas-footnote>div{flex:1 1 100%;min-width:0}
+  .canvas-footnote .text-link{white-space:normal;max-width:100%}
+}
+
+</style>
   <script type="module">
 const DEFINITIONS = Object.freeze({
   faceWidth: { min: 80, max: 120, step: 1, value: 100, group: 'geometry', unit: '%' },
@@ -1396,6 +1576,81 @@ function deriveVolumeStyle(raw){
   return Object.freeze(styles);
 }
 
+/**
+ * Research 007 / FaceGeometry v0 (2D structural landmark proposal).
+ *
+ * One FACE-LOCAL reference frame (207 x 304 logical pixels) anchors the
+ * orbit, nose, cheek, mouth and jaw. All painting stays native HTML/CSS.
+ * In particular, this is NOT a skull mesh, medical anatomy, or likeness model.
+ * Local coordinates inherit the existing .face scaleX when painted.
+ */
+
+const FRAME = Object.freeze({ x: 87, y: 91, width: 207, height: 304, centerX: 103.5 });
+const point = (x, y) => Object.freeze({ x, y });
+const lerp = (a, b, t) => a + (b - a) * t;
+
+function deriveFaceGeometry(raw) {
+  const p = normalize(raw);
+  const eyeL = point(55.5 - p.eyeSpacing, 157);
+  const eyeR = point(149.5 + p.eyeSpacing, 158);
+  // Nose lies on the midline between both orbits; width moves BOTH alae.
+  const mid = (eyeL.x + eyeR.x) / 2 + 1;
+  const noseRoot = point(mid, lerp(eyeL.y, eyeR.y, .5) + 11.5);
+  const noseBase = point(mid + .5, noseRoot.y + 70);
+  const alaSpan = 18 * p.noseWidth / 100;
+  // The malar plane is defined between the orbit and mandibular turn.
+  const jawSpread = 1 + (p.jaw - 100) * .009;
+  const leftJaw = point(mid - 63 * jawSpread, 257 + (p.jaw - 100) * .08);
+  const rightJaw = point(mid + 63 * jawSpread, 258 + (p.jaw - 100) * .08);
+  const leftCheek = point(lerp(eyeL.x, leftJaw.x, .59), lerp(eyeL.y, leftJaw.y, .35));
+  const rightCheek = point(lerp(eyeR.x, rightJaw.x, .59), lerp(eyeR.y, rightJaw.y, .35));
+  const chin = point(lerp(leftJaw.x, rightJaw.x, .5), 285 + (p.jaw - 100) * .06);
+  const mouth = point(lerp(noseBase.x, chin.x, .34), lerp(noseBase.y, chin.y, .44));
+
+  const anchors = Object.freeze({
+    leftEye: eyeL,
+    rightEye: eyeR,
+    leftBrow: point(eyeL.x - 2, eyeL.y - 38),
+    rightBrow: point(eyeR.x + 1, eyeR.y - 39),
+    leftOrbit: point(eyeL.x, eyeL.y - 3),
+    rightOrbit: point(eyeR.x, eyeR.y - 3),
+    noseRoot,
+    noseBase,
+    leftAla: point(noseBase.x - alaSpan, noseBase.y - 2),
+    rightAla: point(noseBase.x + alaSpan, noseBase.y - 2),
+    leftCheek,
+    rightCheek,
+    leftJaw,
+    rightJaw,
+    mouth,
+    chin
+  });
+  return Object.freeze({
+    frame: FRAME,
+    faceScale: p.faceWidth / 100,
+    anchors
+  });
+}
+
+/** To compare face-local CSS centers to DOM rectangles in portrait space. */
+function toPortraitCoordinates(face, anchor) {
+  return Object.freeze({
+    x: FRAME.x + FRAME.centerX + (anchor.x - FRAME.centerX) * face.faceScale,
+    y: FRAME.y + anchor.y
+  });
+}
+
+/** One set of variables consumed by many CSS anatomical layers. */
+function deriveFaceStructureStyle(raw) {
+  const a = deriveFaceGeometry(raw).anchors;
+  const variables = {};
+  for (const [name, anchor] of Object.entries(a)) {
+    variables[`--fg-${name}-x`] = `${anchor.x.toFixed(2)}px`;
+    variables[`--fg-${name}-y`] = `${anchor.y.toFixed(2)}px`;
+  }
+  return Object.freeze(variables);
+}
+
 // This file uses Unicode escapes to keep the portable source ASCII-only.
 const zh = {
   status:'\u539f\u521b\u4f5c\u54c1 / \u65e0\u56fe\u7247\u7d20\u6750',
@@ -1451,10 +1706,13 @@ const fileInput = document.querySelector('#upload-input');
 const qs = new URLSearchParams(window.location.search);
 const researchVariant = qs.get('r005');
 const volumeVariant = qs.get('r006');
+const faceVariant = qs.get('r007');
+const faceStudy = faceVariant === 'baseline' || faceVariant === 'structured';
 // Research 006 is opt-in until independent visual quality evidence exists.
 // It never changes saved nine-parameter JSON or the public default.
-const volumeStudy = volumeVariant === 'volume' || volumeVariant === 'baseline';
-if (volumeVariant === 'volume') root.dataset.r006 = 'volume';
+const volumeStudy = volumeVariant === 'volume' || volumeVariant === 'baseline' || faceStudy;
+if (volumeVariant === 'volume' || faceStudy) root.dataset.r006 = 'volume';
+if (faceStudy) root.dataset.r007 = faceVariant;
 const acceptedResearchVariants = new Set(['baseline', 'orbital', 'expression']);
 if (acceptedResearchVariants.has(researchVariant)) root.dataset.r005 = researchVariant;
 const researchEmbed = qs.get('embed') === '1' && (acceptedResearchVariants.has(researchVariant) || volumeStudy);
@@ -1519,6 +1777,9 @@ function apply() {
   for (const [name, value] of Object.entries(derivePortraitStyle(values))) root.style.setProperty(name, value);
   if (volumeStudy) {
     for (const [name, value] of Object.entries(deriveVolumeStyle(values))) root.style.setProperty(name, value);
+  }
+  if (faceStudy) {
+    for (const [name, value] of Object.entries(deriveFaceStructureStyle(values))) root.style.setProperty(name, value);
   }
   for (const key of KEYS) {
     const def = DEFINITIONS[key];

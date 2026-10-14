@@ -12,11 +12,11 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 
 def embedded_page():
     html = (ROOT / 'index.html').read_text()
-    for name in ('layout', 'portrait', 'anatomy', 'graphite', 'likeness', 'study004','study005','study006'):
+    for name in ('layout', 'portrait', 'anatomy', 'graphite', 'likeness', 'study004','study005','study006','study007'):
         css = (ROOT / 'styles' / f'{name}.css').read_text()
         html = html.replace(f'<link rel="stylesheet" href="./styles/{name}.css">', f'<style>{css}</style>')
     assert '<link rel="stylesheet"' not in html, 'QA did not inline every CSS file'
-    code = '\n'.join(re.sub(r'^export ', '', (ROOT / 'src' / f'{name}.mjs').read_text(), flags=re.M) for name in ('parameters','geometry','volume','i18n','app'))
+    code = '\n'.join(re.sub(r'^export ', '', (ROOT / 'src' / f'{name}.mjs').read_text(), flags=re.M) for name in ('parameters','geometry','volume','face-model','i18n','app'))
     code = re.sub(r'^import .*?;\n', '', code, flags=re.M)
     return html.replace('<script type="module" src="./src/app.mjs"></script>',f'<script type="module">{code}</script>')
 
