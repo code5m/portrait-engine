@@ -1101,6 +1101,103 @@ body[data-r005-embed="1"] .paper {width:100%;height:100%;min-height:0;max-width:
 body[data-r005-embed="1"] .drawing-signature {display:none;}
 
 </style>
+  <style>
+/* Research 006 / opt-in surface-value experiment.
+   Applies only to #portrait[data-r006="volume"] (query ?r006=volume).
+   A common 2.5D normal/light model controls separate anatomical planes.
+   All shapes are authored in HTML+CSS: never images, SVG, Canvas or urls.
+   This does NOT claim photorealism, medical anatomy or actual occlusion. */
+.portrait .volume-field {display:none;}
+.portrait[data-r006="volume"] .volume-field {
+  display:block;inset:0;z-index:5;border-radius:inherit;
+  overflow:hidden;pointer-events:none;
+}
+.portrait[data-r006="volume"] .volume-field .v-plane {
+  position:absolute;display:block;pointer-events:none;
+  border-radius:50%;
+}
+/* Broad bony masses, tapered toward neighboring forms. Each side reads from
+   a *single* light vector rather than an unrelated hand-tuned gradient. */
+.portrait[data-r006="volume"] .v-forehead {
+  left:18%;top:4%;width:64%;height:31%;
+  background:radial-gradient(ellipse at 50% 35%,#fffbe4ba 4%,#eee5d454 54%,transparent 77%);
+  opacity:var(--v-forehead-light,.16);
+}
+.portrait[data-r006="volume"] .v-brow-left,
+.portrait[data-r006="volume"] .v-brow-right {
+  top:31%;width:53%;height:20%;filter:blur(2.1px);
+  background:radial-gradient(ellipse at 55% 52%,#31382dcb 1%,#4f554798 22%,#66695b44 55%,transparent 78%);
+}
+.portrait[data-r006="volume"] .v-brow-left {left:-5%;opacity:var(--v-browLeft-shade,.35)}
+.portrait[data-r006="volume"] .v-brow-right {right:-5%;opacity:var(--v-browRight-shade,.35)}
+.portrait[data-r006="volume"] .v-orbit-left,
+.portrait[data-r006="volume"] .v-orbit-right {
+  top:39%;width:48%;height:27%;filter:blur(3.3px);
+  background:radial-gradient(ellipse 89% 69% at 50% 23%,#272e27b8 2%,#4b51487b 31%,transparent 74%);
+}
+.portrait[data-r006="volume"] .v-orbit-left {left:0;opacity:var(--v-orbitLeft-shade,.25)}
+.portrait[data-r006="volume"] .v-orbit-right {right:0;opacity:var(--v-orbitRight-shade,.25)}
+.portrait[data-r006="volume"] .v-cheek-left,
+.portrait[data-r006="volume"] .v-cheek-right {
+  top:56%;width:67%;height:32%;filter:blur(4.3px);
+  background:radial-gradient(ellipse at 38% 49%,#3a4037af 0%,#4c524692 23%,#686b5b4d 54%,transparent 77%);
+}
+.portrait[data-r006="volume"] .v-cheek-left {
+  left:-27%;opacity:var(--v-cheekLeft-shade,.42);
+  transform:translateX(calc(-1 * var(--v-cheek-x,0px))) rotate(17deg);
+}
+.portrait[data-r006="volume"] .v-cheek-right {
+  right:-27%;opacity:var(--v-cheekRight-shade,.42);
+  transform:translateX(var(--v-cheek-x,0px)) scaleX(-1) rotate(11deg);
+}
+.portrait[data-r006="volume"] .v-nose-left,
+.portrait[data-r006="volume"] .v-nose-right {
+  top:49%;height:33%;width:22%;filter:blur(2.5px);
+  background:radial-gradient(ellipse at 58% 53%,#3e453bd6,#585e5091 45%,transparent 86%);
+}
+.portrait[data-r006="volume"] .v-nose-left{left:36%;opacity:calc(var(--v-noseLeft-shade,.25)*.68)}
+.portrait[data-r006="volume"] .v-nose-right{right:35%;opacity:calc(var(--v-noseRight-shade,.25)*.68)}
+.portrait[data-r006="volume"] .v-jaw-left,
+.portrait[data-r006="volume"] .v-jaw-right {
+  top:76%;width:55%;height:30%;filter:blur(4px);
+  background:radial-gradient(ellipse 76% 74% at 45% 66%,#2c322dc2 4%,#595c4c99 44%,transparent 89%);
+}
+.portrait[data-r006="volume"] .v-jaw-left{left:-6%;opacity:var(--v-jawLeft-shade,.35)}
+.portrait[data-r006="volume"] .v-jaw-right{right:-5%;opacity:var(--v-jawRight-shade,.35)}
+.portrait[data-r006="volume"] .v-chin {
+  left:27%;top:86%;width:46%;height:14%;filter:blur(4px);
+  background:radial-gradient(ellipse at 50% 70%,#333a30a8 0%,transparent 76%);
+  opacity:var(--v-chin-shade,.35);
+}
+/* Volume-following pencil marks. Light controls visibility; cheek pencil
+   direction reverses across the face instead of forming a global wallpaper. */
+.portrait[data-r006="volume"] .v-cheek-left::after,
+.portrait[data-r006="volume"] .v-cheek-right::after {
+  content:"";inset:8% 8%;border-radius:inherit;
+  background:repeating-linear-gradient(36deg,#2d35264d 0 .48px,transparent .48px 7.1px);
+  -webkit-mask-image:radial-gradient(ellipse 72% 70% at 50% 48%,#000,transparent 76%);
+  mask-image:radial-gradient(ellipse 72% 70% at 50% 48%,#000,transparent 76%);
+  opacity:calc(var(--v-hatch-strength,.6)*.6);
+}
+.portrait[data-r006="volume"] .v-cheek-right::after {transform:scaleX(-1) rotate(-16deg)}
+/* The original bright nasal pillar is toned down in the opt-in comparison;
+   the paired left/right nasal planes now carry coherent volume. */
+.portrait[data-r006="volume"] .nose-bridge {
+  background:linear-gradient(90deg,#77776e5a 0%,#bcb9a653 29%,#e6e1d493 53%,#9a9a8a65 100%);
+  filter:blur(5px);width:32px;left:18px;
+}
+.portrait[data-r006="volume"] .nose-tip {
+  background:radial-gradient(ellipse at 43% 18%,#e7e2d8a8,#b8b4a760 63%,transparent 87%);
+}
+.portrait[data-r006="volume"] .forehead-light{opacity:.18}
+.portrait[data-r006="volume"] .face-tones{opacity:.56}
+.portrait[data-r006="volume"] .eye-socket{opacity:.31}
+/* Purely diagnostic: overlay plane silhouettes without changing stored data. */
+.portrait[data-r006="volume"][data-study="structure"] .volume-field .v-plane {
+  filter:none;outline:1px dashed #2a6b7777;background:none!important;opacity:.95!important;
+}
+
+</style>
   <script type="module">
 const DEFINITIONS = Object.freeze({
   faceWidth: { min: 80, max: 120, step: 1, value: 100, group: 'geometry', unit: '%' },
@@ -1229,6 +1326,76 @@ function deriveHeadLandmarks(raw) {
   });
 }
 
+/**
+ * Research 006: a tiny, explicit 2.5D value model for CSS portrait studies.
+ *
+ * We deliberately approximate a face with stable FRONT-FACING plane normals.
+ * There is no hidden bitmap, 3D mesh, canvas, WebGL or AI image. JavaScript
+ * computes only numeric CSS custom properties; the browser draws everything.
+ * Positive lightDirection lights the viewer-right side of the face.
+ * These normals are artistic abstractions, NOT anthropometric measurements.
+ */
+
+const PLANE_NORMALS = Object.freeze({
+  browLeft: Object.freeze([-0.38, 0.31, 0.87]),
+  browRight: Object.freeze([0.38, 0.31, 0.87]),
+  orbitLeft: Object.freeze([-0.53, -0.10, 0.69]),
+  orbitRight: Object.freeze([0.53, -0.10, 0.69]),
+  cheekLeft: Object.freeze([-0.67, -0.13, 0.72]),
+  cheekRight: Object.freeze([0.67, -0.13, 0.72]),
+  noseLeft: Object.freeze([-0.79, -0.08, 0.58]),
+  noseRight: Object.freeze([0.79, -0.08, 0.58]),
+  jawLeft: Object.freeze([-0.58, -0.58, 0.60]),
+  jawRight: Object.freeze([0.58, -0.58, 0.60]),
+  forehead: Object.freeze([0, 0.40, 0.92]),
+  chin: Object.freeze([0, -0.53, 0.85])
+});
+
+const clamp=(x,min=0,max=1)=>Math.min(max,Math.max(min,x));
+function dot(a,b){return a.reduce((v,x,i)=>v+x*b[i],0);}
+function unit(v){const length=Math.hypot(...v);return v.map(x=>x/length);}
+
+/**
+ * One shared light in viewer coordinates. Elevation fixed at 24deg.
+ * The additive 15% ambient term avoids pure-black holes in eye sockets.
+ */
+function lightVector(degrees){
+  const safeDegrees = Number.isFinite(degrees) ? clamp(degrees,-60,60) : 0;
+  const a=safeDegrees*Math.PI/180;
+  const elev=24*Math.PI/180;
+  return Object.freeze([Math.sin(a)*Math.cos(elev),Math.sin(elev),Math.cos(a)*Math.cos(elev)]);
+}
+
+/** Values only. Artists may later replace the normals without reworking UI. */
+function deriveVolumeValues(raw){
+  const p=normalize(raw);
+  const light=lightVector(p.lightDirection);
+  const planes={};
+  for(const [name,n] of Object.entries(PLANE_NORMALS)){
+    const normal=unit(n);
+    const diffuse=clamp(dot(normal,light));
+    // Contrast physically inspired, not physical cast shadows.
+    const shade=clamp((1-(0.15+0.85*diffuse))*(0.22+0.78*(p.graphite/100)));
+    const lightness=clamp(Math.pow(diffuse,2.8)*(0.2+0.12*(1-p.graphite/100)));
+    planes[name]=Object.freeze({diffuse,shade,lightness});
+  }
+  return Object.freeze(planes);
+}
+
+/** DOM-independent style contract, anchored to the same face as geometry.mjs. */
+function deriveVolumeStyle(raw){
+  const planes=deriveVolumeValues(raw);
+  const p=normalize(raw);
+  const styles={};
+  for(const [name,value] of Object.entries(planes)){
+    styles[`--v-${name}-shade`]=value.shade.toFixed(4);
+    styles[`--v-${name}-light`]=value.lightness.toFixed(4);
+  }
+  styles['--v-hatch-strength']=(p.hatching/100).toFixed(4);
+  styles['--v-cheek-x'] = `${(p.jaw-100)*0.14}px`;
+  return Object.freeze(styles);
+}
+
 // This file uses Unicode escapes to keep the portable source ASCII-only.
 const zh = {
   status:'\u539f\u521b\u4f5c\u54c1 / \u65e0\u56fe\u7247\u7d20\u6750',
@@ -1283,9 +1450,14 @@ const fileInput = document.querySelector('#upload-input');
 // Public default stays baseline while external aesthetic ratings are absent.
 const qs = new URLSearchParams(window.location.search);
 const researchVariant = qs.get('r005');
+const volumeVariant = qs.get('r006');
+// Research 006 is opt-in until independent visual quality evidence exists.
+// It never changes saved nine-parameter JSON or the public default.
+const volumeStudy = volumeVariant === 'volume' || volumeVariant === 'baseline';
+if (volumeVariant === 'volume') root.dataset.r006 = 'volume';
 const acceptedResearchVariants = new Set(['baseline', 'orbital', 'expression']);
 if (acceptedResearchVariants.has(researchVariant)) root.dataset.r005 = researchVariant;
-const researchEmbed = qs.get('embed') === '1' && acceptedResearchVariants.has(researchVariant);
+const researchEmbed = qs.get('embed') === '1' && (acceptedResearchVariants.has(researchVariant) || volumeStudy);
 if (researchEmbed) document.body.dataset.r005Embed = '1';
 const STORAGE_KEY = 'portrait-engine/parameters/v1';
 let values = defaults();
@@ -1345,6 +1517,9 @@ function buildControls() {
 
 function apply() {
   for (const [name, value] of Object.entries(derivePortraitStyle(values))) root.style.setProperty(name, value);
+  if (volumeStudy) {
+    for (const [name, value] of Object.entries(deriveVolumeStyle(values))) root.style.setProperty(name, value);
+  }
   for (const key of KEYS) {
     const def = DEFINITIONS[key];
     const input = document.getElementById(`param-${key}`);
@@ -1362,6 +1537,7 @@ function apply() {
 }
 
 function persist() {
+  if (volumeStudy) return; // No experimental paint may overwrite user portraits.
   try { localStorage.setItem(STORAGE_KEY, encode(values)); } catch { /* Browser may block storage. */ }
 }
 function restore() {
@@ -1409,7 +1585,7 @@ setStudyMode('graphite');
 for (const button of document.querySelectorAll('[data-study-mode]')) {
   button.addEventListener('click', () => setStudyMode(button.dataset.studyMode));
 }
-if (!researchEmbed) restore();
+if (!researchEmbed && !volumeStudy) restore();
 buildControls();
 apply();
 for (const button of document.querySelectorAll('[data-preset]')) {
@@ -1479,6 +1655,20 @@ updateScale();
               <div class="ear ear-right"><span></span></div>
               <div class="face">
                 <div class="face-tones"></div>
+                <div class="volume-field" aria-hidden="true">
+                  <span class="v-plane v-forehead"></span>
+                  <span class="v-plane v-brow-left"></span>
+                  <span class="v-plane v-brow-right"></span>
+                  <span class="v-plane v-orbit-left"></span>
+                  <span class="v-plane v-orbit-right"></span>
+                  <span class="v-plane v-cheek-left"></span>
+                  <span class="v-plane v-cheek-right"></span>
+                  <span class="v-plane v-nose-left"></span>
+                  <span class="v-plane v-nose-right"></span>
+                  <span class="v-plane v-jaw-left"></span>
+                  <span class="v-plane v-jaw-right"></span>
+                  <span class="v-plane v-chin"></span>
+                </div>
                 <div class="side-shadow side-shadow-left"></div>
                 <div class="side-shadow side-shadow-right"></div>
                 <div class="face-hatching"></div>

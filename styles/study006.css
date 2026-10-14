@@ -1,0 +1,94 @@
+/* Research 006 / opt-in surface-value experiment.
+   Applies only to #portrait[data-r006="volume"] (query ?r006=volume).
+   A common 2.5D normal/light model controls separate anatomical planes.
+   All shapes are authored in HTML+CSS: never images, SVG, Canvas or urls.
+   This does NOT claim photorealism, medical anatomy or actual occlusion. */
+.portrait .volume-field {display:none;}
+.portrait[data-r006="volume"] .volume-field {
+  display:block;inset:0;z-index:5;border-radius:inherit;
+  overflow:hidden;pointer-events:none;
+}
+.portrait[data-r006="volume"] .volume-field .v-plane {
+  position:absolute;display:block;pointer-events:none;
+  border-radius:50%;
+}
+/* Broad bony masses, tapered toward neighboring forms. Each side reads from
+   a *single* light vector rather than an unrelated hand-tuned gradient. */
+.portrait[data-r006="volume"] .v-forehead {
+  left:18%;top:4%;width:64%;height:31%;
+  background:radial-gradient(ellipse at 50% 35%,#fffbe4ba 4%,#eee5d454 54%,transparent 77%);
+  opacity:var(--v-forehead-light,.16);
+}
+.portrait[data-r006="volume"] .v-brow-left,
+.portrait[data-r006="volume"] .v-brow-right {
+  top:31%;width:53%;height:20%;filter:blur(2.1px);
+  background:radial-gradient(ellipse at 55% 52%,#31382dcb 1%,#4f554798 22%,#66695b44 55%,transparent 78%);
+}
+.portrait[data-r006="volume"] .v-brow-left {left:-5%;opacity:var(--v-browLeft-shade,.35)}
+.portrait[data-r006="volume"] .v-brow-right {right:-5%;opacity:var(--v-browRight-shade,.35)}
+.portrait[data-r006="volume"] .v-orbit-left,
+.portrait[data-r006="volume"] .v-orbit-right {
+  top:39%;width:48%;height:27%;filter:blur(3.3px);
+  background:radial-gradient(ellipse 89% 69% at 50% 23%,#272e27b8 2%,#4b51487b 31%,transparent 74%);
+}
+.portrait[data-r006="volume"] .v-orbit-left {left:0;opacity:var(--v-orbitLeft-shade,.25)}
+.portrait[data-r006="volume"] .v-orbit-right {right:0;opacity:var(--v-orbitRight-shade,.25)}
+.portrait[data-r006="volume"] .v-cheek-left,
+.portrait[data-r006="volume"] .v-cheek-right {
+  top:56%;width:67%;height:32%;filter:blur(4.3px);
+  background:radial-gradient(ellipse at 38% 49%,#3a4037af 0%,#4c524692 23%,#686b5b4d 54%,transparent 77%);
+}
+.portrait[data-r006="volume"] .v-cheek-left {
+  left:-27%;opacity:var(--v-cheekLeft-shade,.42);
+  transform:translateX(calc(-1 * var(--v-cheek-x,0px))) rotate(17deg);
+}
+.portrait[data-r006="volume"] .v-cheek-right {
+  right:-27%;opacity:var(--v-cheekRight-shade,.42);
+  transform:translateX(var(--v-cheek-x,0px)) scaleX(-1) rotate(11deg);
+}
+.portrait[data-r006="volume"] .v-nose-left,
+.portrait[data-r006="volume"] .v-nose-right {
+  top:49%;height:33%;width:22%;filter:blur(2.5px);
+  background:radial-gradient(ellipse at 58% 53%,#3e453bd6,#585e5091 45%,transparent 86%);
+}
+.portrait[data-r006="volume"] .v-nose-left{left:36%;opacity:calc(var(--v-noseLeft-shade,.25)*.68)}
+.portrait[data-r006="volume"] .v-nose-right{right:35%;opacity:calc(var(--v-noseRight-shade,.25)*.68)}
+.portrait[data-r006="volume"] .v-jaw-left,
+.portrait[data-r006="volume"] .v-jaw-right {
+  top:76%;width:55%;height:30%;filter:blur(4px);
+  background:radial-gradient(ellipse 76% 74% at 45% 66%,#2c322dc2 4%,#595c4c99 44%,transparent 89%);
+}
+.portrait[data-r006="volume"] .v-jaw-left{left:-6%;opacity:var(--v-jawLeft-shade,.35)}
+.portrait[data-r006="volume"] .v-jaw-right{right:-5%;opacity:var(--v-jawRight-shade,.35)}
+.portrait[data-r006="volume"] .v-chin {
+  left:27%;top:86%;width:46%;height:14%;filter:blur(4px);
+  background:radial-gradient(ellipse at 50% 70%,#333a30a8 0%,transparent 76%);
+  opacity:var(--v-chin-shade,.35);
+}
+/* Volume-following pencil marks. Light controls visibility; cheek pencil
+   direction reverses across the face instead of forming a global wallpaper. */
+.portrait[data-r006="volume"] .v-cheek-left::after,
+.portrait[data-r006="volume"] .v-cheek-right::after {
+  content:"";inset:8% 8%;border-radius:inherit;
+  background:repeating-linear-gradient(36deg,#2d35264d 0 .48px,transparent .48px 7.1px);
+  -webkit-mask-image:radial-gradient(ellipse 72% 70% at 50% 48%,#000,transparent 76%);
+  mask-image:radial-gradient(ellipse 72% 70% at 50% 48%,#000,transparent 76%);
+  opacity:calc(var(--v-hatch-strength,.6)*.6);
+}
+.portrait[data-r006="volume"] .v-cheek-right::after {transform:scaleX(-1) rotate(-16deg)}
+/* The original bright nasal pillar is toned down in the opt-in comparison;
+   the paired left/right nasal planes now carry coherent volume. */
+.portrait[data-r006="volume"] .nose-bridge {
+  background:linear-gradient(90deg,#77776e5a 0%,#bcb9a653 29%,#e6e1d493 53%,#9a9a8a65 100%);
+  filter:blur(5px);width:32px;left:18px;
+}
+.portrait[data-r006="volume"] .nose-tip {
+  background:radial-gradient(ellipse at 43% 18%,#e7e2d8a8,#b8b4a760 63%,transparent 87%);
+}
+.portrait[data-r006="volume"] .forehead-light{opacity:.18}
+.portrait[data-r006="volume"] .face-tones{opacity:.56}
+.portrait[data-r006="volume"] .eye-socket{opacity:.31}
+/* Purely diagnostic: overlay plane silhouettes without changing stored data. */
+.portrait[data-r006="volume"][data-study="structure"] .volume-field .v-plane {
+  filter:none;outline:1px dashed #2a6b7777;background:none!important;opacity:.95!important;
+}

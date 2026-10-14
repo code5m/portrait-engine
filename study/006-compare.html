@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Research 006 | 原始素描与统一体面光照对照</title>
+  <style>
+    :root{color-scheme:dark;font-family:system-ui,-apple-system,"Noto Sans",sans-serif;color:#eae9e3;background:#181d1b}
+    body{max-width:1150px;margin:0 auto;padding:22px clamp(12px,3vw,36px)}
+    h1{font:normal clamp(24px,4vw,36px)/1.3 Georgia,serif;margin:8px 0 10px}
+    p{font-size:14px;line-height:1.75;color:#b5bdb5;max-width:78ch}
+    .frames{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin-top:24px}
+    figure{padding:0;margin:0;min-width:0}
+    figcaption{margin:0 0 11px;font-weight:600;color:#e1d3bf;font-size:14px}
+    iframe{display:block;width:100%;height:560px;border:1px solid #51594d;background:#dedbd1}
+    a{color:#d5b997}
+    .note{margin-top:18px;border-left:2px solid #ab967b;padding:4px 16px;background:#222925}
+    @media(max-width:780px){.frames{grid-template-columns:1fr}iframe{height:535px}}
+  </style>
+</head>
+<body>
+  <div style="font:11px monospace;letter-spacing:2px;color:#cfaa7a">PORTRAIT ENGINE / RESEARCH 006</div>
+  <h1>让面部各体面接受同一束光</h1>
+  <p>这是一份对照实验，不是商业演示。两边使用同样的人物和默认参数，头像由 HTML + CSS 实时绘制；右侧的明暗值来自统一的近似 2.5D 法线模型，没有图片、SVG、Canvas 或 AI 绘图素材。</p>
+  <div class="frames">
+    <figure><figcaption>A / 基线绘画</figcaption><iframe title="实验对照 A 基线" src="../standalone.html?r006=baseline&amp;embed=1" loading="eager"></iframe></figure>
+    <figure><figcaption>B / 统一体面值</figcaption><iframe title="实验对照 B 体面模型" src="../standalone.html?r006=volume&amp;embed=1" loading="eager"></iframe></figure>
+  </div>
+  <div class="note"><p><strong>不要把两张图的区别等同于写实水平提高。</strong> 自动测试只能确认结构、光照响应和浏览器稳定性，是否更接近真人必须由独立观察者评判。当前没有实际真人盲评结果。</p></div>
+  <p>可分别 <a href="../standalone.html?r006=baseline">打开基线独立实验</a>、<a href="../standalone.html?r006=volume">打开统一体面实验</a>，手动调整光源方向和脸宽。完整研究记录：<a href="../docs/RESEARCH-006.md">RESEARCH-006.md</a>。</p>
+</body>
+</html>

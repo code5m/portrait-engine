@@ -102,3 +102,11 @@ Research 003 adds `styles/likeness.css`: intentionally asymmetric eye constructi
 - 完整过程、反证标准和真实欠缺见 [`docs/RESEARCH-005.md`](docs/RESEARCH-005.md)。
 
 **目前没有独立真人盲评数据，也没有证据能宣布哪幅更写实。**
+
+## Research 006：统一体面光照（实验模式，未代替默认作品）
+
+这轮研究让眉骨、眼窝、颧骨、鼻翼、下颌的明暗来自 **12 个面部体面法线与同一光源**，而非每个部位独立指定光影。它仍然是二维近似，不是真实三维人脸。
+
+打开 `standalone.html?r006=volume` 查看纯 CSS 实验，使用 `standalone.html?r006=baseline` 作为对照。通过本地服务访问 [`study/006-compare.html`](study/006-compare.html) 可以同时查看 A/B。实验不修改用户已有存档，默认画面不变。
+
+自动化：`npm run verify`、`python3 test/study006-visual.py`（9 种脸宽/光向组合 × 2 个版本，共 18 组截图）。真实限制和美术债务见 [`docs/RESEARCH-006.md`](docs/RESEARCH-006.md)。**仍无独立真人盲评，不能断言更写实。**

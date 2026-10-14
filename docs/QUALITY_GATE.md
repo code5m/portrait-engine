@@ -77,3 +77,15 @@ The research issue remains open until that evidence exists.
 - 新版不会静默替换既有默认角色。固定人物参数和光源才具备可比性。
 - 执行 `python3 test/study005-visual.py` 与 GitHub Visual Study 工作流；自动化只验证浏览器画面和评审流程，**不得标记“独立盲评通过”**。
 - 外部人类评分：**未收集**；专业写实素描：**未达标**。
+
+## Research 006：统一光照模型，仍是候选
+
+- [x] 独立 `src/volume.mjs`：12 个体面共用光向与法线，数学输入范围和左右侧光方向测试。
+- [x] CSS-only 面部体面渲染；默认作品维持 `baseline`，`?r006=volume` 显式启用，不写入存档。
+- [x] 旧 7/9 项参数协议兼容；独立单文件 HTML 同源构建。
+- [x] 本地 Chromium 执行两种策略 × 九组参数渲染；真实 DOM、像素差、移动端和异常检查。
+- [ ] **真人独立盲评：没有评分，不能宣布视觉改进。**
+- [ ] **专业写实素描/一套参数生成多种身份：未完成。**
+- [ ] **Chrome/Firefox/Safari 全兼容与严谨性能基准：未完成。**
+
+详细记录见 `docs/RESEARCH-006.md`。GitHub CI 结果必须以远端实际检查为准。

@@ -6,7 +6,7 @@
   "description": "Original code-drawn graphite portrait studio without image assets.",
   "scripts": {
     "dev": "python3 -m http.server 4173",
-    "check": "node --check src/app.mjs && node --check src/parameters.mjs && node --check src/i18n.mjs && node --check src/geometry.mjs && node --check test/parameters.test.mjs && node --check test/geometry.test.mjs",
+    "check": "node --check src/app.mjs && node --check src/parameters.mjs && node --check src/i18n.mjs && node --check src/geometry.mjs && node --check src/volume.mjs && node --check test/parameters.test.mjs && node --check test/geometry.test.mjs",
     "test": "node --test test/*.test.mjs",
     "verify": "npm run check && npm run build && npm test",
     "build": "python3 scripts/build-standalone.py"

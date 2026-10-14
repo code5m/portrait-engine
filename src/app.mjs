@@ -1,6 +1,7 @@
 import { DEFINITIONS, PRESETS, KEYS, defaults, normalize, equal, encode, decode } from './parameters.mjs';
 import { zh } from './i18n.mjs';
 import { derivePortraitStyle } from './geometry.mjs';
+import { deriveVolumeStyle } from './volume.mjs';
 
 const root = document.querySelector('#portrait');
 const paper = document.querySelector('#portrait-paper');
@@ -10,9 +11,14 @@ const fileInput = document.querySelector('#upload-input');
 // Public default stays baseline while external aesthetic ratings are absent.
 const qs = new URLSearchParams(window.location.search);
 const researchVariant = qs.get('r005');
+const volumeVariant = qs.get('r006');
+// Research 006 is opt-in until independent visual quality evidence exists.
+// It never changes saved nine-parameter JSON or the public default.
+const volumeStudy = volumeVariant === 'volume' || volumeVariant === 'baseline';
+if (volumeVariant === 'volume') root.dataset.r006 = 'volume';
 const acceptedResearchVariants = new Set(['baseline', 'orbital', 'expression']);
 if (acceptedResearchVariants.has(researchVariant)) root.dataset.r005 = researchVariant;
-const researchEmbed = qs.get('embed') === '1' && acceptedResearchVariants.has(researchVariant);
+const researchEmbed = qs.get('embed') === '1' && (acceptedResearchVariants.has(researchVariant) || volumeStudy);
 if (researchEmbed) document.body.dataset.r005Embed = '1';
 const STORAGE_KEY = 'portrait-engine/parameters/v1';
 let values = defaults();
@@ -72,6 +78,9 @@ function buildControls() {
 
 function apply() {
   for (const [name, value] of Object.entries(derivePortraitStyle(values))) root.style.setProperty(name, value);
+  if (volumeStudy) {
+    for (const [name, value] of Object.entries(deriveVolumeStyle(values))) root.style.setProperty(name, value);
+  }
   for (const key of KEYS) {
     const def = DEFINITIONS[key];
     const input = document.getElementById(`param-${key}`);
@@ -89,6 +98,7 @@ function apply() {
 }
 
 function persist() {
+  if (volumeStudy) return; // No experimental paint may overwrite user portraits.
   try { localStorage.setItem(STORAGE_KEY, encode(values)); } catch { /* Browser may block storage. */ }
 }
 function restore() {
@@ -136,7 +146,7 @@ setStudyMode('graphite');
 for (const button of document.querySelectorAll('[data-study-mode]')) {
   button.addEventListener('click', () => setStudyMode(button.dataset.studyMode));
 }
-if (!researchEmbed) restore();
+if (!researchEmbed && !volumeStudy) restore();
 buildControls();
 apply();
 for (const button of document.querySelectorAll('[data-preset]')) {

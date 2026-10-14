@@ -17,7 +17,7 @@ test('R005 CSS has an explicit baseline and two isolated non-raster candidates',
 test('query-driven experiment is read-only and cannot overwrite saved user characters', () => {
   const js = read('src/app.mjs');
   assert.match(js, /acceptedResearchVariants = new Set\(\['baseline', 'orbital', 'expression'\]\)/);
-  assert.match(js, /if \(!researchEmbed\) restore\(\)/);
+  assert.match(js, /if \(!researchEmbed && !volumeStudy\) restore\(\)/);
   assert.match(js, /root\.dataset\.r005 = researchVariant/);
   assert.match(js, /researchEmbed\) document\.body\.dataset\.r005Embed/);
 });
