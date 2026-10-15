@@ -25,6 +25,9 @@ IDS = ("lin-che", "zhou-qishan", "third-portrait")
 LIGHTS = ("front", "side", "top")
 EXPRESSIONS = ("neutral", "happy", "sad", "angry", "fear")
 MIN_DELTA = 0.01  # Detects "nothing painted changed", never a realism threshold.
+# Same-code Chromium captures may differ by ~0.036 due to subpixel raster noise.
+# 0.08 is a conservative anti-aliasing tolerance, NOT permission to change art.
+DEFAULT_IMAGE_NOISE_TOLERANCE = 0.08
 
 def diff_mean(a, b):
     with Image.open(a) as aa, Image.open(b) as bb:
@@ -46,7 +49,8 @@ def image_detail(file):
 async def capture_matrix(browser, port, mode, document="standalone.html", query="", expressions=EXPRESSIONS):
     dest = OUT / mode
     dest.mkdir(parents=True, exist_ok=True)
-    context = await browser.new_context(viewport={"width": 1440, "height": 1040}, device_scale_factor=1)
+    context = await browser.new_context(viewport={"width": 1440, "height": 1040},
+                                        device_scale_factor=1, reduced_motion="reduce")
     errors = []
     illegal_requests = []
     def on_request(req):
@@ -60,17 +64,19 @@ async def capture_matrix(browser, port, mode, document="standalone.html", query=
     check = await page.locator("#portrait").evaluate("""el => ({
        mediaTags: el.querySelectorAll('img,svg,canvas,picture,video,iframe,object,embed').length,
        faceEngine: el.dataset.faceEngine,
-       r012: el.dataset.r012 || '',
-       r013: el.dataset.r013 || ''
+       studyFlags: Object.fromEntries([...el.attributes]
+         .filter(a => /^data-r\\d{3}$/.test(a.name)).map(a => [a.name,a.value]))
     })""")
     assert check["mediaTags"] == 0, (mode, check)
     assert check["faceEngine"] == "v1", (mode, check)
-    if mode in ("default", "previous-default"):
-        assert not check["r012"] and not check["r013"], (mode, check)
-    if mode == "r012":
-        assert check["r012"] == "form", check
-    if mode == "r013":
-        assert check["r013"] == "anatomy", check
+    declared = json.loads((ROOT / "research/experiments.json").read_text(encoding="utf8"))
+    for experiment in declared["experiments"]:
+        key = "data-" + experiment["id"].lower()
+        if mode == experiment["id"].lower():
+            assert check["studyFlags"].get(key) == experiment["candidateQuery"].split("=", 1)[-1], (
+                mode, "study was not activated", check)
+        else:
+            assert not check["studyFlags"].get(key), (mode, "another experiment leaked into this control arm", check)
 
     scenes = {}
     try:
@@ -198,12 +204,33 @@ async def main():
             try:
                 default = await capture_matrix(browser,server.server_port,"default")
                 verify_invariants("default",default,EXPRESSIONS)
-                r013 = await capture_matrix(browser,server.server_port,"r013",query="?r013=anatomy")
-                verify_invariants("r013",r013,EXPRESSIONS)
-                r012 = await capture_matrix(browser,server.server_port,"r012",query="?r012=form",expressions=("neutral",))
                 contact_sheet("default",default)
-                contact_sheet("r013",r013)
-                contact_sheet("r012",r012)
+                ledger = json.loads((ROOT / "research" / "experiments.json").read_text(encoding="utf8"))
+                experiments = {}
+                for experiment in ledger["experiments"]:
+                    mode = experiment["id"].lower()
+                    subset = ("neutral",) if experiment["status"] == "REJECTED_FIRST_VIEW" else EXPRESSIONS
+                    scenes = await capture_matrix(browser,server.server_port,mode,
+                                                  query=experiment["candidateQuery"],expressions=subset)
+                    if len(subset) == len(EXPRESSIONS):
+                        verify_invariants(mode,scenes,EXPRESSIONS)
+                    contact_sheet(mode,scenes)
+                    comparisons = [
+                        diff_mean(ROOT / default[name]["file"], ROOT / entry["file"])
+                        for name, entry in scenes.items()
+                    ]
+                    # Every registered experiment must produce a visible response,
+                    # but nonzero difference is NEVER proof of artistic improvement.
+                    assert sum(delta > MIN_DELTA for delta in comparisons) >= 3, (
+                        experiment["id"], "registered candidate has almost no painted effect")
+                    experiments[experiment["id"]] = {
+                        "status": experiment["status"],
+                        "query": experiment["candidateQuery"],
+                        "coverage": len(scenes),
+                        "scenes": scenes,
+                        "differentFromDefault": sum(delta > MIN_DELTA for delta in comparisons),
+                        "maxChannelMeanDifference": round(max(comparisons),4)
+                    }
                 cross = []
                 if previous:
                     before=await capture_matrix(browser,server.server_port,"previous-default",
@@ -214,7 +241,21 @@ async def main():
                             key=f"{identity}-{light}-neutral"
                             delta=diff_mean(ROOT/before[key]["file"],ROOT/default[key]["file"])
                             cross.append({"scene":key,"maxChannelMeanDifference":round(delta,6)})
-                times=[x["captureMs"] for x in list(default.values())+list(r013.values())]
+                times=[x["captureMs"] for x in default.values()]
+                for experiment in experiments.values():
+                    times.extend(x["captureMs"] for x in experiment["scenes"].values())
+                default_drift = any(item["maxChannelMeanDifference"] > DEFAULT_IMAGE_NOISE_TOLERANCE
+                                    for item in cross)
+                # Identity/lighting/expression CSS state is also part of the
+                # default contract; small screenshot raster variance is tolerated.
+                if previous:
+                    for identity in IDS:
+                        for light in LIGHTS:
+                            key=f"{identity}-{light}-neutral"
+                            for variable in ("head","orbit","nose","skull","lightX","lightElevation","mouthOpen","browShift"):
+                                assert default[key]["style"][variable] == before[key]["style"][variable], (
+                                    "DEFAULT_STRUCTURE_REGRESSION_BLOCKED",key,variable,
+                                    before[key]["style"][variable],default[key]["style"][variable])
                 report={
                     "mission":"General generation; artwork is evidence; realism is primary criterion",
                     "engineStatus":"ENGINE_PASS",
@@ -223,29 +264,32 @@ async def main():
                     "humanReviewers":0,
                     "neverClaim":"Pixel differences do not certify human realism or artistic merit",
                     "coverage":{"identities":len(IDS),"lights":len(LIGHTS),"expressions":len(EXPRESSIONS),
-                                "perMode":len(default),"default":len(default),"r013":len(r013),
-                                "r012Diagnostic":len(r012)},
+                                "default":len(default),
+                                "candidateModes":{name:data["coverage"] for name,data in experiments.items()}},
                     "performanceDiagnosticsMs":{"median":round(statistics.median(times),1),
                                                  "p95":round(sorted(times)[int(.95*(len(times)-1))],1)},
                     "baselineSHA":sha or None,
                     "defaultVisualDiff":cross,
-                    "candidatePixelsDoDifferFromDefault":all(
-                        diff_mean(ROOT/default[f"{identity}-{light}-neutral"]["file"],
-                                  ROOT/r013[f"{identity}-{light}-neutral"]["file"])>MIN_DELTA
-                        for identity in IDS for light in LIGHTS),
-                    "scenes":{"default":default,"r013":r013,"r012":r012}
+                    "defaultNoiseTolerance":DEFAULT_IMAGE_NOISE_TOLERANCE,
+                    "defaultDriftBeyondTolerance":default_drift,
+                    "experimentSummary":{name:{k:v for k,v in data.items() if k!="scenes"}
+                                         for name,data in experiments.items()},
+                    "scenes":{"default":default,
+                              "experiments":{name:data["scenes"] for name,data in experiments.items()}}
                 }
                 (OUT/"evidence.json").write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding="utf8")
-                if cross and any(e["maxChannelMeanDifference"] > 0.02 for e in cross):
+                if default_drift:
                     if not eligible_human_promotion():
-                        raise AssertionError("DEFAULT_VISUAL_REGRESSION_BLOCKED: default CSS face differs from PR base "
-                                             "without independent, independently verified promotion evidence. "
+                        raise AssertionError("DEFAULT_VISUAL_REGRESSION_BLOCKED: main default portrait visibly "
+                                             "differs from PR base beyond measured Chromium subpixel tolerance "
+                                             "without replicated, structurally validated human review. "
                                              "See docs/RESEARCH-CONSTITUTION.md. Deviations: "+json.dumps(cross))
-                    # Structural human-evidence certification is a separate gate.
-                    print("DEFAULT_CHANGED_WITH_PROMOTION_CLAIM: requires independent evidence authenticity review.")
-                print("RESEARCH_RENDER_PASS:",len(default),"default +",len(r013),"R013 +",len(r012),
-                      "R012 native CSS scenes; 3 identities × 3 lights × 5 expressions per main mode")
-                print("ART_UNVERIFIED: no automated score or pixel distance implies realism")
+                    # Even a complete dataset has unverified human-source authenticity.
+                    print("DEFAULT_CHANGED_WITH_REVIEW_RECORDS: human provenance still requires human verification.")
+                print("RESEARCH_RENDER_PASS: 3 identities × 3 lights × 5 expressions across current default and "
+                      +str([name for name,data in experiments.items() if data["coverage"]==45]))
+                print("REJECTED experiments stay diagnostic; adding a registered RNNN automatically expands CI coverage.")
+                print("ART_UNVERIFIED: pixels, scores schema and CI cannot authenticate visual realism")
                 print("Evidence manifest:",str(OUT/"evidence.json"))
             finally:
                 await browser.close()
