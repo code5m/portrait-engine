@@ -17,6 +17,8 @@ const fileInput = document.querySelector('#upload-input');
 // Research 005 candidates are isolated from saved portraits.
 // Public default stays baseline while external aesthetic ratings are absent.
 const qs = new URLSearchParams(window.location.search);
+const formStudy = qs.get('r012') === 'form';
+if (formStudy) root.dataset.r012 = 'form';
 const researchVariant = qs.get('r005');
 const volumeVariant = qs.get('r006');
 const faceVariant = qs.get('r007');
