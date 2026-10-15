@@ -61,6 +61,8 @@ jobs:
           python -m pip install playwright pillow
           python -m playwright install --with-deps chromium
       - name: Render three identities across three lights and five expressions
+        env:
+          RESEARCH_LOG_PREVIEW: "1"
         run: python test/research-governance-matrix.py
       - name: Disclose truthful research state
         if: always()
