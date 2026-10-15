@@ -7,11 +7,36 @@ html = (ROOT / 'index.html').read_text()
 for name in ('layout','portrait','anatomy','graphite','likeness','study004','study005','study006','study007','study008','study009','face-engine'):
     css = (ROOT / 'styles' / (name + '.css')).read_text()
     html = html.replace(f'<link rel="stylesheet" href="./styles/{name}.css">', f'<style>\n{css}\n</style>')
-source = '\n'.join(re.sub(r'^export ', '', (ROOT / 'src' / (name + '.mjs')).read_text(), flags=re.M) for name in ('parameters','geometry','volume','face-model','face-dna','face-geometry','lighting','surface-field','stroke-field','identity/identity-model','identity/identity-registry','expression/expression-dna','expression/expression-engine','hair/hair-field','hair/hair-generator','material/skin-material','material/artistic-surface','engine','i18n','app'))
-source = re.sub(r'^import .*?;\n', '', source, flags=re.M)
-# Flatten scoped ES modules without colliding lexical declarations: each source
-# gets its own scope and explicitly exported names go into a local registry.
-# The compiler now uses module-independent exports where possible; CI parses result.
+# Explicit dependency order also preserves each research script's own scope.
+modules = ('parameters','geometry','volume','face-model','face-dna','face-geometry',
+           'lighting','surface-field','stroke-field','identity/identity-model',
+           'identity/identity-registry','expression/expression-dna',
+           'expression/expression-engine','hair/hair-field',
+           'hair/hair-generator','material/skin-material',
+           'material/artistic-surface','engine','i18n','app')
+module_registry = []
+for name in modules:
+    code = (ROOT / 'src' / (name + '.mjs')).read_text()
+    # Namespace import declarations are resolved to the exporting module scope.
+    imports = re.findall(r"^import\s*\{([^}]+)\}\s*from\s*['\"]([^'\"]+)['\"];?\s*$", code, flags=re.M)
+    code = re.sub(r"^import\s*\{[^}]+\}\s*from\s*['\"][^'\"]+['\"];?\s*\n", '', code, flags=re.M)
+    aliases = []
+    for symbols, relative in imports:
+        path = (pathlib.PurePosixPath(name).parent / relative).as_posix()
+        # pathlib does not normalize ..; use posixpath.normpath.
+        import posixpath
+        path = posixpath.normpath(path).removesuffix('.mjs')
+        names = []
+        for entry in symbols.split(','):
+            part = entry.strip().split(' as ')
+            names.append(part[0].strip() if len(part) == 1 else (part[0].strip() + ': ' + part[-1].strip()))
+        aliases.append('const {' + ', '.join(names) + '} = modules[' + repr(path) + '];')
+    exports = re.findall(r'^export\s+(?:const|let|function|class)\s+(\w+)', code, flags=re.M)
+    code = re.sub(r'^export\s+', '', code, flags=re.M)
+    # Legacy DOM script runs inside its own closure; shared symbols are imported.
+    module_registry.append('{\n' + '\n'.join(aliases) + '\n' + code +
+        '\nmodules[' + repr(name) + '] = {' + ','.join(exports) + '};\n}')
+source = 'const modules = Object.create(null);\n' + '\n'.join(module_registry)
 html = html.replace('<script type="module" src="./src/app.mjs"></script>', f'<script type="module">\n{source}\n</script>')
 # The standalone portrait remains truly single-file; the multi-file blind study
 # is intentionally available only when the repository's /study/ directory exists.
