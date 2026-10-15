@@ -15,9 +15,9 @@ export const STROKE_REGIONS = Object.freeze([
 const clampStroke = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 
 /** Gradient axis follows surface height derivative; hatch lines are its isoheight tangent. */
-export function deriveStrokeField(raw) {
+export function deriveStrokeField(raw, dna = null) {
   const p = normalize(raw);
-  const field = deriveSurfaceField(p);
+  const field = deriveSurfaceField({ ...p, lightElevation: raw?.lightElevation }, dna);
   const patches = {};
   for (const name of STROKE_REGIONS) {
     const { normal, shade } = field.values[name];
@@ -39,8 +39,8 @@ export function deriveStrokeField(raw) {
 }
 
 /** Names deliberately match face-local DOM region classes in study009.css. */
-export function deriveStrokeFieldStyle(raw) {
-  const field = deriveStrokeField(raw);
+export function deriveStrokeFieldStyle(raw, dna = null) {
+  const field = deriveStrokeField(raw, dna);
   const variables = {};
   for (const [name, {angle, opacity}] of Object.entries(field)) {
     variables[`--r009-${name}-angle`] = `${angle.toFixed(2)}deg`;
