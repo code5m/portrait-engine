@@ -11,6 +11,15 @@ on:
       - 'src/surface-field.mjs'
       - 'src/stroke-field.mjs'
       - 'src/app.mjs'
+      - 'src/engine.mjs'
+      - 'src/identity/**'
+      - 'src/expression/**'
+      - 'src/hair/**'
+      - 'src/material/**'
+      - 'src/face-dna.mjs'
+      - 'src/face-geometry.mjs'
+      - 'src/lighting.mjs'
+      - 'test/engine-v1-visual.py'
       - 'index.html'
       - 'scripts/build-standalone.py'
       - 'test/study007-visual.py'
@@ -79,8 +88,10 @@ jobs:
           python scripts/build-r010-study.py --check
           python test/study010-visual.py
           python test/study010-offline-visual.py
+          python test/engine-v1-visual.py
       - name: Upload reproducible visual evidence (not runtime assets)
         if: always()
+        continue-on-error: true  # Quota outage must not misreport passing Chromium QA as failing.
         uses: actions/upload-artifact@v4
         with:
           name: research-010-css-human-blind-protocol
@@ -92,5 +103,6 @@ jobs:
             test-results/research-008/
             test-results/research-009/
             test-results/research-010/
+            test-results/face-engine-v1/
           if-no-files-found: warn
           retention-days: 21

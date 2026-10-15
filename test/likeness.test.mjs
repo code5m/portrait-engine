@@ -12,8 +12,8 @@ const qa=fs.readFileSync(new URL('../test/browser-qa.py',import.meta.url),'utf8'
 test('the same original CSS art is wired into application, offline build and browser QA',()=>{
   assert.match(html,/href="\.\/styles\/likeness\.css"/);
   assert.match(build,/'likeness'/);
-  assert.match(qa,/'likeness'/);
-  assert.match(qa,/QA did not inline every CSS file/);
+  assert.match(qa,/standalone\.html/);
+  assert.match(qa,/exact generated CSS\/JS bundle/);
   assert.doesNotMatch(css,/(?:url\s*\(|data:image|base64|<svg|<canvas|<img)/i);
 });
 

@@ -15,7 +15,7 @@ test('Study 004 is the final visible layer in live page, offline build and actua
   const study = html.indexOf('href="./styles/study004.css"');
   assert.ok(previous > 0 && study > previous, 'Study 004 must not be hidden below the old likeness layer');
   assert.match(source, /'likeness','study004'/);
-  assert.match(browser, /'likeness', 'study004'/);
+  assert.match(browser, /standalone\.html/);
   assert.ok(output.includes('Research 004: portrait form before decoration'));
   assert.doesNotMatch(output, /<link\s+rel="stylesheet"/);
 });

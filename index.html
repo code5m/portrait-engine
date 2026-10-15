@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="./styles/study007.css">
   <link rel="stylesheet" href="./styles/study008.css">
   <link rel="stylesheet" href="./styles/study009.css">
+  <link rel="stylesheet" href="./styles/face-engine.css">
   <script type="module" src="./src/app.mjs"></script>
 </head>
 <body>
@@ -162,6 +163,14 @@
       <aside class="inspector" aria-labelledby="inspector-title">
         <div class="inspector-header"><span class="eyebrow" data-t="inspectorEyebrow">STUDIO CONTROLS</span><h2 id="inspector-title" data-t="inspectorTitle">Sculpt the portrait</h2><p data-t="inspectorIntro">Move a slider. Watch the CSS face respond.</p></div>
         <fieldset class="preset-fieldset"><legend data-t="presets">CHARACTER STUDIES</legend><div class="preset-buttons" role="group" aria-label="Character presets"><button type="button" class="preset active" data-preset="classic" data-t="presetClassic" aria-pressed="true">Classic</button><button type="button" class="preset" data-preset="gentle" data-t="presetGentle" aria-pressed="false">Gentle</button><button type="button" class="preset" data-preset="angular" data-t="presetAngular" aria-pressed="false">Angular</button></div></fieldset>
+<fieldset class="study-fieldset"><legend>人物身份 / IDENTITY</legend><div class="preset-buttons" role="group" aria-label="Independent character identities">
+<button class="preset" type="button" data-identity="lin-che" aria-pressed="false">林彻</button>
+<button class="preset" type="button" data-identity="zhou-qishan" aria-pressed="false">周启山</button>
+<button class="preset" type="button" data-identity="third-portrait" aria-pressed="false">人物 C</button></div></fieldset>
+<fieldset class="study-fieldset"><legend>表情 / EXPRESSION</legend><div class="studio-options" role="group" aria-label="Expression selection">
+<button type="button" data-expression="neutral">平静</button><button type="button" data-expression="happy">微笑</button><button type="button" data-expression="sad">悲伤</button><button type="button" data-expression="angry">愤怒</button><button type="button" data-expression="fear">恐惧</button></div></fieldset>
+<fieldset class="study-fieldset"><legend>统一光照 / LIGHTING</legend><div class="studio-options" role="group" aria-label="Lighting selection">
+<button type="button" data-light-mode="custom">滑块</button><button type="button" data-light-mode="front">正面</button><button type="button" data-light-mode="side">侧面</button><button type="button" data-light-mode="top">顶光</button><button type="button" data-light-mode="cinematic">电影</button></div></fieldset>
         <fieldset class="study-fieldset"><legend data-t="studyTitle">Drawing study mode</legend><div class="study-buttons" role="group" aria-label="Drawing study views"><button type="button" class="study-button active" data-study-mode="graphite" data-t="studyGraphite" aria-pressed="true">Graphite portrait</button><button type="button" class="study-button" data-study-mode="structure" data-t="studyStructure" aria-pressed="false">Construction guides</button></div></fieldset>
         <div class="control-section"><div class="section-header"><span class="eyebrow" data-t="structure">01 / FACE GEOMETRY</span></div><div class="controls" id="geometry-controls"></div></div>
         <div class="control-section"><div class="section-header"><span class="eyebrow" data-t="surface">02 / GRAPHITE FINISH</span></div><div class="controls" id="finish-controls"></div></div>

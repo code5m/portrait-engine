@@ -16,3 +16,5 @@
 .study-button:hover{border-color:#8c9b8e}
 .study-button.active,.study-button[aria-pressed="true"]{border-color:#c6ac89;background:#343e36;color:#f5e5cb}
 @media(max-width:800px){.study-fieldset{grid-column:1/-1}}
+
+.studio-options{display:flex;flex-wrap:wrap;gap:6px}.studio-options button{border:1px solid #424c44;color:#b8c3b9;background:#242c27;border-radius:3px;padding:8px 10px;font-size:11px}.studio-options button.active,.studio-options button[aria-pressed="true"]{border-color:#d6ba91;color:#ffedcf;background:#3e453c}

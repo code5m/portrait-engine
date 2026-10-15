@@ -32,17 +32,17 @@ function unit(v){const length=Math.hypot(...v);return v.map(x=>x/length);}
  * One shared light in viewer coordinates. Elevation fixed at 24deg.
  * The additive 15% ambient term avoids pure-black holes in eye sockets.
  */
-export function lightVector(degrees){
+export function lightVector(degrees, elevationDegrees = 24){
   const safeDegrees = Number.isFinite(degrees) ? clamp(degrees,-60,60) : 0;
   const a=safeDegrees*Math.PI/180;
-  const elev=24*Math.PI/180;
+  const elev=clamp(elevationDegrees, 0, 85)*Math.PI/180;
   return Object.freeze([Math.sin(a)*Math.cos(elev),Math.sin(elev),Math.cos(a)*Math.cos(elev)]);
 }
 
 /** Values only. Artists may later replace the normals without reworking UI. */
 export function deriveVolumeValues(raw){
   const p=normalize(raw);
-  const light=lightVector(p.lightDirection);
+  const light=lightVector(p.lightDirection, Number.isFinite(raw?.lightElevation) ? raw.lightElevation : 24);
   const planes={};
   for(const [name,n] of Object.entries(PLANE_NORMALS)){
     const normal=unit(n);
