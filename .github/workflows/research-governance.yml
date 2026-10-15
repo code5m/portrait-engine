@@ -1,0 +1,79 @@
+name: Research Governance — Universal CSS Portrait
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: research-governance-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  policy-and-compatibility:
+    name: Research Policy / Engine Contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Syntax, legacy compatibility, source/media policy, opt-in isolation, offline build
+        run: |
+          npm run verify
+          git diff --exit-code -- standalone.html study/010-blind-offline.html study/010-results-offline.html
+          git diff --check
+      - name: Research status
+        run: |
+          echo '### ENGINE_PASS does not mean ART_PASS' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Research: general generation; artwork is evidence; realism is primary metric.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'R012: rejected at first-view; R013: ART_UNVERIFIED. Both opt-in.' >> "$GITHUB_STEP_SUMMARY"
+  actual-browser-matrix:
+    name: 3×3×5 Chromium / Default Visual Lock
+    needs: policy-and-compatibility
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      GOVERNANCE_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build portable CSS renderer and block source drift
+        run: |
+          npm run build
+          npm run governance:check
+          git diff --exit-code -- standalone.html
+      - name: Install real Chromium
+        run: |
+          python -m pip install playwright pillow
+          python -m playwright install --with-deps chromium
+      - name: Render three identities across three lights and five expressions
+        run: python test/research-governance-matrix.py
+      - name: Disclose truthful research state
+        if: always()
+        run: |
+          echo '### Visual evidence is not an artistic judgment' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Browser captures are diagnostic, not Photoshop/AI images or runtime inputs.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Without real independent human blind review: ART_UNVERIFIED.' >> "$GITHUB_STEP_SUMMARY"
+      - name: Attach contact sheets and per-scene evidence (optional quota)
+        if: always()
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: css-portrait-generative-matrix-${{ github.run_id }}
+          path: test-results/research-governance/
+          if-no-files-found: warn
+          retention-days: 14
