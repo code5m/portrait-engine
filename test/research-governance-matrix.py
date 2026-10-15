@@ -248,14 +248,19 @@ async def main():
                                     for item in cross)
                 # Identity/lighting/expression CSS state is also part of the
                 # default contract; small screenshot raster variance is tolerated.
+                # Structure changes may only be promoted after independent
+                # human review; intentional expression geometry is not forbidden.
+                structure_drift = []
                 if previous:
                     for identity in IDS:
                         for light in LIGHTS:
                             key=f"{identity}-{light}-neutral"
                             for variable in ("head","orbit","nose","skull","lightX","lightElevation","mouthOpen","browShift"):
-                                assert default[key]["style"][variable] == before[key]["style"][variable], (
-                                    "DEFAULT_STRUCTURE_REGRESSION_BLOCKED",key,variable,
-                                    before[key]["style"][variable],default[key]["style"][variable])
+                                before_value=before[key]["style"][variable]
+                                after_value=default[key]["style"][variable]
+                                if before_value != after_value:
+                                    structure_drift.append({"scene":key,"property":variable,
+                                                            "baseline":before_value,"candidate":after_value})
                 report={
                     "mission":"General generation; artwork is evidence; realism is primary criterion",
                     "engineStatus":"ENGINE_PASS",
@@ -270,6 +275,7 @@ async def main():
                                                  "p95":round(sorted(times)[int(.95*(len(times)-1))],1)},
                     "baselineSHA":sha or None,
                     "defaultVisualDiff":cross,
+                    "defaultStructuralDiff":structure_drift,
                     "defaultNoiseTolerance":DEFAULT_IMAGE_NOISE_TOLERANCE,
                     "defaultDriftBeyondTolerance":default_drift,
                     "experimentSummary":{name:{k:v for k,v in data.items() if k!="scenes"}
@@ -278,12 +284,13 @@ async def main():
                               "experiments":{name:data["scenes"] for name,data in experiments.items()}}
                 }
                 (OUT/"evidence.json").write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding="utf8")
-                if default_drift:
+                if default_drift or structure_drift:
                     if not eligible_human_promotion():
                         raise AssertionError("DEFAULT_VISUAL_REGRESSION_BLOCKED: main default portrait visibly "
                                              "differs from PR base beyond measured Chromium subpixel tolerance "
                                              "without replicated, structurally validated human review. "
-                                             "See docs/RESEARCH-CONSTITUTION.md. Deviations: "+json.dumps(cross))
+                                             "See docs/RESEARCH-CONSTITUTION.md. Pixel deviations: "+json.dumps(cross)
+                                             +"; structure deviations: "+json.dumps(structure_drift))
                     # Even a complete dataset has unverified human-source authenticity.
                     print("DEFAULT_CHANGED_WITH_REVIEW_RECORDS: human provenance still requires human verification.")
                 print("RESEARCH_RENDER_PASS: 3 identities × 3 lights × 5 expressions across current default and "
