@@ -85,6 +85,14 @@ for (const file of list('test','.py').filter(p=>/research\d{3}-preview\.py$/i.te
   const id = path.basename(file).match(/(\d{3})/)[1];
   reject(!seen.has('R'+id),file,'visual experiment omitted from ledger');
 }
+// Guard ALL newly named R012+ experiments, even when the author adds a
+// candidate to a shared CSS module instead of styles/researchNNN.css.
+for (const [,number] of app.matchAll(/qs\.get\(['"]r(\d{3})['"]\)/g)) {
+  if (Number(number)>=12) reject(!seen.has('R'+number),'src/app.mjs','unregistered research query r'+number);
+}
+for (const [,number] of allCSS.matchAll(/\[data-r(\d{3})\s*=/g)) {
+  if (Number(number)>=12) reject(!seen.has('R'+number),'styles/**','unregistered CSS experiment r'+number);
+}
 reject((app.match(/Object\.entries\(deriveEngineStyle\(activeCharacter\)\)/g)||[]).length!==1,'src/app.mjs','canonical engine style must be derived exactly once per apply()');
 if (violations.length) {
   console.error('RESEARCH_POLICY_FAIL:\n'+violations.map(x=>' - '+x).join('\n'));
