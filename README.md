@@ -1,5 +1,12 @@
 # Portrait Engine · 可编程素描肖像实验
 
+> **最高研发原则：研究的是通用生成能力，人物作品是验证手段，写实质量是核心衡量标准。**
+>
+> 不允许用生成单张漂亮脸、参数个数、构建成功或像素差替代多身份写实质量验证。严格保持 HTML + CSS 唯一绘制媒介、JS 只负责计算。权威规范见 [研究宪章](docs/RESEARCH-CONSTITUTION.md)，审计与欠债见 [质量审计](docs/ENGINE-QUALITY-AUDIT.md)。
+>
+> **真实状态：** R012 首轮视觉审查未接受；R013 只证明结构和像素响应，尚无独立真人盲评。仍为 `ART_UNVERIFIED`，不得宣称照片级写实。
+
+
 本项目从零使用 **HTML + CSS 绘制人物头部**。JavaScript 只负责交互和参数，不生成或加载头像图片。
 
 **真实定位：目前是可运行的风格化素描实验，还没有达到专业写实素描水准。**
@@ -26,7 +33,7 @@ npm run dev
 
 然后打开 `http://localhost:4173`。
 
-一键验证并重新生成单文件：
+一键验证并重新生成单文件（包含**跨源代码原生媒介限制、研究登记、单次渲染计算等不可绕过门禁**）：
 
 ```bash
 npm run verify
@@ -160,3 +167,21 @@ python3 -m http.server 4173
 
 ### Research 010: offline handoff quality gate
 Share `study/010-blind-offline.html` directly with independent observers. It opens without a local HTTP server; optionally send the matching `study/010-results-offline.html` to the researcher for fully local scoring. The links in these two pages stay within the offline kit. `python3 test/study010-offline-visual.py` tests all three lighting scenes, genuine browser rendering, download/upload, smartphone layout, and zero external HTTP requests. GitHub Visual Study must navigate the actual `file://` pages rather than an inline fallback. Scores from QA are synthetic and discarded; actual human ratings remain zero.
+
+## 研究宪章 / GitHub 主线门禁（R014 起适用）
+
+```bash
+npm run verify
+npm run governance:check
+# 安装 Python Playwright + Pillow 及 Chromium 后：
+python3 test/research-governance-matrix.py
+```
+
+GitHub 的 `Research Governance — Universal CSS Portrait` 工作流对 PR 强制执行：
+
+1. 静态媒介与性能/兼容契约：HTML + CSS 绘制，人像不加载图片、SVG、Canvas、WebGL、WebGPU 等替代物；Face DNA 和实验状态有单一台账；保留旧 JSON。
+2. 浏览器真实绘制：默认 V1、R013 各 3 身份 × 3 光照 × 5 表情，R012 保留 3 身份 × 3 灯位中性对照；每份附九图联系表、结构不变量和完整场景清单。
+3. PR 默认画像锁：在相同 Chromium 条件下比较 `main` 基线与 PR 默认场景。无真实审查证据的默认视觉变更阻塞；只增 opt-in 实验可以独立合并。
+4. 严格区分工程通过与艺术评价；`ART_UNVERIFIED` 不会因截图或 CI 自动变成 `ART_PASS`。人工成对盲评的结构验证在 `scripts/validate-human-evidence.mjs`，观察者来源仍须人工核实。
+
+研究候选登记：[`research/experiments.json`](research/experiments.json)。新增人物时不得为特定 ID 手写一套新 CSS；已有代码发现的问题见 [`docs/ENGINE-QUALITY-AUDIT.md`](docs/ENGINE-QUALITY-AUDIT.md)。
