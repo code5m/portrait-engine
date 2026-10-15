@@ -1,0 +1,33 @@
+name: Synchronize generated portrait standalone
+on:
+  push:
+    branches: [feature/face-engine-v1-closure]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  synchronize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/face-engine-v1-closure
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Rebuild generated offline artifacts
+        run: |
+          npm run build
+          python3 scripts/build-r010-study.py
+          python3 scripts/check-standalone.py
+          git diff --check
+      - name: Commit standalone only if generated contents changed
+        run: |
+          if ! git diff --quiet -- standalone.html; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add standalone.html
+            git commit -m "build: synchronize standalone from face engine source"
+            git push origin HEAD:feature/face-engine-v1-closure
+          fi
