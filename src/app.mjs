@@ -132,6 +132,10 @@ function apply() {
     selector.classList.toggle('active',selector.dataset.lightMode === selectedLighting);
     selector.setAttribute('aria-pressed',String(selector.dataset.lightMode === selectedLighting));
   }
+  if (!volumeStudy) {
+    // The canonical DNA renderer is the last writer of structural/lighting properties.
+    for (const [name,value] of Object.entries(deriveEngineStyle(activeCharacter))) root.style.setProperty(name,value);
+  }
   for (const key of KEYS) {
     const def = DEFINITIONS[key];
     const input = document.getElementById(`param-${key}`);
