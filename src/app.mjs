@@ -5,6 +5,10 @@ import { deriveVolumeStyle } from './volume.mjs';
 import { deriveFaceStructureStyle } from './face-model.mjs';
 import { deriveSurfaceFieldStyle } from './surface-field.mjs';
 import { deriveStrokeFieldStyle } from './stroke-field.mjs';
+import { buildFaceState, deriveEngineStyle, encodeFaceState, decodeFaceState } from './engine.mjs';
+import { dnaFromLegacyParameters } from './face-dna.mjs';
+import { IDENTITIES, findIdentity } from './identity/identity-registry.mjs';
+import { EXPRESSION_PRESETS } from './expression/expression-dna.mjs';
 
 const root = document.querySelector('#portrait');
 const paper = document.querySelector('#portrait-paper');
@@ -36,6 +40,9 @@ const researchEmbed = qs.get('embed') === '1' && (acceptedResearchVariants.has(r
 if (researchEmbed) document.body.dataset.r005Embed = '1';
 const STORAGE_KEY = 'portrait-engine/parameters/v1';
 let values = defaults();
+let activeCharacter = buildFaceState({parameters:values});
+let selectedExpression = 'neutral';
+let selectedLighting = 'custom';
 let noticeTimer;
 
 function notify(message) {
@@ -78,6 +85,7 @@ function buildControls() {
     input.setAttribute('aria-describedby', `hint-${key}`);
     input.addEventListener('input', () => {
       values = normalize({ ...values, [key]: input.valueAsNumber });
+      activeCharacter = buildFaceState({...activeCharacter, faceDNA:dnaFromLegacyParameters(values,activeCharacter.faceDNA), parameters:values, lighting:selectedLighting === 'custom' ? {mode:'custom', direction:values.lightDirection} : activeCharacter.lighting});
       apply();
       persist();
     });
@@ -91,6 +99,14 @@ function buildControls() {
 }
 
 function apply() {
+  if (!volumeStudy) {
+    for (const [name,value] of Object.entries(deriveEngineStyle(activeCharacter))) root.style.setProperty(name,value);
+    root.dataset.r006 = 'volume';
+    root.dataset.r007 = 'structured';
+    root.dataset.r008 = 'field';
+    root.dataset.r009 = 'strokes';
+    root.dataset.faceEngine = 'v1';
+  }
   for (const [name, value] of Object.entries(derivePortraitStyle(values))) root.style.setProperty(name, value);
   if (volumeStudy) {
     for (const [name, value] of Object.entries(deriveVolumeStyle(values))) root.style.setProperty(name, value);
@@ -103,6 +119,18 @@ function apply() {
   }
   if (strokeVariant === 'strokes') {
     for (const [name, value] of Object.entries(deriveStrokeFieldStyle(values))) root.style.setProperty(name, value);
+  }
+  for (const selector of document.querySelectorAll('[data-identity]')) {
+    const active = selector.dataset.identity === activeCharacter.id;
+    selector.classList.toggle('active',active); selector.setAttribute('aria-pressed',String(active));
+  }
+  for (const selector of document.querySelectorAll('[data-expression]')) {
+    selector.classList.toggle('active',selector.dataset.expression === selectedExpression);
+    selector.setAttribute('aria-pressed',String(selector.dataset.expression === selectedExpression));
+  }
+  for (const selector of document.querySelectorAll('[data-light-mode]')) {
+    selector.classList.toggle('active',selector.dataset.lightMode === selectedLighting);
+    selector.setAttribute('aria-pressed',String(selector.dataset.lightMode === selectedLighting));
   }
   for (const key of KEYS) {
     const def = DEFINITIONS[key];
@@ -122,16 +150,24 @@ function apply() {
 
 function persist() {
   if (volumeStudy) return; // No experimental paint may overwrite user portraits.
-  try { localStorage.setItem(STORAGE_KEY, encode(values)); } catch { /* Browser may block storage. */ }
+  try {
+    localStorage.setItem(STORAGE_KEY, encode(values));
+    localStorage.setItem('portrait-engine/character/v2',encodeFaceState(activeCharacter));
+  } catch { /* Browser may block storage. */ }
 }
 function restore() {
   try {
     const serialized = localStorage.getItem(STORAGE_KEY);
     if (serialized) values = decode(serialized);
+    const character = localStorage.getItem('portrait-engine/character/v2');
+    activeCharacter = character ? decodeFaceState(character) : buildFaceState({parameters:values});
+    values = activeCharacter.parameters;
+    selectedLighting = activeCharacter.lighting.mode;
+    selectedExpression = Object.keys(EXPRESSION_PRESETS).find(key=>JSON.stringify(EXPRESSION_PRESETS[key])===JSON.stringify(activeCharacter.expression)) ?? 'neutral';
   } catch { values = defaults(); }
 }
 function download() {
-  const blob = new Blob([encode(values)], { type: 'application/json;charset=utf-8' });
+  const blob = new Blob([encodeFaceState(activeCharacter)], { type: 'application/json;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement('a');
   anchor.href = url;
@@ -145,7 +181,7 @@ function download() {
 async function importFile(file) {
   if (!file || file.size > 1024 * 1024) throw new Error('Invalid file size');
   const text = await file.text();
-  return decode(text);
+  return decodeFaceState(text);
 }
 function updateScale() {
   if (!paper || !root) return;
@@ -170,23 +206,46 @@ for (const button of document.querySelectorAll('[data-study-mode]')) {
   button.addEventListener('click', () => setStudyMode(button.dataset.studyMode));
 }
 if (!researchEmbed && !volumeStudy) restore();
+for (const button of document.querySelectorAll('[data-identity]')) {
+  button.addEventListener('click',()=>{
+    const identity = findIdentity(button.dataset.identity);
+    if (!identity) return;
+    activeCharacter = buildFaceState({...activeCharacter,id:identity.id,faceDNA:identity.faceDNA});
+    values = activeCharacter.parameters; apply(); persist();
+  });
+}
+for (const button of document.querySelectorAll('[data-expression]')) {
+  button.addEventListener('click',()=>{
+    selectedExpression = button.dataset.expression;
+    activeCharacter = buildFaceState({...activeCharacter,expression:EXPRESSION_PRESETS[selectedExpression]});
+    apply(); persist();
+  });
+}
+for (const button of document.querySelectorAll('[data-light-mode]')) {
+  button.addEventListener('click',()=>{
+    selectedLighting = button.dataset.lightMode;
+    activeCharacter = buildFaceState({...activeCharacter,lighting:{mode:selectedLighting,direction:values.lightDirection}});
+    apply(); persist();
+  });
+}
 buildControls();
 apply();
 for (const button of document.querySelectorAll('[data-preset]')) {
   button.addEventListener('click', () => {
     values = { ...PRESETS[button.dataset.preset] };
+    activeCharacter = buildFaceState({parameters:values}); selectedLighting='custom'; selectedExpression='neutral';
     apply(); persist();
   });
 }
 document.getElementById('reset-btn').addEventListener('click', () => {
-  values = defaults(); apply(); persist(); notify(zh.toastReset);
+  values = defaults(); activeCharacter=buildFaceState({parameters:values}); selectedLighting='custom'; selectedExpression='neutral'; apply(); persist(); notify(zh.toastReset);
 });
 document.getElementById('download-btn').addEventListener('click', download);
 document.getElementById('import-btn').addEventListener('click', () => fileInput.click());
 fileInput.addEventListener('change', async () => {
   try {
     if (!fileInput.files?.[0]) return;
-    values = await importFile(fileInput.files[0]);
+    activeCharacter = await importFile(fileInput.files[0]); values = activeCharacter.parameters; selectedLighting=activeCharacter.lighting.mode; selectedExpression='neutral';
     apply(); persist(); notify(zh.toastLoaded);
   } catch { notify(zh.toastError); }
   finally { fileInput.value = ''; }
