@@ -1,5 +1,10 @@
 # 验收门禁与未完成事项
 
+> **当前适用的最高门禁：** [Portrait Engine 研究宪章](RESEARCH-CONSTITUTION.md)。本文件保留历史研究记录；**历史工程绿灯不能替代独立写实质量评价**。主线默认画面从合并 R012/R013 时的 V1 复合渲染开始，R012/R013 自身仍是实验模式。
+>
+> `Research Governance — Universal CSS Portrait` 已设计独立的静态来源限制、45 场景真实 Chromium 验证、PR 默认图锁与人工证据结构审核。是否通过必须以该 PR 实际 GitHub Actions 输出为准。
+
+
 ## 已完成的自动化验证
 
 - `npm run check`：JavaScript 源码语法检查。
