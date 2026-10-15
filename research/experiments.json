@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "mission": "general generation capability; artworks validate it; realism is the primary success criterion",
+  "renderer": "HTML_CSS_ONLY",
+  "overallArtStatus": "ART_UNVERIFIED",
+  "experiments": [
+    {
+      "id": "R012",
+      "status": "REJECTED_FIRST_VIEW",
+      "hypothesis": "Coherent CSS facial planes reduce puppet-like appearance across multiple identities",
+      "control": "standalone.html",
+      "candidateQuery": "?r012=form",
+      "optIn": true,
+      "minimumIdentities": 3,
+      "minimumLightingConditions": 3,
+      "minimumExpressions": 5,
+      "independentHumanReviewers": 0,
+      "observations": "First-view negative: mask/doll face, hair helmet, weak identity separation.",
+      "evidenceDocument": "docs/RESEARCH-012-VISUAL-FIRST.md"
+    },
+    {
+      "id": "R013",
+      "status": "ART_UNVERIFIED",
+      "hypothesis": "Independent skull cheek jaw contours produce visibly separable identities without hard-coded per-person CSS",
+      "control": "standalone.html",
+      "candidateQuery": "?r013=anatomy",
+      "optIn": true,
+      "minimumIdentities": 3,
+      "minimumLightingConditions": 3,
+      "minimumExpressions": 5,
+      "independentHumanReviewers": 0,
+      "observations": "Deterministic contour differences and browser A/B only; art realism has not been validated.",
+      "evidenceDocument": "docs/RESEARCH-013-IDENTITY-FORM.md"
+    }
+  ]
+}
