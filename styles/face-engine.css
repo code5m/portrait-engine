@@ -10,3 +10,77 @@
 .portrait[data-face-engine="v1"] .v-plane{filter:blur(var(--skin-softness));}
 .portrait[data-face-engine="v1"] .nose-bridge{transform:scaleX(calc(.8 + var(--dna-nose-projection)*.35));}
 .portrait[data-face-engine="v1"] .cheek-plane{scale:calc(.8 + var(--dna-cheek-volume)*.4);}
+
+/* R012 - opt-in form study: native CSS sculptural planes rather than extra badges.
+   Backface and under-eye shading responds to the same DNA/light CSS values.
+   Candidate is NOT the default and must win a human visual comparison first. */
+.portrait[data-r012="form"] .face {
+  border-radius:46% 48% 45% 47% / 34% 34% 62% 64%;
+  background:
+    radial-gradient(ellipse 36% 20% at 47% 18%,#f7f2e7bf,transparent 100%),
+    radial-gradient(ellipse 56% 37% at 50% 43%,#ebe3d8b8,transparent 94%),
+    radial-gradient(ellipse 43% 36% at 10% 56%,#5a554f7e,transparent 97%),
+    radial-gradient(ellipse 39% 40% at 91% 58%,#5a574fa1,transparent 98%),
+    radial-gradient(ellipse 61% 29% at 50% 95%,#5750478f,transparent 96%),
+    radial-gradient(ellipse 105% 96% at var(--light-x,39%) 35%,#e4ded2 12%,#b6afa4 54%,#736e67 100%);
+  box-shadow:inset 0 9px 13px #faf3e627,inset 0 -18px 22px #3e3b355c,
+    inset 12px -2px 16px #45433c3d,inset -13px 1px 20px #39372f48;
+}
+.portrait[data-r012="form"] .face-tones {
+  background:
+    radial-gradient(ellipse 63% 23% at 49% 43%,#56524837,transparent 84%),
+    radial-gradient(ellipse 54% 24% at 50% 61%,#eae4d59e,transparent 85%),
+    radial-gradient(ellipse 32% 17% at 20% 73%,#4c4a4251,transparent 97%),
+    radial-gradient(ellipse 31% 18% at 78% 73%,#4c4a4262,transparent 98%),
+    radial-gradient(ellipse 75% 19% at 49% 91%,#6860584d,transparent 95%);
+  opacity:.77;
+  filter:none;
+}
+.portrait[data-r012="form"] .eye-socket {
+  background:
+    radial-gradient(ellipse 83% 55% at 51% 52%,#3c3b347e,transparent 84%),
+    radial-gradient(ellipse 92% 82% at 54% 72%,#e9ddca6c,transparent 88%);
+  filter:blur(2.7px);
+  opacity:calc(.35 + var(--dna-orbit-depth,.5) * .42);
+}
+.portrait[data-r012="form"] .brow-bone {
+  background:
+    radial-gradient(ellipse 82% 60% at 47% 73%,#fcf5e5a0,transparent 83%),
+    radial-gradient(ellipse 75% 49% at 50% 31%,#4b493f83,transparent 89%);
+  filter:blur(3.1px);
+  opacity:calc(.26 + var(--dna-brow-depth,.5) * .45);
+}
+.portrait[data-r012="form"] .cheek-plane {
+  background:
+    radial-gradient(ellipse 82% 47% at 47% 21%,#f3e9d8a1,transparent 93%),
+    radial-gradient(ellipse 88% 67% at 52% 71%,#47443f91,transparent 94%);
+  filter:blur(5.2px);
+  opacity:calc(.27 + var(--dna-cheek-volume,.5) * .42);
+}
+.portrait[data-r012="form"] .nose-bridge {
+  background:linear-gradient(90deg,#605c5268 0%,#c4bcb058 29%,#f5eee0c4 56%,#817b6e8b 93%);
+  box-shadow:var(--nose-cast-x,2px) 9px 10px #332f2e72;
+  filter:blur(3.3px);
+}
+.portrait[data-r012="form"] .nose-tip {
+  background:radial-gradient(ellipse 91% 79% at 42% 28%,#fff5e6c4,#c3b9aa86 54%,transparent 92%);
+}
+.portrait[data-r012="form"] .mouth {
+  rotate:calc(var(--dna-mouth-corner,.5) * 1.2deg - .6deg);
+}
+.portrait[data-r012="form"] .lip-line {
+  opacity:.44;
+  border-top-width:1px;
+}
+.portrait[data-r012="form"] .hair-cap {
+  clip-path:polygon(1% 58%,5% 34%,12% 17%,30% 4%,47% 2%,62% 5%,79% 14%,95% 33%,100% 63%,94% 59%,80% 46%,74% 41%,63% 34%,52% 39%,45% 37%,36% 42%,25% 48%,12% 68%);
+  background:
+    radial-gradient(ellipse 61% 39% at 28% 30%,#93938636,transparent 98%),
+    repeating-linear-gradient(116deg,#242922 0 1px,#3b3e35 1.7px 4px,#54564a 5px 6px,#222721 7px 10px);
+}
+.portrait[data-r012="form"] .hair-strands {
+  background:repeating-linear-gradient(101deg,transparent 0 4.2px,#d4cbb74b 4.4px 4.7px,transparent 4.9px 11px);
+  opacity:calc(.18 + var(--hair-field-density,.6) * .28);
+}
+.portrait[data-r012="form"] .stroke-field {opacity:.64;}
+.portrait[data-r012="form"][data-study="structure"] .stroke-field {display:none;}
