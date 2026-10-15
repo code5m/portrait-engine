@@ -5,6 +5,9 @@ PR baseline protection: GOVERNANCE_BASE_SHA=<40-char base git SHA> python ...
 Only HTML and CSS may draw the portrait; screenshot PNGs are QA OUTPUTS only.
 """
 import asyncio
+import base64
+import io
+import textwrap
 import hashlib
 import json
 import os
@@ -284,6 +287,28 @@ async def main():
                               "experiments":{name:data["scenes"] for name,data in experiments.items()}}
                 }
                 (OUT/"evidence.json").write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding="utf8")
+                # GitHub Actions artifact storage may be exhausted. Emit small,
+                # genuinely Chromium-rendered, non-runtime JPEG contact sheets
+                # as base64 logs so researchers can still independently inspect.
+                # This DOES NOT create an ART_PASS or change the CSS renderer.
+                if os.environ.get("RESEARCH_LOG_PREVIEW") == "1":
+                    modes = ["default"] + [e["id"].lower() for e in ledger["experiments"]]
+                    for mode in modes:
+                        with Image.open(OUT / (mode + "-nine-scene-contact.jpg")) as photo:
+                            thumb = photo.convert("RGB")
+                            thumb.thumbnail((760, 1080), Image.Resampling.LANCZOS)
+                            buffer = io.BytesIO()
+                            thumb.save(buffer, format="JPEG", quality=60, optimize=True)
+                        payload = base64.b64encode(buffer.getvalue()).decode("ascii")
+                        print("QUALITY_CONTACT_SHEET_BEGIN mode=" + mode + " format=jpeg;base64")
+                        for row in textwrap.wrap(payload, 180):
+                            print(row)
+                        print("QUALITY_CONTACT_SHEET_END mode=" + mode)
+                    print("QUALITY_DIAGNOSTICS " + json.dumps({
+                        "defaultNoiseTolerance": DEFAULT_IMAGE_NOISE_TOLERANCE,
+                        "maximumDefaultDiff": max([e["maxChannelMeanDifference"] for e in cross] or [0]),
+                        "structuralDifferences": len(structure_drift),
+                        "sceneCounts": report["coverage"]}, ensure_ascii=False))
                 if default_drift or structure_drift:
                     if not eligible_human_promotion():
                         raise AssertionError("DEFAULT_VISUAL_REGRESSION_BLOCKED: main default portrait visibly "
