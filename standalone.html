@@ -26,6 +26,8 @@
 .study-button.active,.study-button[aria-pressed="true"]{border-color:#c6ac89;background:#343e36;color:#f5e5cb}
 @media(max-width:800px){.study-fieldset{grid-column:1/-1}}
 
+.studio-options{display:flex;flex-wrap:wrap;gap:6px}.studio-options button{border:1px solid #424c44;color:#b8c3b9;background:#242c27;border-radius:3px;padding:8px 10px;font-size:11px}.studio-options button.active,.studio-options button[aria-pressed="true"]{border-color:#d6ba91;color:#ffedcf;background:#3e453c}
+
 </style>
   <style>
 /* All portrait marks are original CSS shapes, gradients and masks. No asset URLs. */
@@ -1536,7 +1538,25 @@ body[data-r005-embed="1"] .drawing-signature {display:none;}
 .portrait[data-r009="strokes"][data-study="structure"] .stroke-field {display:none}
 
 </style>
+  <style>
+/* Native CSS-only rendering of DNA and its expression, skin and hair fields. */
+.portrait[data-face-engine="v1"] .face{transform:scaleX(var(--face-x)) scaleY(var(--dna-skull-height));}
+.portrait[data-face-engine="v1"] .eyebrow{translate:0 var(--expr-brow-shift);rotate:var(--expr-brow-tilt);}
+.portrait[data-face-engine="v1"] .eye-white{transform:scaleY(var(--expr-eye-squint));}
+.portrait[data-face-engine="v1"] .mouth{translate:0 var(--expr-mouth-curve);rotate:var(--expr-mouth-corner);transform:scaleY(var(--expr-mouth-open));}
+.portrait[data-face-engine="v1"] .hair-cap{rotate:var(--hair-field-direction);transform:scaleX(var(--hair-field-length));}
+.portrait[data-face-engine="v1"] .hair-strands{background-size:var(--hair-strand-pitch) 100%;rotate:var(--hair-field-curl);}
+.portrait[data-face-engine="v1"] .face-tones{filter:blur(var(--skin-softness));opacity:calc(.3 + var(--art-graphite) * .38);}
+.portrait[data-face-engine="v1"] .face-hatching{opacity:calc(var(--art-hatching) * var(--skin-grain-opacity) + .12);}
+.portrait[data-face-engine="v1"] .v-plane{filter:blur(var(--skin-softness));}
+.portrait[data-face-engine="v1"] .nose-bridge{transform:scaleX(calc(.8 + var(--dna-nose-projection)*.35));}
+.portrait[data-face-engine="v1"] .cheek-plane{scale:calc(.8 + var(--dna-cheek-volume)*.4);}
+
+</style>
   <script type="module">
+const modules = Object.create(null);
+{
+
 const DEFINITIONS = Object.freeze({
   faceWidth: { min: 80, max: 120, step: 1, value: 100, group: 'geometry', unit: '%' },
   eyeSpacing: { min: -16, max: 16, step: 1, value: 0, group: 'geometry', unit: 'px' },
@@ -1581,7 +1601,10 @@ function decode(json) {
   return normalize(parsed.parameters);
 }
 
-
+modules['parameters'] = {DEFINITIONS,PRESETS,KEYS,defaults,normalize,equal,encode,decode};
+}
+{
+const {normalize} = modules['parameters'];
 /**
  * Maps human-readable sliders into coordinated CSS landmarks.
  * The face is centered at x=190.5px in a fixed 380px drawing coordinate space.
@@ -1664,6 +1687,10 @@ function deriveHeadLandmarks(raw) {
   });
 }
 
+modules['geometry'] = {derivePortraitStyle,deriveHeadLandmarks};
+}
+{
+const {normalize} = modules['parameters'];
 /**
  * Research 006: a tiny, explicit 2.5D value model for CSS portrait studies.
  *
@@ -1673,7 +1700,6 @@ function deriveHeadLandmarks(raw) {
  * Positive lightDirection lights the viewer-right side of the face.
  * These normals are artistic abstractions, NOT anthropometric measurements.
  */
-
 const PLANE_NORMALS = Object.freeze({
   browLeft: Object.freeze([-0.38, 0.31, 0.87]),
   browRight: Object.freeze([0.38, 0.31, 0.87]),
@@ -1697,17 +1723,17 @@ function unit(v){const length=Math.hypot(...v);return v.map(x=>x/length);}
  * One shared light in viewer coordinates. Elevation fixed at 24deg.
  * The additive 15% ambient term avoids pure-black holes in eye sockets.
  */
-function lightVector(degrees){
+function lightVector(degrees, elevationDegrees = 24){
   const safeDegrees = Number.isFinite(degrees) ? clamp(degrees,-60,60) : 0;
   const a=safeDegrees*Math.PI/180;
-  const elev=24*Math.PI/180;
+  const elev=clamp(elevationDegrees, 0, 85)*Math.PI/180;
   return Object.freeze([Math.sin(a)*Math.cos(elev),Math.sin(elev),Math.cos(a)*Math.cos(elev)]);
 }
 
 /** Values only. Artists may later replace the normals without reworking UI. */
 function deriveVolumeValues(raw){
   const p=normalize(raw);
-  const light=lightVector(p.lightDirection);
+  const light=lightVector(p.lightDirection, Number.isFinite(raw?.lightElevation) ? raw.lightElevation : 24);
   const planes={};
   for(const [name,n] of Object.entries(PLANE_NORMALS)){
     const normal=unit(n);
@@ -1734,6 +1760,10 @@ function deriveVolumeStyle(raw){
   return Object.freeze(styles);
 }
 
+modules['volume'] = {PLANE_NORMALS,lightVector,deriveVolumeValues,deriveVolumeStyle};
+}
+{
+const {normalize} = modules['parameters'];
 /**
  * Research 007 / FaceGeometry v0 (2D structural landmark proposal).
  *
@@ -1742,7 +1772,6 @@ function deriveVolumeStyle(raw){
  * In particular, this is NOT a skull mesh, medical anatomy, or likeness model.
  * Local coordinates inherit the existing .face scaleX when painted.
  */
-
 const FRAME = Object.freeze({ x: 87, y: 91, width: 207, height: 304, centerX: 103.5 });
 const point = (x, y) => Object.freeze({ x, y });
 const lerp = (a, b, t) => a + (b - a) * t;
@@ -1809,22 +1838,206 @@ function deriveFaceStructureStyle(raw) {
   return Object.freeze(variables);
 }
 
+modules['face-model'] = {deriveFaceGeometry,toPortraitCoordinates,deriveFaceStructureStyle};
+}
+{
+const {normalize, defaults} = modules['parameters'];
+/**
+ * Face DNA is the canonical structural description of a stylized 2.5D head.
+ * The nine legacy sliders remain a reversible UI and export adapter, not a
+ * second set of independent facial geometry state.
+ */
+const DEFAULT_FACE_DNA = Object.freeze({
+  skull: Object.freeze({ width: .5, height: .5, forehead: .5 }),
+  brow: Object.freeze({ height: .5, depth: .5, tilt: .5 }),
+  orbit: Object.freeze({ depth: .5, width: .5, angle: .5 }),
+  nose: Object.freeze({ bridge: .5, base: .5, projection: .5 }),
+  cheek: Object.freeze({ height: .5, volume: .5 }),
+  mouth: Object.freeze({ width: .5, volume: .5, corner: .5 }),
+  jaw: Object.freeze({ width: .5, angle: .5 })
+});
+
+function clamp01(value, fallback = .5) {
+  return typeof value === 'number' && Number.isFinite(value)
+    ? Math.min(1, Math.max(0, value)) : fallback;
+}
+
+function normalizeDNAGroup(source, fallback) {
+  const result = {};
+  for (const key of Object.keys(fallback)) result[key] = clamp01(source?.[key], fallback[key]);
+  return result;
+}
+
+function normalizeFaceDNA(input = {}) {
+  const source = input && typeof input === 'object' && !Array.isArray(input) ? input : {};
+  return Object.fromEntries(Object.entries(DEFAULT_FACE_DNA)
+    .map(([name, group]) => [name, normalizeDNAGroup(source[name], group)]));
+}
+
+const dnaScale = (v, min, max) => clamp01((v - min) / (max - min));
+const legacyScale = (v, min, max) => min + clamp01(v) * (max - min);
+
+/** Convert validated old slider values to structural DNA without losing extra features. */
+function dnaFromLegacyParameters(input, prior = DEFAULT_FACE_DNA) {
+  const p = normalize(input);
+  const dna = normalizeFaceDNA(prior);
+  dna.skull.width = dnaScale(p.faceWidth, 80, 120);
+  dna.orbit.width = dnaScale(p.eyeSpacing, -16, 16);
+  dna.nose.base = dnaScale(p.noseWidth, 80, 125);
+  dna.jaw.width = dnaScale(p.jaw, 82, 118);
+  dna.mouth.width = dnaScale(p.mouthWidth, 82, 118);
+  return dna;
+}
+
+/** Adapter used by existing CSS primitives and v1 JSON export. */
+function legacyParametersFromDNA(input, finishing = defaults()) {
+  const dna = normalizeFaceDNA(input);
+  return normalize({
+    ...finishing,
+    faceWidth: legacyScale(dna.skull.width, 80, 120),
+    eyeSpacing: legacyScale(dna.orbit.width, -16, 16),
+    noseWidth: legacyScale(dna.nose.base, 80, 125),
+    jaw: legacyScale(dna.jaw.width, 82, 118),
+    mouthWidth: legacyScale(dna.mouth.width, 82, 118)
+  });
+}
+
+function deriveIdentityFingerprint(dna) {
+  const d = normalizeFaceDNA(dna);
+  return [
+    d.skull.width, d.skull.height, d.orbit.depth, d.orbit.width,
+    d.nose.projection, d.nose.base, d.cheek.volume, d.jaw.width,
+    d.jaw.angle, d.mouth.width
+  ].map(value => value.toFixed(3)).join('-');
+}
+
+modules['face-dna'] = {DEFAULT_FACE_DNA,clamp01,normalizeFaceDNA,dnaFromLegacyParameters,legacyParametersFromDNA,deriveIdentityFingerprint};
+}
+{
+const {normalizeFaceDNA, legacyParametersFromDNA} = modules['face-dna'];
+const {deriveFaceGeometry} = modules['face-model'];
+/**
+ * Canonical DNA -> 16 existing face-local CSS landmarks and extra 2.5D metrics.
+ * This is an artistic approximation, not a 3D mesh or biometric identity.
+ */
+const dnaRound = value => Number(value.toFixed(2));
+const dnaOffset = value => value - .5;
+
+function deriveDNAGeometry(input) {
+  const dna = normalizeFaceDNA(input);
+  const legacy = deriveFaceGeometry(legacyParametersFromDNA(dna));
+  const a = Object.fromEntries(Object.entries(legacy.anchors)
+    .map(([name, p]) => [name, { x: p.x, y: p.y }]));
+  const browShift = -dnaOffset(dna.brow.height) * 20;
+  const orbitShift = dnaOffset(dna.orbit.depth) * 8;
+  const tilt = dnaOffset(dna.orbit.angle) * 10;
+  for (const side of ['left', 'right']) {
+    const sign = side === 'left' ? -1 : 1;
+    for (const name of ['Eye','Orbit']) a[side + name].y += orbitShift + sign * tilt;
+    a[side + 'Brow'].y += browShift + sign * tilt;
+    a[side + 'Cheek'].y -= dnaOffset(dna.cheek.height) * 18;
+    a[side + 'Cheek'].x += sign * dnaOffset(dna.cheek.volume) * 13;
+    a[side + 'Jaw'].y += dnaOffset(dna.jaw.angle) * 8;
+  }
+  a.noseRoot.y -= dnaOffset(dna.nose.bridge) * 14;
+  a.noseBase.y += dnaOffset(dna.nose.projection) * 12;
+  a.leftAla.y += dnaOffset(dna.nose.projection) * 12;
+  a.rightAla.y += dnaOffset(dna.nose.projection) * 12;
+  a.mouth.y += dnaOffset(dna.mouth.volume) * 10;
+  a.chin.y += dnaOffset(dna.skull.height) * 18;
+  for (const point of Object.values(a)) {
+    point.x = dnaRound(point.x);
+    point.y = dnaRound(point.y);
+    Object.freeze(point);
+  }
+  return Object.freeze({
+    frame: legacy.frame, faceScale: legacy.faceScale, anchors: Object.freeze(a),
+    metrics: Object.freeze({
+      skullHeight: dnaRound(.96 + dnaOffset(dna.skull.height) * .19),
+      orbitDepth: dnaRound(dna.orbit.depth),
+      browDepth: dnaRound(dna.brow.depth),
+      noseProjection: dnaRound(dna.nose.projection),
+      cheekVolume: dnaRound(dna.cheek.volume),
+      mouthCorner: dnaRound(dna.mouth.corner)
+    })
+  });
+}
+
+function deriveDNAGeometryStyle(input) {
+  const geometry = deriveDNAGeometry(input);
+  const style = {};
+  for (const [name, point] of Object.entries(geometry.anchors)) {
+    style['--fg-' + name + '-x'] = point.x.toFixed(2) + 'px';
+    style['--fg-' + name + '-y'] = point.y.toFixed(2) + 'px';
+  }
+  style['--dna-skull-height'] = String(geometry.metrics.skullHeight);
+  style['--dna-orbit-depth'] = String(geometry.metrics.orbitDepth);
+  style['--dna-brow-depth'] = String(geometry.metrics.browDepth);
+  style['--dna-nose-projection'] = String(geometry.metrics.noseProjection);
+  style['--dna-cheek-volume'] = String(geometry.metrics.cheekVolume);
+  style['--dna-mouth-corner'] = String(geometry.metrics.mouthCorner);
+  return Object.freeze(style);
+}
+
+modules['face-geometry'] = {deriveDNAGeometry,deriveDNAGeometryStyle};
+}
+{
+const {lightVector} = modules['volume'];
+/** Single 3D-direction vector shared by plane, relief and stroke shading. */
+const LIGHT_MODES = Object.freeze(['front', 'side', 'top', 'cinematic', 'custom']);
+const lightClamp = (v, min, max) => Math.min(max, Math.max(min, v));
+function normalizeLighting(input = {}) {
+  const source = input && typeof input === 'object' ? input : {};
+  const mode = LIGHT_MODES.includes(source.mode) ? source.mode : 'cinematic';
+  const direction = Number.isFinite(source.direction) ? lightClamp(source.direction, -60, 60) : -30;
+  return { mode, direction };
+}
+
+function deriveLightingRig(raw) {
+  const setting = normalizeLighting(raw);
+  const choices = {
+    front: [0, 24],
+    side: [53, 24],
+    top: [0, 73],
+    cinematic: [-38, 42],
+    custom: [setting.direction, 24]
+  };
+  const [azimuth, elevation] = choices[setting.mode];
+  const vector = lightVector(azimuth, elevation);
+  const lightPosition = 50 + azimuth / 60 * 22;
+  return Object.freeze({
+    mode: setting.mode,
+    azimuth, elevation, vector,
+    css: Object.freeze({
+      '--light-x': lightPosition.toFixed(2) + '%',
+      '--shadow-x': (100 - lightPosition).toFixed(2) + '%',
+      '--light-elevation': String(elevation)
+    })
+  });
+}
+
+modules['lighting'] = {LIGHT_MODES,normalizeLighting,deriveLightingRig};
+}
+{
+const {normalize} = modules['parameters'];
+const {deriveFaceGeometry} = modules['face-model'];
+const {deriveDNAGeometry} = modules['face-geometry'];
+const {lightVector} = modules['volume'];
 /**
  * Research 008: continuous FACE-LOCAL relief and directional value probes.
  * This is a falsifiable 2.5D sketch hypothesis, not 3D anatomy/photogrammetry.
  * JavaScript returns geometry/light CSS variables; the DOM + CSS paint art.
  * It is gated behind ?r008=field; existing saved portraits remain untouched.
  */
-
 const clampField = (x, min = 0, max = 1) => Math.min(max, Math.max(min, x));
 const gaussian = (x, y, cx, cy, sx, sy) =>
   Math.exp(-0.5 * (((x-cx)/sx)**2 + ((y-cy)/sy)**2));
 const rad = degrees => degrees * Math.PI / 180;
 
 /** Signed relief in logical face pixels. Higher numbers protrude toward viewer. */
-function deriveRelief(raw) {
+function deriveRelief(raw, dna = null) {
   const p = normalize(raw);
-  const face = deriveFaceGeometry(p);
+  const face = dna ? deriveDNAGeometry(dna) : deriveFaceGeometry(p);
   const a = face.anchors;
   const lobes = [
     // The same landmarks that position CSS organs define the depth field.
@@ -1853,9 +2066,9 @@ function deriveRelief(raw) {
 }
 
 /** Distinct shading probes at the flanks, not the feature's geometric center. */
-function deriveSurfaceField(raw) {
+function deriveSurfaceField(raw, dna = null) {
   const p = normalize(raw);
-  const field = deriveRelief(p);
+  const field = deriveRelief(p, dna);
   const a = field.face.anchors;
   const points = {
     browLeft: [a.leftBrow.x - 9, a.leftBrow.y + 7],
@@ -1871,7 +2084,7 @@ function deriveSurfaceField(raw) {
     chin: [a.chin.x, a.chin.y - 9],
     forehead: [(a.leftBrow.x + a.rightBrow.x) / 2, a.leftBrow.y - 56]
   };
-  const light = lightVector(p.lightDirection);
+  const light = lightVector(p.lightDirection, Number.isFinite(raw?.lightElevation) ? raw.lightElevation : 24);
   const values = {};
   for (const [region, [x, y]] of Object.entries(points)) {
     const normal = field.normalAt(x, y);
@@ -1901,9 +2114,9 @@ function deriveSurfaceField(raw) {
   });
 }
 
-function deriveSurfaceFieldStyle(raw) {
+function deriveSurfaceFieldStyle(raw, dna = null) {
   const p = normalize(raw);
-  const field = deriveSurfaceField(p);
+  const field = deriveSurfaceField({ ...p, lightElevation: raw?.lightElevation }, dna);
   const css = {};
   for (const [name, value] of Object.entries(field.values)) {
     css[`--v-${name}-shade`] = value.shade.toFixed(4);
@@ -1919,13 +2132,17 @@ function deriveSurfaceFieldStyle(raw) {
   return Object.freeze(css);
 }
 
+modules['surface-field'] = {deriveRelief,deriveSurfaceField,deriveSurfaceFieldStyle};
+}
+{
+const {normalize} = modules['parameters'];
+const {deriveSurfaceField} = modules['surface-field'];
 /**
  * Research 009 / Surface-bound graphite strokes, NOT a true drawing engine.
  * Same 12 relief-derived normals and one directional light as Research 008.
  * Numeric values only: actual marks are CSS repeating-gradients and masks.
  * The field is a small artistic study, not measured human anatomy.
  */
-
 const STROKE_REGIONS = Object.freeze([
   'browLeft','browRight','orbitLeft','orbitRight',
   'noseLeft','noseRight','cheekLeft','cheekRight',
@@ -1934,9 +2151,9 @@ const STROKE_REGIONS = Object.freeze([
 const clampStroke = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 
 /** Gradient axis follows surface height derivative; hatch lines are its isoheight tangent. */
-function deriveStrokeField(raw) {
+function deriveStrokeField(raw, dna = null) {
   const p = normalize(raw);
-  const field = deriveSurfaceField(p);
+  const field = deriveSurfaceField({ ...p, lightElevation: raw?.lightElevation }, dna);
   const patches = {};
   for (const name of STROKE_REGIONS) {
     const { normal, shade } = field.values[name];
@@ -1958,8 +2175,8 @@ function deriveStrokeField(raw) {
 }
 
 /** Names deliberately match face-local DOM region classes in study009.css. */
-function deriveStrokeFieldStyle(raw) {
-  const field = deriveStrokeField(raw);
+function deriveStrokeFieldStyle(raw, dna = null) {
+  const field = deriveStrokeField(raw, dna);
   const variables = {};
   for (const [name, {angle, opacity}] of Object.entries(field)) {
     variables[`--r009-${name}-angle`] = `${angle.toFixed(2)}deg`;
@@ -1967,6 +2184,172 @@ function deriveStrokeFieldStyle(raw) {
   }
   return Object.freeze(variables);
 }
+
+modules['stroke-field'] = {STROKE_REGIONS,deriveStrokeField,deriveStrokeFieldStyle};
+}
+{
+const {normalizeFaceDNA, deriveIdentityFingerprint} = modules['face-dna'];
+function createIdentity(raw) {
+  if (!raw || typeof raw !== 'object' || !/^[a-z][a-z0-9-]{1,39}$/.test(raw.id)) throw new TypeError('Invalid identity id');
+  const faceDNA = normalizeFaceDNA(raw.faceDNA);
+  return Object.freeze({id:raw.id, name:String(raw.name || raw.id).slice(0,80), age:Math.min(120,Math.max(0,Number.isFinite(raw.age)?raw.age:35)), faceDNA, fingerprint:deriveIdentityFingerprint(faceDNA)});
+}
+
+modules['identity/identity-model'] = {createIdentity};
+}
+{
+const {createIdentity} = modules['identity/identity-model'];
+const IDENTITIES = Object.freeze([
+createIdentity({id:'lin-che',name:'林彻',age:35,faceDNA:{skull:{width:.42,height:.65},orbit:{depth:.74,width:.57},nose:{projection:.68,base:.41},jaw:{width:.68,angle:.78},cheek:{volume:.43}}}),
+createIdentity({id:'zhou-qishan',name:'周启山',age:52,faceDNA:{skull:{width:.70,height:.43},brow:{depth:.77,height:.42},orbit:{depth:.65,width:.41},nose:{projection:.53,base:.63},jaw:{width:.83,angle:.71},cheek:{volume:.67}}}),
+createIdentity({id:'third-portrait',name:'第三人物 / 研究',age:29,faceDNA:{skull:{width:.27,height:.55},orbit:{depth:.32,width:.67},nose:{projection:.36,base:.32},jaw:{width:.26,angle:.33},cheek:{volume:.72,height:.64},mouth:{width:.59}}})
+]);
+function findIdentity(id) {return IDENTITIES.find(item=>item.id===id) ?? null;}
+
+modules['identity/identity-registry'] = {IDENTITIES,findIdentity};
+}
+{
+const {clamp01} = modules['face-dna'];
+const EXPRESSION_PRESETS = Object.freeze({
+neutral:{browRaise:.5,eyeTension:.2,mouthSmile:.5,jawOpen:0},
+happy:{browRaise:.64,eyeTension:.42,mouthSmile:.9,jawOpen:.22},
+sad:{browRaise:.35,eyeTension:.28,mouthSmile:.15,jawOpen:.08},
+angry:{browRaise:.12,eyeTension:.86,mouthSmile:.28,jawOpen:.04},
+fear:{browRaise:.88,eyeTension:.75,mouthSmile:.3,jawOpen:.68}
+});
+function normalizeExpression(raw={}) {
+ const v=typeof raw==='string'?EXPRESSION_PRESETS[raw]??EXPRESSION_PRESETS.neutral:raw;
+ return Object.fromEntries(Object.entries(EXPRESSION_PRESETS.neutral).map(([k,x])=>[k,clamp01(v?.[k],x)]));
+}
+
+modules['expression/expression-dna'] = {EXPRESSION_PRESETS,normalizeExpression};
+}
+{
+const {normalizeExpression} = modules['expression/expression-dna'];
+function deriveExpressionStyle(raw) {
+ const e=normalizeExpression(raw);
+ return Object.freeze({
+ '--expr-brow-shift':((.5-e.browRaise)*10).toFixed(2)+'px',
+ '--expr-brow-tilt':((e.eyeTension-.2)*-8).toFixed(2)+'deg',
+ '--expr-eye-squint':(1-e.eyeTension*.3).toFixed(3),
+ '--expr-mouth-curve':((e.mouthSmile-.5)*9).toFixed(2)+'px',
+ '--expr-mouth-open':(1+e.jawOpen*.7).toFixed(3),
+ '--expr-mouth-corner':((e.mouthSmile-.5)*14).toFixed(2)+'deg'
+ });
+}
+
+modules['expression/expression-engine'] = {deriveExpressionStyle};
+}
+{
+const {clamp01} = modules['face-dna'];
+function normalizeHair(raw={}) {
+ return {density:clamp01(raw?.density,.6),length:clamp01(raw?.length,.6),curl:clamp01(raw?.curl,.25),direction:clamp01(raw?.direction,.5)};
+}
+function sampleHairField(raw, count=24) {
+ const h=normalizeHair(raw); const n=Math.min(128,Math.max(1,Math.floor(count)));
+ return Object.freeze(Array.from({length:n},(_,i)=>{
+ const t=(i+.5)/n, angle=(t-.5)*Math.PI+((h.direction-.5)*.7);
+ return Object.freeze({rootX:Number((50+46*Math.sin(angle)).toFixed(2)),rootY:Number((19+16*Math.cos(angle)).toFixed(2)),angle:Number(angle.toFixed(4)),length:Number((38+120*h.length*(.7+.3*Math.sin(i*2.39996)**2)).toFixed(2)),weight:Number((.4+2.3*h.density).toFixed(2)),curl:h.curl});
+ }));
+}
+
+modules['hair/hair-field'] = {normalizeHair,sampleHairField};
+}
+{
+const {normalizeHair, sampleHairField} = modules['hair/hair-field'];
+function deriveHairStyle(raw) {
+ const h=normalizeHair(raw); const field=sampleHairField(h);
+ return Object.freeze({
+ '--hair-field-density':h.density.toFixed(3),
+ '--hair-field-length':(0.8+h.length*.5).toFixed(3),
+ '--hair-field-curl':(h.curl*19).toFixed(2)+'deg',
+ '--hair-field-direction':((h.direction-.5)*24).toFixed(2)+'deg',
+ '--hair-field-strands':String(field.length),
+ '--hair-strand-pitch':(3.4+(1-h.density)*6).toFixed(2)+'px'
+ });
+}
+
+modules['hair/hair-generator'] = {deriveHairStyle};
+}
+{
+const {clamp01} = modules['face-dna'];
+function normalizeSkin(raw={}) {
+ return {tone:clamp01(raw?.tone,.52),roughness:clamp01(raw?.roughness,.65),pore:clamp01(raw?.pore,.34)};
+}
+function deriveSkinStyle(raw) {
+ const skin=normalizeSkin(raw);
+ return Object.freeze({
+ '--skin-tone':(87-skin.tone*25).toFixed(2)+'%',
+ '--skin-grain-opacity':(skin.pore*.22).toFixed(3),
+ '--skin-softness':(1.6+skin.roughness*4).toFixed(2)+'px'
+ });
+}
+
+modules['material/skin-material'] = {normalizeSkin,deriveSkinStyle};
+}
+{
+const {clamp01} = modules['face-dna'];
+function deriveArtisticSurfaceStyle(raw={}) {
+ return Object.freeze({
+ '--art-graphite':clamp01(raw?.graphite,.65).toFixed(3),
+ '--art-paper':clamp01(raw?.paper,.7).toFixed(3),
+ '--art-hatching':clamp01(raw?.hatching,.62).toFixed(3)
+ });
+}
+
+modules['material/artistic-surface'] = {deriveArtisticSurfaceStyle};
+}
+{
+const {normalizeFaceDNA, legacyParametersFromDNA, dnaFromLegacyParameters, deriveIdentityFingerprint} = modules['face-dna'];
+const {deriveDNAGeometryStyle} = modules['face-geometry'];
+const {derivePortraitStyle} = modules['geometry'];
+const {deriveVolumeStyle} = modules['volume'];
+const {deriveSurfaceFieldStyle} = modules['surface-field'];
+const {deriveStrokeFieldStyle} = modules['stroke-field'];
+const {normalizeExpression} = modules['expression/expression-dna'];
+const {deriveExpressionStyle} = modules['expression/expression-engine'];
+const {normalizeHair} = modules['hair/hair-field'];
+const {deriveHairStyle} = modules['hair/hair-generator'];
+const {normalizeSkin, deriveSkinStyle} = modules['material/skin-material'];
+const {deriveArtisticSurfaceStyle} = modules['material/artistic-surface'];
+const {normalizeLighting, deriveLightingRig} = modules['lighting'];
+const {normalize, defaults} = modules['parameters'];
+function buildFaceState(input={}) {
+ const params=normalize(input.parameters??defaults());
+ const faceDNA=normalizeFaceDNA(input.faceDNA??dnaFromLegacyParameters(params));
+ const expression=normalizeExpression(input.expression);
+ const hair=normalizeHair(input.hair);
+ const skin=normalizeSkin(input.skin);
+ const lighting=normalizeLighting(input.lighting??{mode:'custom',direction:params.lightDirection});
+ return {id:typeof input.id==='string'?input.id:'custom',faceDNA,expression,hair,skin,lighting,parameters:legacyParametersFromDNA(faceDNA,params)};
+}
+function deriveEngineStyle(input) {
+ const state=buildFaceState(input);const rig=deriveLightingRig(state.lighting);
+ const p={...state.parameters,lightDirection:rig.azimuth,lightElevation:rig.elevation};
+ return Object.freeze({...derivePortraitStyle(p),...deriveDNAGeometryStyle(state.faceDNA),
+ ...deriveVolumeStyle(p),...deriveSurfaceFieldStyle(p,state.faceDNA),
+ ...deriveStrokeFieldStyle(p,state.faceDNA),...deriveExpressionStyle(state.expression),
+ ...deriveHairStyle(state.hair),...deriveSkinStyle(state.skin),
+ ...deriveArtisticSurfaceStyle({graphite:p.graphite/100,hatching:p.hatching/100}),...rig.css});
+}
+function encodeFaceState(raw) {
+ const state=buildFaceState(raw);
+ return JSON.stringify({format:'portrait-engine-character',version:2,identity:{id:state.id,fingerprint:deriveIdentityFingerprint(state.faceDNA)},state},null,2);
+}
+function decodeFaceState(serialized) {
+ const json=JSON.parse(serialized);
+ if(json?.format==='portrait-engine-params'&&json.version===1) {
+  const p=normalize(json.parameters);return buildFaceState({parameters:p});
+ }
+ if(json?.format!=='portrait-engine-character'||json.version!==2||!json.state||typeof json.state!=='object')throw new Error('Unsupported character file');
+ const state=buildFaceState(json.state);
+ if(json.identity?.fingerprint!==deriveIdentityFingerprint(state.faceDNA))throw new Error('Identity fingerprint mismatch');
+ return state;
+}
+
+modules['engine'] = {buildFaceState,deriveEngineStyle,encodeFaceState,decodeFaceState};
+}
+{
 
 // This file uses Unicode escapes to keep the portable source ASCII-only.
 const zh = {
@@ -2013,7 +2396,20 @@ const zh = {
   toastReset:'\u5df2\u6062\u590d\u9ed8\u8ba4\u53c2\u6570',toastSaved:'\u5df2\u5bfc\u51fa\u4eba\u7269\u53c2\u6570',toastLoaded:'\u5df2\u5bfc\u5165\u4eba\u7269\u53c2\u6570',toastError:'\u65e0\u6cd5\u8bfb\u53d6\u53c2\u6570\u6587\u4ef6'
 };
 
-
+modules['i18n'] = {zh};
+}
+{
+const {DEFINITIONS, PRESETS, KEYS, defaults, normalize, equal, encode, decode} = modules['parameters'];
+const {zh} = modules['i18n'];
+const {derivePortraitStyle} = modules['geometry'];
+const {deriveVolumeStyle} = modules['volume'];
+const {deriveFaceStructureStyle} = modules['face-model'];
+const {deriveSurfaceFieldStyle} = modules['surface-field'];
+const {deriveStrokeFieldStyle} = modules['stroke-field'];
+const {buildFaceState, deriveEngineStyle, encodeFaceState, decodeFaceState} = modules['engine'];
+const {dnaFromLegacyParameters} = modules['face-dna'];
+const {IDENTITIES, findIdentity} = modules['identity/identity-registry'];
+const {EXPRESSION_PRESETS} = modules['expression/expression-dna'];
 const root = document.querySelector('#portrait');
 const paper = document.querySelector('#portrait-paper');
 const toast = document.querySelector('#toast');
@@ -2044,6 +2440,9 @@ const researchEmbed = qs.get('embed') === '1' && (acceptedResearchVariants.has(r
 if (researchEmbed) document.body.dataset.r005Embed = '1';
 const STORAGE_KEY = 'portrait-engine/parameters/v1';
 let values = defaults();
+let activeCharacter = buildFaceState({parameters:values});
+let selectedExpression = 'neutral';
+let selectedLighting = 'custom';
 let noticeTimer;
 
 function notify(message) {
@@ -2086,6 +2485,7 @@ function buildControls() {
     input.setAttribute('aria-describedby', `hint-${key}`);
     input.addEventListener('input', () => {
       values = normalize({ ...values, [key]: input.valueAsNumber });
+      activeCharacter = buildFaceState({...activeCharacter, faceDNA:dnaFromLegacyParameters(values,activeCharacter.faceDNA), parameters:values, lighting:selectedLighting === 'custom' ? {mode:'custom', direction:values.lightDirection} : activeCharacter.lighting});
       apply();
       persist();
     });
@@ -2099,6 +2499,14 @@ function buildControls() {
 }
 
 function apply() {
+  if (!volumeStudy) {
+    for (const [name,value] of Object.entries(deriveEngineStyle(activeCharacter))) root.style.setProperty(name,value);
+    root.dataset.r006 = 'volume';
+    root.dataset.r007 = 'structured';
+    root.dataset.r008 = 'field';
+    root.dataset.r009 = 'strokes';
+    root.dataset.faceEngine = 'v1';
+  }
   for (const [name, value] of Object.entries(derivePortraitStyle(values))) root.style.setProperty(name, value);
   if (volumeStudy) {
     for (const [name, value] of Object.entries(deriveVolumeStyle(values))) root.style.setProperty(name, value);
@@ -2111,6 +2519,22 @@ function apply() {
   }
   if (strokeVariant === 'strokes') {
     for (const [name, value] of Object.entries(deriveStrokeFieldStyle(values))) root.style.setProperty(name, value);
+  }
+  for (const selector of document.querySelectorAll('[data-identity]')) {
+    const active = selector.dataset.identity === activeCharacter.id;
+    selector.classList.toggle('active',active); selector.setAttribute('aria-pressed',String(active));
+  }
+  for (const selector of document.querySelectorAll('[data-expression]')) {
+    selector.classList.toggle('active',selector.dataset.expression === selectedExpression);
+    selector.setAttribute('aria-pressed',String(selector.dataset.expression === selectedExpression));
+  }
+  for (const selector of document.querySelectorAll('[data-light-mode]')) {
+    selector.classList.toggle('active',selector.dataset.lightMode === selectedLighting);
+    selector.setAttribute('aria-pressed',String(selector.dataset.lightMode === selectedLighting));
+  }
+  if (!volumeStudy) {
+    // The canonical DNA renderer is the last writer of structural/lighting properties.
+    for (const [name,value] of Object.entries(deriveEngineStyle(activeCharacter))) root.style.setProperty(name,value);
   }
   for (const key of KEYS) {
     const def = DEFINITIONS[key];
@@ -2130,16 +2554,24 @@ function apply() {
 
 function persist() {
   if (volumeStudy) return; // No experimental paint may overwrite user portraits.
-  try { localStorage.setItem(STORAGE_KEY, encode(values)); } catch { /* Browser may block storage. */ }
+  try {
+    localStorage.setItem(STORAGE_KEY, encode(values));
+    localStorage.setItem('portrait-engine/character/v2',encodeFaceState(activeCharacter));
+  } catch { /* Browser may block storage. */ }
 }
 function restore() {
   try {
     const serialized = localStorage.getItem(STORAGE_KEY);
     if (serialized) values = decode(serialized);
+    const character = localStorage.getItem('portrait-engine/character/v2');
+    activeCharacter = character ? decodeFaceState(character) : buildFaceState({parameters:values});
+    values = activeCharacter.parameters;
+    selectedLighting = activeCharacter.lighting.mode;
+    selectedExpression = Object.keys(EXPRESSION_PRESETS).find(key=>JSON.stringify(EXPRESSION_PRESETS[key])===JSON.stringify(activeCharacter.expression)) ?? 'neutral';
   } catch { values = defaults(); }
 }
 function download() {
-  const blob = new Blob([encode(values)], { type: 'application/json;charset=utf-8' });
+  const blob = new Blob([encodeFaceState(activeCharacter)], { type: 'application/json;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement('a');
   anchor.href = url;
@@ -2153,7 +2585,7 @@ function download() {
 async function importFile(file) {
   if (!file || file.size > 1024 * 1024) throw new Error('Invalid file size');
   const text = await file.text();
-  return decode(text);
+  return decodeFaceState(text);
 }
 function updateScale() {
   if (!paper || !root) return;
@@ -2178,23 +2610,46 @@ for (const button of document.querySelectorAll('[data-study-mode]')) {
   button.addEventListener('click', () => setStudyMode(button.dataset.studyMode));
 }
 if (!researchEmbed && !volumeStudy) restore();
+for (const button of document.querySelectorAll('[data-identity]')) {
+  button.addEventListener('click',()=>{
+    const identity = findIdentity(button.dataset.identity);
+    if (!identity) return;
+    activeCharacter = buildFaceState({...activeCharacter,id:identity.id,faceDNA:identity.faceDNA});
+    values = activeCharacter.parameters; apply(); persist();
+  });
+}
+for (const button of document.querySelectorAll('[data-expression]')) {
+  button.addEventListener('click',()=>{
+    selectedExpression = button.dataset.expression;
+    activeCharacter = buildFaceState({...activeCharacter,expression:EXPRESSION_PRESETS[selectedExpression]});
+    apply(); persist();
+  });
+}
+for (const button of document.querySelectorAll('[data-light-mode]')) {
+  button.addEventListener('click',()=>{
+    selectedLighting = button.dataset.lightMode;
+    activeCharacter = buildFaceState({...activeCharacter,lighting:{mode:selectedLighting,direction:values.lightDirection}});
+    apply(); persist();
+  });
+}
 buildControls();
 apply();
 for (const button of document.querySelectorAll('[data-preset]')) {
   button.addEventListener('click', () => {
     values = { ...PRESETS[button.dataset.preset] };
+    activeCharacter = buildFaceState({parameters:values}); selectedLighting='custom'; selectedExpression='neutral';
     apply(); persist();
   });
 }
 document.getElementById('reset-btn').addEventListener('click', () => {
-  values = defaults(); apply(); persist(); notify(zh.toastReset);
+  values = defaults(); activeCharacter=buildFaceState({parameters:values}); selectedLighting='custom'; selectedExpression='neutral'; apply(); persist(); notify(zh.toastReset);
 });
 document.getElementById('download-btn').addEventListener('click', download);
 document.getElementById('import-btn').addEventListener('click', () => fileInput.click());
 fileInput.addEventListener('change', async () => {
   try {
     if (!fileInput.files?.[0]) return;
-    values = await importFile(fileInput.files[0]);
+    activeCharacter = await importFile(fileInput.files[0]); values = activeCharacter.parameters; selectedLighting=activeCharacter.lighting.mode; selectedExpression='neutral';
     apply(); persist(); notify(zh.toastLoaded);
   } catch { notify(zh.toastError); }
   finally { fileInput.value = ''; }
@@ -2208,6 +2663,8 @@ if ('ResizeObserver' in window) new ResizeObserver(updateScale).observe(paper);
 window.addEventListener('resize', updateScale);
 updateScale();
 
+modules['app'] = {};
+}
 </script>
 </head>
 <body>
@@ -2349,6 +2806,14 @@ updateScale();
       <aside class="inspector" aria-labelledby="inspector-title">
         <div class="inspector-header"><span class="eyebrow" data-t="inspectorEyebrow">STUDIO CONTROLS</span><h2 id="inspector-title" data-t="inspectorTitle">Sculpt the portrait</h2><p data-t="inspectorIntro">Move a slider. Watch the CSS face respond.</p></div>
         <fieldset class="preset-fieldset"><legend data-t="presets">CHARACTER STUDIES</legend><div class="preset-buttons" role="group" aria-label="Character presets"><button type="button" class="preset active" data-preset="classic" data-t="presetClassic" aria-pressed="true">Classic</button><button type="button" class="preset" data-preset="gentle" data-t="presetGentle" aria-pressed="false">Gentle</button><button type="button" class="preset" data-preset="angular" data-t="presetAngular" aria-pressed="false">Angular</button></div></fieldset>
+<fieldset class="study-fieldset"><legend>人物身份 / IDENTITY</legend><div class="preset-buttons" role="group" aria-label="Independent character identities">
+<button class="preset" type="button" data-identity="lin-che" aria-pressed="false">林彻</button>
+<button class="preset" type="button" data-identity="zhou-qishan" aria-pressed="false">周启山</button>
+<button class="preset" type="button" data-identity="third-portrait" aria-pressed="false">人物 C</button></div></fieldset>
+<fieldset class="study-fieldset"><legend>表情 / EXPRESSION</legend><div class="studio-options" role="group" aria-label="Expression selection">
+<button type="button" data-expression="neutral">平静</button><button type="button" data-expression="happy">微笑</button><button type="button" data-expression="sad">悲伤</button><button type="button" data-expression="angry">愤怒</button><button type="button" data-expression="fear">恐惧</button></div></fieldset>
+<fieldset class="study-fieldset"><legend>统一光照 / LIGHTING</legend><div class="studio-options" role="group" aria-label="Lighting selection">
+<button type="button" data-light-mode="custom">滑块</button><button type="button" data-light-mode="front">正面</button><button type="button" data-light-mode="side">侧面</button><button type="button" data-light-mode="top">顶光</button><button type="button" data-light-mode="cinematic">电影</button></div></fieldset>
         <fieldset class="study-fieldset"><legend data-t="studyTitle">Drawing study mode</legend><div class="study-buttons" role="group" aria-label="Drawing study views"><button type="button" class="study-button active" data-study-mode="graphite" data-t="studyGraphite" aria-pressed="true">Graphite portrait</button><button type="button" class="study-button" data-study-mode="structure" data-t="studyStructure" aria-pressed="false">Construction guides</button></div></fieldset>
         <div class="control-section"><div class="section-header"><span class="eyebrow" data-t="structure">01 / FACE GEOMETRY</span></div><div class="controls" id="geometry-controls"></div></div>
         <div class="control-section"><div class="section-header"><span class="eyebrow" data-t="surface">02 / GRAPHITE FINISH</span></div><div class="controls" id="finish-controls"></div></div>
