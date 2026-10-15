@@ -8,9 +8,10 @@
     "dev": "python3 -m http.server 4173",
     "check": "node --check src/app.mjs && node --check src/anatomy/identity-contour.mjs && node --check src/parameters.mjs && node --check src/i18n.mjs && node --check src/geometry.mjs && node --check src/volume.mjs && node --check src/face-model.mjs && node --check src/stroke-field.mjs && node --check test/parameters.test.mjs && node --check test/geometry.test.mjs",
     "test": "node --test test/*.test.mjs",
-    "verify": "npm run check && npm run build && python3 scripts/check-standalone.py && python3 scripts/build-r010-study.py --check && npm test",
+    "verify": "npm run check && npm run build && python3 scripts/check-standalone.py && python3 scripts/build-r010-study.py --check && npm run governance:check && npm test",
     "build": "python3 scripts/build-standalone.py",
-    "build:r010": "python3 scripts/build-r010-study.py"
+    "build:r010": "python3 scripts/build-r010-study.py",
+    "governance:check": "node scripts/check-research-governance.mjs"
   },
   "engines": {
     "node": ">=20"
