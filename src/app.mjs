@@ -9,6 +9,7 @@ import { buildFaceState, deriveEngineStyle, encodeFaceState, decodeFaceState } f
 import { dnaFromLegacyParameters } from './face-dna.mjs';
 import { IDENTITIES, findIdentity } from './identity/identity-registry.mjs';
 import { EXPRESSION_PRESETS } from './expression/expression-dna.mjs';
+import { deriveIdentityFormStyle } from './anatomy/identity-contour.mjs';
 
 const root = document.querySelector('#portrait');
 const paper = document.querySelector('#portrait-paper');
@@ -17,8 +18,10 @@ const fileInput = document.querySelector('#upload-input');
 // Research 005 candidates are isolated from saved portraits.
 // Public default stays baseline while external aesthetic ratings are absent.
 const qs = new URLSearchParams(window.location.search);
+const identityStudy = qs.get('r013') === 'anatomy';
 const formStudy = qs.get('r012') === 'form';
 if (formStudy) root.dataset.r012 = 'form';
+if (identityStudy) root.dataset.r013 = 'anatomy';
 const researchVariant = qs.get('r005');
 const volumeVariant = qs.get('r006');
 const faceVariant = qs.get('r007');
@@ -137,6 +140,10 @@ function apply() {
   if (!volumeStudy) {
     // The canonical DNA renderer is the last writer of structural/lighting properties.
     for (const [name,value] of Object.entries(deriveEngineStyle(activeCharacter))) root.style.setProperty(name,value);
+  }
+  if (identityStudy && !volumeStudy) {
+    const style = deriveIdentityFormStyle(activeCharacter.faceDNA, activeCharacter.lighting);
+    for (const [name, value] of Object.entries(style)) root.style.setProperty(name, value);
   }
   for (const key of KEYS) {
     const def = DEFINITIONS[key];

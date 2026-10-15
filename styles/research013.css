@@ -1,0 +1,42 @@
+/* R013 — structural identity hypothesis, NOT promoted by green CI.
+ * HTML and CSS remain the only drawing primitives: no raster/SVG/Canvas. */
+.portrait[data-r013="anatomy"] .face {
+  clip-path:var(--r013-head-contour);
+}
+.portrait[data-r013="anatomy"] .eye-left,
+.portrait[data-r013="anatomy"] .eye-right {
+  scale:var(--r013-eye-scale-x,1) var(--r013-eye-scale-y,1);
+  transform-origin:50% 48%;
+}
+.portrait[data-r013="anatomy"] .eyebrow-left,
+.portrait[data-r013="anatomy"] .eyebrow-right {
+  scale:var(--r013-brow-scale,1) 1;
+}
+.portrait[data-r013="anatomy"] .nose {
+  scale:var(--r013-nose-scale-x,1) var(--r013-nose-scale-y,1);
+  transform-origin:50% 15%;
+}
+.portrait[data-r013="anatomy"] .mouth {
+  scale:var(--r013-mouth-scale-x,1) var(--r013-mouth-scale-y,1);
+}
+.portrait[data-r013="anatomy"] .face-tones {
+  /* Same shared 3D light rig; intentionally bounded, not a black chin mask. */
+  background:
+    radial-gradient(ellipse 58% 90% at var(--r013-shadow-center,50%) 49%,
+      rgba(57,54,50,var(--r013-shadow-opacity,.16)),transparent 96%),
+    radial-gradient(ellipse 29% 28% at 49% 93%,#47453e35,transparent 95%),
+    radial-gradient(ellipse 45% 23% at 50% 7%,#f7f0df5c,transparent 93%);
+  filter:none;
+}
+.portrait[data-r013="anatomy"] .eye-socket-left,
+.portrait[data-r013="anatomy"] .eye-socket-right {
+  opacity:var(--r013-orbit-intensity,.32);
+}
+.portrait[data-r013="anatomy"] .cheek-plane-left,
+.portrait[data-r013="anatomy"] .cheek-plane-right {
+  opacity:var(--r013-malar-intensity,.32);
+}
+.portrait[data-r013="anatomy"] .jaw-plane-left,
+.portrait[data-r013="anatomy"] .jaw-plane-right {
+  opacity:var(--r013-jaw-intensity,.34);
+}

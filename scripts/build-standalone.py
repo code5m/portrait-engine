@@ -4,7 +4,7 @@ import re
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 html = (ROOT / 'index.html').read_text()
-for name in ('layout','portrait','anatomy','graphite','likeness','study004','study005','study006','study007','study008','study009','face-engine'):
+for name in ('layout','portrait','anatomy','graphite','likeness','study004','study005','study006','study007','study008','study009','face-engine','research013'):
     css = (ROOT / 'styles' / (name + '.css')).read_text()
     html = html.replace(f'<link rel="stylesheet" href="./styles/{name}.css">', f'<style>\n{css}\n</style>')
 # Explicit dependency order also preserves each research script's own scope.
@@ -13,7 +13,7 @@ modules = ('parameters','geometry','volume','face-model','face-dna','face-geomet
            'identity/identity-registry','expression/expression-dna',
            'expression/expression-engine','hair/hair-field',
            'hair/hair-generator','material/skin-material',
-           'material/artistic-surface','engine','i18n','app')
+           'material/artistic-surface','engine','anatomy/identity-contour','i18n','app')
 module_registry = []
 for name in modules:
     code = (ROOT / 'src' / (name + '.mjs')).read_text()
