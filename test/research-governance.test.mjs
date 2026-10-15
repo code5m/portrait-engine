@@ -32,8 +32,16 @@ test('unregistered identities demonstrate geometry generality without new one-of
   {orbit:{width:.06,depth:.99},nose:{base:.91,projection:.25}},
   {nose:{base:.14,projection:.91},mouth:{width:.85},brow:{depth:.24}}]
   .map(change=>({...base,...change}));
- const shapes=[...IDENTITIES.map(x=>deriveContourPolygon(x.faceDNA)),...newDNA.map(deriveContourPolygon)];
- assert.equal(new Set(shapes).size,shapes.length,'hard-coded face template detected');
+ // A nose/eye-only DNA mutation should change those organs, NOT the skull outline.
+ const allDNA=[...IDENTITIES.map(x=>x.faceDNA),...newDNA];
+ const signatures=allDNA.map(d=>{
+   const s=deriveIdentityFormStyle(d);
+   return [deriveContourPolygon(d),s['--r013-eye-scale-x'],s['--r013-eye-scale-y'],
+           s['--r013-nose-scale-x'],s['--r013-nose-scale-y'],s['--r013-mouth-scale-x']].join('|');
+ });
+ assert.equal(new Set(signatures).size,signatures.length,'new DNA produced an identical structural face signature');
+ assert.equal(deriveContourPolygon(newDNA[2]),deriveContourPolygon(newDNA[3]),
+   'changing nose/orbit/mouth must NOT reshape the skull silhouette');
  const styles=newDNA.map(x=>deriveIdentityFormStyle(x));
  assert.ok(styles.every(s=>s['--r013-head-contour'].startsWith('polygon(')));
  assert.notEqual(styles[0]['--r013-jaw-intensity'],styles[1]['--r013-jaw-intensity']);
