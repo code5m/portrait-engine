@@ -11,7 +11,7 @@ import os
 from pathlib import Path
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from threading import Thread
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageChops, ImageStat
 from playwright.async_api import async_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -63,6 +63,13 @@ async def run():
     finally:
         server.shutdown()
 
+    # A/B comparison is only valid if painting genuinely changes pixels.
+    for identity in IDENTITIES:
+        for light in LIGHTS:
+            baseline=Image.open(OUT / f'baseline-{identity}-{light}.png').convert('RGB')
+            candidate=Image.open(OUT / f'form-{identity}-{light}.png').convert('RGB')
+            delta=ImageStat.Stat(ImageChops.difference(baseline,candidate)).mean
+            assert max(delta)>0.4, f'R012 candidate not visually distinguishable: {identity}/{light}: {delta}'
     tiles = []
     for mode, identity, light, file, _evidence in scenes:
         photo = Image.open(file).convert("RGB")
