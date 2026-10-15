@@ -6,6 +6,7 @@
  */
 import { normalize } from './parameters.mjs';
 import { deriveFaceGeometry } from './face-model.mjs';
+import { deriveDNAGeometry } from './face-geometry.mjs';
 import { lightVector } from './volume.mjs';
 
 const clampField = (x, min = 0, max = 1) => Math.min(max, Math.max(min, x));
@@ -14,9 +15,9 @@ const gaussian = (x, y, cx, cy, sx, sy) =>
 const rad = degrees => degrees * Math.PI / 180;
 
 /** Signed relief in logical face pixels. Higher numbers protrude toward viewer. */
-export function deriveRelief(raw) {
+export function deriveRelief(raw, dna = null) {
   const p = normalize(raw);
-  const face = deriveFaceGeometry(p);
+  const face = dna ? deriveDNAGeometry(dna) : deriveFaceGeometry(p);
   const a = face.anchors;
   const lobes = [
     // The same landmarks that position CSS organs define the depth field.
@@ -45,9 +46,9 @@ export function deriveRelief(raw) {
 }
 
 /** Distinct shading probes at the flanks, not the feature's geometric center. */
-export function deriveSurfaceField(raw) {
+export function deriveSurfaceField(raw, dna = null) {
   const p = normalize(raw);
-  const field = deriveRelief(p);
+  const field = deriveRelief(p, dna);
   const a = field.face.anchors;
   const points = {
     browLeft: [a.leftBrow.x - 9, a.leftBrow.y + 7],
@@ -63,7 +64,7 @@ export function deriveSurfaceField(raw) {
     chin: [a.chin.x, a.chin.y - 9],
     forehead: [(a.leftBrow.x + a.rightBrow.x) / 2, a.leftBrow.y - 56]
   };
-  const light = lightVector(p.lightDirection);
+  const light = lightVector(p.lightDirection, Number.isFinite(raw?.lightElevation) ? raw.lightElevation : 24);
   const values = {};
   for (const [region, [x, y]] of Object.entries(points)) {
     const normal = field.normalAt(x, y);
@@ -93,9 +94,9 @@ export function deriveSurfaceField(raw) {
   });
 }
 
-export function deriveSurfaceFieldStyle(raw) {
+export function deriveSurfaceFieldStyle(raw, dna = null) {
   const p = normalize(raw);
-  const field = deriveSurfaceField(p);
+  const field = deriveSurfaceField({ ...p, lightElevation: raw?.lightElevation }, dna);
   const css = {};
   for (const [name, value] of Object.entries(field.values)) {
     css[`--v-${name}-shade`] = value.shade.toFixed(4);
