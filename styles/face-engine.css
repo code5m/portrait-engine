@@ -1,0 +1,12 @@
+/* Native CSS-only rendering of DNA and its expression, skin and hair fields. */
+.portrait[data-face-engine="v1"] .face{transform:scaleX(var(--face-x)) scaleY(var(--dna-skull-height));}
+.portrait[data-face-engine="v1"] .eyebrow{translate:0 var(--expr-brow-shift);rotate:var(--expr-brow-tilt);}
+.portrait[data-face-engine="v1"] .eye-white{transform:scaleY(var(--expr-eye-squint));}
+.portrait[data-face-engine="v1"] .mouth{translate:0 var(--expr-mouth-curve);rotate:var(--expr-mouth-corner);transform:scaleY(var(--expr-mouth-open));}
+.portrait[data-face-engine="v1"] .hair-cap{rotate:var(--hair-field-direction);transform:scaleX(var(--hair-field-length));}
+.portrait[data-face-engine="v1"] .hair-strands{background-size:var(--hair-strand-pitch) 100%;rotate:var(--hair-field-curl);}
+.portrait[data-face-engine="v1"] .face-tones{filter:blur(var(--skin-softness));opacity:calc(.3 + var(--art-graphite) * .38);}
+.portrait[data-face-engine="v1"] .face-hatching{opacity:calc(var(--art-hatching) * var(--skin-grain-opacity) + .12);}
+.portrait[data-face-engine="v1"] .v-plane{filter:blur(var(--skin-softness));}
+.portrait[data-face-engine="v1"] .nose-bridge{transform:scaleX(calc(.8 + var(--dna-nose-projection)*.35));}
+.portrait[data-face-engine="v1"] .cheek-plane{scale:calc(.8 + var(--dna-cheek-volume)*.4);}
