@@ -65,7 +65,7 @@ async def capture_matrix(browser, port, mode, document="standalone.html", query=
        mediaTags: el.querySelectorAll('img,svg,canvas,picture,video,iframe,object,embed').length,
        faceEngine: el.dataset.faceEngine,
        studyFlags: Object.fromEntries([...el.attributes]
-         .filter(a => /^data-r\\d{3}$/.test(a.name)).map(a => [a.name,a.value]))
+         .filter(a => /^data-r\d{3}$/.test(a.name)).map(a => [a.name,a.value]))
     })""")
     assert check["mediaTags"] == 0, (mode, check)
     assert check["faceEngine"] == "v1", (mode, check)
