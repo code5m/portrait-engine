@@ -105,7 +105,6 @@ function buildControls() {
 
 function apply() {
   if (!volumeStudy) {
-    for (const [name,value] of Object.entries(deriveEngineStyle(activeCharacter))) root.style.setProperty(name,value);
     root.dataset.r006 = 'volume';
     root.dataset.r007 = 'structured';
     root.dataset.r008 = 'field';
