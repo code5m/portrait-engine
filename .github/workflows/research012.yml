@@ -1,0 +1,30 @@
+name: R012 visual-first experiment
+on:
+  push:
+    branches: [research/012-human-form]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install headless browser for actual CSS frames
+        run: |
+          python -m pip install playwright pillow
+          python -m playwright install --with-deps chromium
+      - name: Verify scripts and compile portable HTML
+        run: |
+          npm run verify
+      - name: R012 real-browser baseline previews
+        env:
+          R012_PRINT_PREVIEW: "1"
+        run: python test/research012-preview.py
