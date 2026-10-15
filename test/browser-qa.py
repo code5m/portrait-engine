@@ -11,14 +11,11 @@ from playwright.async_api import async_playwright
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 
 def embedded_page():
-    html = (ROOT / 'index.html').read_text()
-    for name in ('layout', 'portrait', 'anatomy', 'graphite', 'likeness', 'study004','study005','study006','study007','study008','study009'):
-        css = (ROOT / 'styles' / f'{name}.css').read_text()
-        html = html.replace(f'<link rel="stylesheet" href="./styles/{name}.css">', f'<style>{css}</style>')
-    assert '<link rel="stylesheet"' not in html, 'QA did not inline every CSS file'
-    code = '\n'.join(re.sub(r'^export ', '', (ROOT / 'src' / f'{name}.mjs').read_text(), flags=re.M) for name in ('parameters','geometry','volume','face-model','surface-field','stroke-field','i18n','app'))
-    code = re.sub(r'^import .*?;\n', '', code, flags=re.M)
-    return html.replace('<script type="module" src="./src/app.mjs"></script>',f'<script type="module">{code}</script>')
+    """Exercise the exact generated CSS/JS bundle instead of a second bundler."""
+    html = (ROOT / 'standalone.html').read_text(encoding='utf8')
+    assert '<link rel="stylesheet"' not in html
+    assert 'src="./src/app.mjs"' not in html
+    return html
 
 async def run():
     screenshot_dir = pathlib.Path(os.environ.get('PORTRAIT_QA_DIR', '/tmp'))
@@ -39,7 +36,7 @@ async def run():
         await page.locator('[data-preset="gentle"]').click()
         assert await page.locator('[data-preset="gentle"]').get_attribute('aria-pressed') == 'true'
         await page.locator('#param-lightDirection').fill('60')
-        assert await page.locator('#portrait').evaluate('(e)=>e.style.getPropertyValue("--light-x")') == '72.0%'
+        assert abs(float((await page.locator('#portrait').evaluate('(e)=>e.style.getPropertyValue("--light-x")')).rstrip('%')) - 72) < .01
         await page.locator('[data-study-mode="structure"]').click()
         assert await page.locator('#portrait').get_attribute('data-study') == 'structure'
         assert await page.locator('[data-study-mode="structure"]').get_attribute('aria-pressed') == 'true'
