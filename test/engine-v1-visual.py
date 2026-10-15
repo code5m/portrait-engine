@@ -35,12 +35,12 @@ async def run():
                     for light in LIGHTS:
                         await page.locator(f'[data-light-mode="{light}"]').click()
                         await page.evaluate('()=>new Promise(ok=>requestAnimationFrame(()=>requestAnimationFrame(ok)))')
-                        props=await page.locator('#portrait').evaluate('el=>({
+                        props=await page.locator('#portrait').evaluate('''el=>({
                           x:el.style.getPropertyValue("--fg-leftEye-x"),
                           y:el.style.getPropertyValue("--fg-leftJaw-y"),
                           shade:el.style.getPropertyValue("--v-cheekLeft-shade"),
                           elevation:el.style.getPropertyValue("--light-elevation")
-                        })')
+                        })''')
                         assert all(props.values()),props
                         file=f'{identity}-{light}.png'
                         await page.locator('#portrait-paper').screenshot(path=str(OUT/file))
