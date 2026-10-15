@@ -67,7 +67,7 @@ async def run():
     for identity in IDENTITIES:
         for light in LIGHTS:
             baseline=Image.open(OUT / f'baseline-{identity}-{light}.png').convert('RGB')
-            candidate=Image.open(OUT / f'form-{identity}-{light}.png').convert('RGB')
+            candidate=Image.open(OUT / f'anatomy-{identity}-{light}.png').convert('RGB')
             delta=ImageStat.Stat(ImageChops.difference(baseline,candidate)).mean
             assert max(delta)>0.4, f'R013 identity morphology not visually distinguishable: {identity}/{light}: {delta}'
     tiles = []
