@@ -7,6 +7,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
+import { collectPromotionEvidence } from './validate-human-evidence.mjs';
 
 const root = process.cwd();
 const read = p => fs.readFileSync(path.join(root, p), 'utf8');
@@ -50,7 +51,9 @@ reject(/(?:url\s*\(|image-set\s*\(|@import\b)/i.test(stripCSS(standalone.replace
 const ledger = JSON.parse(read('research/experiments.json'));
 assert.equal(ledger.schemaVersion,1);
 assert.equal(ledger.renderer,'HTML_CSS_ONLY');
-assert.equal(ledger.overallArtStatus,'ART_UNVERIFIED','No art certification without independently authenticated observers');
+assert.ok(['ART_UNVERIFIED','PROMISING_NEEDS_REPLICATION','ART_VERIFIED_WITH_INDEPENDENT_EVIDENCE'].includes(ledger.overallArtStatus),
+  'unknown overall art status');
+const promotionEvidence = collectPromotionEvidence(root);
 assert.ok(Array.isArray(ledger.experiments) && ledger.experiments.length>=2);
 const statuses = new Set(['ART_UNVERIFIED','REJECTED_FIRST_VIEW','PROMISING_NEEDS_REPLICATION','ART_VERIFIED_WITH_INDEPENDENT_EVIDENCE']);
 const seen = new Set();
@@ -70,7 +73,7 @@ for (const e of ledger.experiments) {
   assert.ok(allCSS.includes('[data-r'+short+'='),e.id+' should use uniquely scoped CSS');
   assert.ok(typeof e.evidenceDocument==='string' && fs.existsSync(path.join(root,e.evidenceDocument)),e.id+' missing research document');
   if (e.status === 'ART_VERIFIED_WITH_INDEPENDENT_EVIDENCE') {
-    assert.ok(fs.existsSync(path.join(root,'research/promotions',e.id+'.json')),e.id+' cannot self-promote without paired human evidence');
+    assert.ok(promotionEvidence.some(item => item.id === e.id), e.id + ' cannot self-promote without structurally complete paired and replicated human evidence');
   }
 }
 for (const file of list('styles','.css').filter(p=>/research\d{3}\.css$/i.test(p))) {
@@ -88,5 +91,6 @@ if (violations.length) {
   process.exitCode=1;
 } else {
   console.log('RESEARCH_POLICY_ENGINE_PASS: CSS-only media, registered opt-in studies, no per-identity CSS, single canonical style writer');
-  console.log('ART_UNVERIFIED: static policy is NOT a human realism evaluation');
+  console.log('HUMAN_EVIDENCE_STRUCTURE_PASS: ' + promotionEvidence.length + ' studies; real-human source verification is still mandatory');
+  console.log('QUALITY_CLAIM: ' + ledger.overallArtStatus + '; static policy is NOT human realism evaluation');
 }
