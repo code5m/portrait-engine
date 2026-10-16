@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "stage": "S0",
+  "status": "CALIBRATION_COMPLETE",
+  "artStatus": "ART_UNVERIFIED",
+  "humanObservers": 0,
+  "sourceDigest": "e61c9d443e6172f6e870631780e9ad712cb299c13bbb3d9d8df4619f6313680a29",
+  "ciRun": "38830775186",
+  "ciCommit": "d8b35e0e589ddc817516587f176585a2eece6d7aa2",
+  "sourceHeadCommit": "df72c4c965b5e9bfdeb8245e6a0d0ddb50df0cbf",
+  "ciJob": "116748799000",
+  "ciURL": "https://github.com/code5m/portrait-engine/actions/runs/38830775186",
+  "provenanceNote": "ciCommit is the synthetic PR merge checkout recorded by GITHUB_SHA; sourceHeadCommit is the tested research branch. This snapshot comes from S0_COMPLETION_JSON in the actual CI log, not synthetic test scores.",
+  "upstream": {
+    "repository": "USC-ICT/ICT-FaceKit",
+    "commit": "da5f95a607f5e6b37755b38d3385d7f2853732e5",
+    "files": [
+      {"path":"LICENSE","gitBlob":"b48fef2f199ff2009537e07175b87ec334f23ec4","sha256":"b20a78d8fc51657e14f3e00c8abb538d786ad00aa63210328c22565e583167e1","bytes":1096},
+      {"path":"FaceXModel/generic_neutral_mesh.obj","gitBlob":"95f024e9aaf27db239f3fe43957e988b993cd1ca","sha256":"eedbc2576d8e5ea57f55255b8f98263213a1efb5431d8bfceed1d7aef10271f9","bytes":2555599}
+    ]
+  },
+  "blenderVersion": "4.0.2",
+  "colorManagement": {"view":"Standard","look":"None"},
+  "counts": {"baselinePortraits":9,"blenderPrimitives":9,"cssPrimitives":9,"cssThreeTone":3,"referenceHeadFrames":2},
+  "metrics": [
+    {"scene":"sphere-left","referenceVsAnalyticMAE":0.252,"cssVsAnalyticMAE":1.5143,"cssVsBlenderMAE":1.4716},
+    {"scene":"sphere-front","referenceVsAnalyticMAE":0.2507,"cssVsAnalyticMAE":1.4495,"cssVsBlenderMAE":1.4202},
+    {"scene":"sphere-right","referenceVsAnalyticMAE":0.2526,"cssVsAnalyticMAE":1.5144,"cssVsBlenderMAE":1.4722},
+    {"scene":"wide-left","referenceVsAnalyticMAE":0.2525,"cssVsAnalyticMAE":1.5474,"cssVsBlenderMAE":1.5104},
+    {"scene":"wide-front","referenceVsAnalyticMAE":0.2506,"cssVsAnalyticMAE":1.3986,"cssVsBlenderMAE":1.3711},
+    {"scene":"wide-right","referenceVsAnalyticMAE":0.2529,"cssVsAnalyticMAE":1.5493,"cssVsBlenderMAE":1.5125},
+    {"scene":"tall-left","referenceVsAnalyticMAE":0.2523,"cssVsAnalyticMAE":1.3488,"cssVsBlenderMAE":1.3146},
+    {"scene":"tall-front","referenceVsAnalyticMAE":0.2491,"cssVsAnalyticMAE":1.4382,"cssVsBlenderMAE":1.4085},
+    {"scene":"tall-right","referenceVsAnalyticMAE":0.252,"cssVsAnalyticMAE":1.3509,"cssVsBlenderMAE":1.3144}
+  ],
+  "freestylePixelDelta": 1.50642,
+  "limitations": [
+    "No cast shadows or physical bounced light",
+    "Visible finite-tone banding",
+    "Single orthographic view; ellipsoids are NOT human identities",
+    "ICT mesh is an import probe only, not yet transferred to CSS",
+    "No evidence of improved human-portrait realism"
+  ],
+  "artifactStorage": "Upload failed due to GitHub artifact quota. Completion JSON and labeled compact reference/CSS previews are emitted to CI logs. Do not claim full-resolution artifacts were uploaded.",
+  "imageHashes": {
+    "css-sphere-front.png":"4f31373eaa2ffeb72fdcd8dee5bf1ca6f8c1010d624568ea3dcea1b53522e264",
+    "css-sphere-left.png":"9c26abc492d87cc7c47bfc7661dc02922beb2601e646f3de3fb0f969c1d1454c",
+    "css-sphere-right.png":"a6745aeb7b54f5ba4720ffe26c19ef4df44a013442cc36dfa52f6313816c28a0",
+    "css-tall-front.png":"5f2ce4032271e0a8af54d0cfb2d74a199d830e0e3e20e7dc3801342da9341be7",
+    "css-tall-left.png":"a01b1334344bfd4fdeda0bc1472af6f63f9508897aca10e16866b49ff1a0aafe",
+    "css-tall-right.png":"eeff449fc25a7ab14b5cd3f6da60da50b55df535fe981e83f0349a480af00b89",
+    "css-wide-front.png":"f915b5654ea1f2946179b9952cf999f58b881375545f321c6330acace71bce8d",
+    "css-wide-left.png":"f7188ddc49bd4ee8c98165f35596b0f40f83c57fd883bb29f9ae05d0a380ec4f",
+    "css-wide-right.png":"5b6ff0d3ea78a3612969c5f159d3b87553c0857e9892125a148df4aaea83ce69",
+    "css3-sphere-left.png":"c775b0254e211286ca35ecfe4059e607049adbc7de6b3b7587e8c3ddf25b85244",
+    "css3-tall-left.png":"9e388105cd2f04cfb0e251382ed3919a13b2b714a43a50b7fdb8e484051c26de3",
+    "css3-wide-left.png":"0cbbc8c479e83240217f100c334c002cb258b9cce937929bb263b5c6133b02402",
+    "ict-neutral-freestyle.png":"39bba99c4b034e618fcbf6bd406d087c7b7f1f882d387669746b4fbb42b7c63f",
+    "ict-neutral-reference.png":"bfe5c8b227b9d044f389bd43f9d5a1ec88aef1cfe39b1d6a79b86c5d70132080",
+    "reference-sphere-front.png":"103f884941a45b3a5d1a8225afda5cfae772d408131142a249fb785846e74024e",
+    "reference-sphere-left.png":"761d385f52b40b0b9e0bd54e5b5b64084ec9376f84f05119c371f67515d76b1e1",
+    "reference-sphere-right.png":"1b469afb21d32a09ff093701df4eac4f0b94f9a0d7f4dec0a4c5d734c214a844b",
+    "reference-tall-front.png":"b7c39443dca1768a4443e883b42fa69c064fca5927342a0f160b824bfae47e06f5",
+    "reference-tall-left.png":"f3ab428524ae531cc4eafcd3e6bf7ac8a24c3c940347e98d84b219422fd5d38c99",
+    "reference-tall-right.png":"62e15b2f8e0e722bc966409efc0c9a87c2273e633c8b912e801a1d305f82f8eff",
+    "reference-wide-front.png":"7f0bb0d0dfdfa8581619851138d77286f4341b92bc39d02c2270f2fa58e59b8f51",
+    "reference-wide-left.png":"d18038e1f404845aa215d142e9722e1604c923af6f23c60efb29a24682f32b03c4",
+    "reference-wide-right.png":"34139ad3cbbf1b4e3072d538e1addcf6e0c2a0900964f40df39add8c0728d6361"
+  }
+}
