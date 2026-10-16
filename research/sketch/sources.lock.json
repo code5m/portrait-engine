@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "ict": {
+    "repository":"USC-ICT/ICT-FaceKit",
+    "commit":"da5f95a607f5e6b37755b38d3385d7f2853732e5",
+    "license":"MIT",
+    "files":[
+      {"path":"LICENSE","gitBlob":"b48fef2f199ff2009537e07175b87ec334f23ec4","destination":"ICT-LICENSE.txt"},
+      {"path":"FaceXModel/generic_neutral_mesh.obj","gitBlob":"95f024e9aaf27db239f3fe43957e988b993cd1ca","destination":"neutral.obj"}
+    ],
+    "use":"Offline reference import test only. No vendor raster textures, scripts or geometry included in production runtime."
+  },
+  "references":[
+    {"id":"light-form","url":"https://www.proko.com/course-lesson/shading-light-and-form-basics","use":"Form shadow versus cast shadow; terminator is not automatically a dark line. Textual paraphrase only."},
+    {"id":"whole-to-part","url":"https://www.proko.com/course-lesson/practical-guide-to-realistic-shading","use":"Structure and major shadow organization before detail; a teaching heuristic, not a universal physical law."},
+    {"id":"diffuse","url":"https://www.pbr-book.org/4ed/Reflection_Models/Diffuse_Reflection","use":"Lambertian reference and cosine term; constant ambient here is a calibration simplification, not real indirect light."},
+    {"id":"freestyle","url":"https://docs.blender.org/manual/en/4.5/render/freestyle/introduction.html","use":"Line/edge NPR reference only; not a complete graphite portrait engine."},
+    {"id":"rtsc","url":"https://rtsc.cs.princeton.edu/","use":"Contour extraction sensitivity to geometry noise; reference only, no GPL code copied."}
+  ]
+}

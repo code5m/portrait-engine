@@ -1,0 +1,64 @@
+name: Sketch stages / S0 reference calibration
+on:
+  push:
+    branches: [main, research/sketch-s0]
+    paths: ['research/sketch/**', 'study/sketch-s0*', 'scripts/*sketch-s0.py', 'test/sketch-s0*', '.github/workflows/sketch-stages.yml']
+  pull_request:
+    paths: ['research/sketch/**', 'study/sketch-s0*', 'scripts/*sketch-s0.py', 'test/sketch-s0*', '.github/workflows/sketch-stages.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: sketch-stage-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  s0:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify production is unchanged and test calibration mathematics
+        run: |
+          npm run verify
+          git diff --exit-code -- standalone.html
+          python scripts/build-sketch-s0.py
+          python scripts/build-sketch-s0.py --check
+          python -m py_compile scripts/*sketch-s0.py
+      - name: Install offline reference and browser tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends blender
+          python -m pip install playwright pillow numpy
+          python -m playwright install --with-deps chromium
+      - name: Verify pinned MIT reference assets
+        run: python scripts/prepare-sketch-s0.py
+      - name: Render Blender reference and Freestyle probe (not CSS)
+        run: blender --background --python-exit-code 1 --python scripts/reference-sketch-s0.py
+      - name: Capture existing portraits and actual CSS calibration
+        run: |
+          python test/engine-v1-visual.py
+          python scripts/capture-sketch-s0.py
+      - name: Compare same-scene geometry and retain inspectable evidence
+        env:
+          S0_LOG_PREVIEW: '1'
+        run: python scripts/assess-sketch-s0.py
+      - name: Attach evidence only (quota does not skip tests)
+        if: always()
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: sketch-s0-${{ github.run_id }}
+          path: |
+            test-results/sketch-s0/*.png
+            test-results/sketch-s0/*.jpg
+            test-results/sketch-s0/*.json
+            test-results/sketch-s0/lab.html
+          retention-days: 14
