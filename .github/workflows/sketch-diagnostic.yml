@@ -21,7 +21,8 @@ jobs:
           import os, urllib.request
           base='https://api.github.com/repos/'+os.environ['REPOSITORY']+'/actions/jobs/'
           for job in [116803666523,116803666620]:
-              request=urllib.request.Request(base+str(job)+'/logs',headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json'})
+              request=urllib.request.Request(base+str(job)+'/logs',headers={'Accept':'application/vnd.github+json'})
+              request.add_unredirected_header('Authorization','Bearer '+os.environ['GH_TOKEN'])
               with urllib.request.urlopen(request,timeout=40) as response:
                   text=response.read(16000000).decode('utf-8','replace')
               lines=text.splitlines()
