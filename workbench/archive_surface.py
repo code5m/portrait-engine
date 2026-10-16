@@ -3,7 +3,7 @@ Only a NEW evidence branch is written; main and PR refs are never moved here.
 No user review database or credentials enter the bounded archive allowlist.
 """
 from __future__ import annotations
-import base64,hashlib,json,math,os,re,sys,time,urllib.request
+import base64,hashlib,json,math,os,re,sys,time,urllib.request,urllib.error
 from pathlib import Path
 from model import ROOT,CACHE,canonical
 from surface_registry import S5,S6,cases,case,case_specs,sample_id,source_digest
@@ -155,6 +155,48 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self,req,fp,code,msg,headers,newurl):raise RuntimeError('Unexpected Git API redirect')
 
 
+
+def build_archive_tree(api, base_tree, entries, chunk_size=45):
+    """Build one Git tree through bounded REST requests, not one huge 422 payload.
+
+    Git trees are immutable: each chunk extends the SHA returned by the last.
+    The LAST resulting SHA contains every file and is committed atomically.
+    No partial evidence branch is created if any chunk fails.
+    """
+    require(re.fullmatch(r'[a-f0-9]{40}',base_tree) is not None,'Invalid archive base tree')
+    require(type(chunk_size) is int and 1<=chunk_size<=100,'Invalid tree chunk size')
+    seen=set()
+    for entry in entries:
+        path=entry.get('path','')
+        require(isinstance(path,str) and path not in seen and
+                path.startswith('research/sketch/evidence/') and
+                not any(part in ('','.','..') for part in path.split('/')) and
+                entry.get('mode')=='100644' and entry.get('type')=='blob' and
+                (('sha' in entry) != ('content' in entry)),
+                'Duplicate, unsafe or ambiguous archive entry: '+str(path)[:140])
+        seen.add(path)
+    total=(len(entries)+chunk_size-1)//chunk_size
+    current=base_tree
+    for i in range(total):
+        piece=entries[i*chunk_size:(i+1)*chunk_size]
+        try:
+            value=api('/git/trees',{'base_tree':current,'tree':piece})
+        except urllib.error.HTTPError as error:
+            # HTTP 422 formerly took 10m of blob uploads and printed no JSON
+            # explanation. Keep GitHub's bounded validation error visible.
+            detail=error.read(6000).decode('utf8','replace')
+            raise RuntimeError('Archive tree batch '+str(i+1)+'/'+str(total)+
+                               ' HTTP '+str(error.code)+
+                               ' first='+piece[0]['path']+' last='+piece[-1]['path']+
+                               ' response='+detail) from error
+        current=value['sha']
+        require(isinstance(current,str) and
+                re.fullmatch(r'[a-f0-9]{40}',current) is not None,
+                'Invalid Git tree SHA at batch '+str(i+1))
+        print('ARCHIVE_TREE_BATCH',i+1,total,len(piece),flush=True)
+    return current
+
+
 def publish():
     files,receipt=collect();run,head=context();attempt=os.environ.get('GITHUB_RUN_ATTEMPT','')
     require(bool(re.fullmatch(r'\d+',attempt)),'Missing attempt');repo=os.environ.get('GITHUB_REPOSITORY','')
@@ -179,7 +221,7 @@ def publish():
             entry['sha']=blob
         else:entry['content']=data.decode('utf8')
         entries.append(entry)
-    tree=api('/git/trees',{'base_tree':tree_base,'tree':entries})['sha']
+    tree=build_archive_tree(api,tree_base,entries)
     commit=api('/git/commits',{'message':f'archive(sketch): S5/S6 run {run} {receipt["status"]}, real PNGs and zero fabricated reviews','tree':tree,'parents':[head]})['sha']
     branch=f'evidence/sketch-s5-s6-{run}-{attempt}';api('/git/refs',{'ref':'refs/heads/'+branch,'sha':commit})
     receipt.update(branch=branch,commit=commit,files=len(files),bytes=sum(map(len,files.values())))
