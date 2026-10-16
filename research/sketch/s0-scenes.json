@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "scope": "S0 calibration, not a human-portrait candidate",
+  "frameSize": 256,
+  "orthoScale": 3.4,
+  "ambient": 0.08,
+  "direct": 0.72,
+  "bands": 16,
+  "curveSamples": 160,
+  "profiles": [
+    {"id":"sphere","radii":[1,1,1]},
+    {"id":"wide","radii":[1.15,0.82,0.9]},
+    {"id":"tall","radii":[0.78,1.22,1.02]}
+  ],
+  "lights": [
+    {"id":"left","direction":[-0.65,0.4,0.65]},
+    {"id":"front","direction":[0,0.4,1]},
+    {"id":"right","direction":[0.65,0.4,0.65]}
+  ]
+}
