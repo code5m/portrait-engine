@@ -1,17 +1,17 @@
 {
-  "schemaVersion": 1,
-  "mission": "研究的是通用生成能力，人物作品是验证手段，写实质量是核心衡量标准。",
-  "baselineCommit": "7efae11e1f687874bd29b1dae845eec509500283",
-  "currentStage": "S5",
-  "artStatus": "ART_UNVERIFIED",
-  "humanReview": {"status":"DEFERRED_BY_OWNER","decisionDate":"2026-10-16","independentObservers":0,"blocksOptInEngineering":false,"blocksArtCertificationAndDefaultPromotion":true},
-  "stages": [
+  "schemaVersion":1,
+  "mission":"研究的是通用生成能力，人物作品是验证手段，写实质量是核心衡量标准。",
+  "baselineCommit":"7efae11e1f687874bd29b1dae845eec509500283",
+  "currentStage":"S5",
+  "artStatus":"ART_UNVERIFIED",
+  "humanReview":{"status":"DEFERRED_BY_OWNER","decisionDate":"2026-10-16","independentObservers":0,"blocksOptInEngineering":false,"blocksArtCertificationAndDefaultPromotion":true},
+  "stages":[
     {"id":"S0","title":"素描原理与研究基线","status":"COMPLETE","report":"docs/sketch/S0.md","evidence":"research/sketch/evidence/S0.json"},
     {"id":"S1","title":"基本形体、明暗与投影","status":"COMPLETE","report":"docs/sketch/S1.md","evidence":"research/sketch/evidence/S1.json"},
     {"id":"S2","title":"头部结构与形体概括","status":"COMPLETE","report":"docs/sketch/S2.md","evidence":"research/sketch/evidence/S2.json"},
     {"id":"S3","title":"大明暗与连续体积","status":"COMPLETE","report":"docs/sketch/S3.md","evidence":"research/sketch/evidence/S3.json"},
     {"id":"S4","title":"边缘控制与五官整合","status":"COMPLETE","report":"docs/sketch/S4.md","evidence":"research/sketch/evidence/S4.json"},
-    {"id":"S5","title":"排线、头发与材料","status":"NOT_STARTED","report":null,"evidence":null},
-    {"id":"S6","title":"陌生人物泛化与综合验收","status":"NOT_STARTED","report":null,"evidence":null}
+    {"id":"S5","title":"排线、头发与材料","status":"IN_PROGRESS","report":"docs/sketch/S5.md","evidence":null},
+    {"id":"S6","title":"陌生人物泛化与综合验收","status":"NOT_STARTED","report":"docs/sketch/S6.md","evidence":null}
   ]
 }

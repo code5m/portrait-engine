@@ -1,0 +1,92 @@
+name: Registered surface case
+description: Compile and independently evaluate three lights for one fixed pose.
+inputs:
+  case:
+    required: true
+    description: Registered identity-expression case.
+  stage:
+    required: true
+    description: S5 or S6.
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - name: Install compiler and independent browser/reference
+      shell: bash
+      run: |
+        sudo apt-get update -qq > "$RUNNER_TEMP/install.log" 2>&1
+        sudo apt-get install -y --no-install-recommends blender >> "$RUNNER_TEMP/install.log" 2>&1 || { tail -40 "$RUNNER_TEMP/install.log"; exit 1; }
+        python -m pip install -q -r workbench/requirements.txt
+        python -m playwright install --with-deps chromium > "$RUNNER_TEMP/chromium.log" 2>&1 || { tail -40 "$RUNNER_TEMP/chromium.log"; exit 1; }
+    - name: Preserve frozen evidence and test new contracts
+      shell: bash
+      run: |
+        npm run verify > "$RUNNER_TEMP/verify.log" 2>&1 || { tail -60 "$RUNNER_TEMP/verify.log"; exit 1; }
+        tail -12 "$RUNNER_TEMP/verify.log"
+        git diff --exit-code -- standalone.html src styles
+        python -m py_compile workbench/*.py
+        python workbench/test_contract.py
+        python workbench/test_surface.py
+    - name: Verify original pinned model and additional pose sources
+      shell: bash
+      env:
+        CASE_STAGE: ${{ inputs.stage }}
+      run: |
+        python workbench/model.py
+        if [ "$CASE_STAGE" = S6 ]; then
+          PYTHONPATH=workbench python -c 'from surface_model import prepare_extra; print("EXTRA_SOURCE_FILES",len(prepare_extra()))'
+        fi
+    - name: Bind numerical cache to complete model and compiler sources
+      id: source
+      shell: bash
+      run: PYTHONPATH=workbench python -c 'from surface_registry import geometry_source_digest; print("key="+geometry_source_digest())' >> "$GITHUB_OUTPUT"
+    - name: Restore numerical parent regions, never measured PASS results
+      uses: actions/cache/restore@v4
+      with:
+        path: data/workbench/surface/base
+        key: surface-parent-${{ inputs.case }}-${{ steps.source.outputs.key }}
+    - name: Compile materials and every light for the fixed case
+      shell: bash
+      env:
+        SURFACE_CASE: ${{ inputs.case }}
+      run: python -u workbench/run_surface_matrix.py compile "$SURFACE_CASE"
+    - name: Save content-checked numerical regions
+      uses: actions/cache/save@v4
+      with:
+        path: data/workbench/surface/base
+        key: surface-parent-${{ inputs.case }}-${{ steps.source.outputs.key }}
+    - name: Fresh Cycles pose references and radiometry
+      shell: bash
+      env:
+        SURFACE_CASE: ${{ inputs.case }}
+      run: |
+        blender --background --python-exit-code 1 --python workbench/surface_reference.py -- --case "$SURFACE_CASE" > "$RUNNER_TEMP/surface-reference.log" 2>&1 || { tail -70 "$RUNNER_TEMP/surface-reference.log"; exit 1; }
+        grep 'SURFACE_REFERENCE_COMPLETE' "$RUNNER_TEMP/surface-reference.log"
+    - name: Actual Chromium full frame and ablation matrix
+      shell: bash
+      env:
+        SURFACE_CASE: ${{ inputs.case }}
+      run: python -u workbench/run_surface_matrix.py validate "$SURFACE_CASE"
+    - name: Real shared workbench, parameters and export without invented reviews
+      if: inputs.case == 'head-a-neutral' || inputs.case == 'novel-a-smile'
+      shell: bash
+      env:
+        CASE_STAGE: ${{ inputs.stage }}
+      run: python -u workbench/test_surface_ui.py "$CASE_STAGE"
+    - name: Preserve success or failure receipts without changing the outcome
+      if: always()
+      shell: bash
+      env:
+        SURFACE_CASE: ${{ inputs.case }}
+      run: python -u workbench/archive_surface.py pack "$SURFACE_CASE"
+    - name: Transfer same-run receipts to the all-scenes gate
+      if: always()
+      uses: actions/cache/save@v4
+      with:
+        path: data/workbench/surface/receipts
+        key: surface-proof-${{ github.run_id }}-${{ env.SOURCE_HEAD_SHA }}-${{ inputs.case }}

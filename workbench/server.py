@@ -1,18 +1,20 @@
-"""Local-first, allowlisted research API. Machine and human records are separate.
-S2 historical studies stay immutable; S3/S4 are explicit opt-in pipelines.
+"""Local-first allowlisted research API; machine and human records stay separate.
+S2 numerical history is immutable. S3-S6 are opt-in experiments, never ART_PASS.
 This is for a trusted research group, not a public multi-tenant service.
 """
 from __future__ import annotations
-import argparse,contextlib,hashlib,hmac,http.cookies,json,os,queue,re,secrets,shutil,sqlite3,subprocess,sys,threading,time
+import argparse,contextlib,copy,hashlib,hmac,http.cookies,json,os,queue,re,secrets,shutil,sqlite3,subprocess,sys,threading,time
 from http.server import BaseHTTPRequestHandler,ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlsplit,unquote
 from model import ROOT,CACHE,CONFIG,HeadModel,prepare,source_digest,canonical,sha,save_json
+from surface_registry import catalog as surface_catalog,validate_payload as validate_surface_payload
 STATIC={'/':'index.html','/app.mjs':'app.mjs','/style.css':'style.css','/renderer.mjs':'renderer.mjs',
-        '/study_renderer.mjs':'study_renderer.mjs','/api-guide':'api.html'}
+        '/study_renderer.mjs':'study_renderer.mjs','/surface_renderer.mjs':'surface_renderer.mjs',
+        '/pipeline_renderer.mjs':'pipeline_renderer.mjs','/api-guide':'api.html'}
 ID=re.compile(r'^[a-z0-9-]{1,80}$');MAX_BODY=32768
 DIMS=['structure','volume','eyes','identity','realism']
-STAGES=('S2','S3','S4')
+STAGES=('S2','S3','S4','S5','S6')
 TOKEN=os.getenv('PORTRAIT_TOKEN','');MODEL=None;JOBS=queue.Queue(maxsize=8);SESSIONS={};LOCK=threading.RLock()
 
 
@@ -37,7 +39,7 @@ def initialize():
         c.executescript('''PRAGMA journal_mode=WAL;
         CREATE TABLE IF NOT EXISTS jobs(id TEXT PRIMARY KEY,operation TEXT,payload TEXT,status TEXT,result TEXT,error TEXT,created REAL);
         CREATE TABLE IF NOT EXISTS reviews(id TEXT PRIMARY KEY,reviewer TEXT,render_id TEXT,source_digest TEXT,content_hash TEXT,payload TEXT,created REAL);
-        CREATE TABLE IF NOT EXISTS events(id INTEGER PRIMARY KEY,kind TEXT,payload TEXT,created REAL);
+        CREATE TABLE IF NOT EXISTS events(id INTEGER PRIMARY KEY,kind TEXT,payload,created REAL);
         ''')
         c.execute("UPDATE jobs SET status='failed',error='Server restarted; retry explicitly' WHERE status IN ('queued','running')")
 
@@ -48,7 +50,7 @@ def emit(kind,data):
 
 def json_file(path):return json.loads(path.read_text(encoding='utf8'))
 def read_render(ident):
-    if not ID.fullmatch(ident):raise ValueError('Invalid render identifier')
+    if not isinstance(ident,str) or not ID.fullmatch(ident):raise ValueError('Invalid render identifier')
     path=CACHE/'renders'/(ident+'.json')
     if not path.exists():raise FileNotFoundError('Render not found')
     return json_file(path)
@@ -103,9 +105,10 @@ def worker():
 
 
 def validate_render_payload(data):
+    if data.get('stage') in ('S5','S6'):return validate_surface_payload(data)
     if set(data)-{'identity','weights','light','stage'}:raise ValueError('Unknown render field')
     stage=data.get('stage','S2')
-    if stage not in STAGES:raise ValueError('Choose an explicitly registered study: S2, S3 or S4')
+    if stage not in ('S2','S3','S4'):raise ValueError('Choose an explicitly registered study: S2-S6')
     identities={i['id']:i for i in CONFIG['identities']};lights={l['id']:l['direction'] for l in CONFIG['lights']}
     if 'weights' in data:weights=data['weights']
     else:
@@ -125,8 +128,9 @@ def review_payload(data,d):
     scores=data.get('scores',{})
     if not isinstance(scores,dict) or set(scores)!=set(DIMS) or any(type(v) is not int or not 1<=v<=5 for v in scores.values()):raise ValueError('All five scores must be integers 1..5')
     views={'tone','structure'}
-    if d.get('stage') in ('S3','S4'):views.add('masses')
-    if d.get('stage')=='S4':views.add('edges-control')
+    if d.get('stage') in ('S3','S4','S5','S6'):views.add('masses')
+    if d.get('stage') in ('S4','S5','S6'):views.add('edges-control')
+    if d.get('stage') in ('S5','S6'):views.update(('material-control','hair-control'))
     if data.get('viewMode','tone') not in views:raise ValueError('Unknown review view')
     if not isinstance(data.get('note',''),str) or len(data.get('note',''))>2000:raise ValueError('Note too long')
     annotations=data.get('annotations',[])
@@ -144,13 +148,31 @@ def validation(ident,d):
     if machine.get('contentHash')!=d['contentHash'] or machine.get('sourceDigest')!=digest:machine={'status':'STALE' if path.exists() else 'NOT_RUN'}
     with db() as c:reviews=[json.loads(x['payload']) for x in c.execute('SELECT payload FROM reviews WHERE render_id=? AND source_digest=? AND content_hash=? ORDER BY created',(ident,digest,d['contentHash']))]
     latest={(r['reviewerSession'],r.get('viewMode','tone')):r for r in reviews}
-    candidate_reviews=[r for r in latest.values() if r.get('viewMode')!='edges-control']
+    candidate_reviews=[r for r in latest.values() if not r.get('viewMode','tone').endswith('-control')]
     verdicts={r['verdict'] for r in candidate_reviews}
     tone_accepts=any(r['verdict']=='accept' and r.get('viewMode','tone')=='tone' for r in candidate_reviews)
     human='PENDING' if not verdicts else ('REJECT' if 'reject' in verdicts else ('REVISE' if 'revise' in verdicts else ('ACCEPT' if tone_accepts else 'PENDING')))
     decision='PENDING' if machine['status']!='PASS' or human=='PENDING' else ('OWNER_ACCEPTED' if human=='ACCEPT' else 'REVISION_REQUIRED')
     return {'machine':machine,'human':{'status':human,'reviews':reviews,'selfReportedSessions':len({k[0] for k in latest}),
-            'independentHumansVerified':False},'decision':decision,'artStatus':'ART_UNVERIFIED','independentObservers':'NOT_VERIFIED','stage':d.get('stage','S2')}
+            'independentHumansVerified':False},'decision':decision,'artStatus':'ART_UNVERIFIED','independentObservers':'NOT_VERIFIED',
+            'stage':d.get('stage','S2'),'humanReview':json_file(ROOT/'research/sketch/stages.json').get('humanReview',{})}
+
+
+def openapi_schema():
+    """Extend the compatible v1 schema with stage-specific bounded inputs."""
+    schema=json_file(ROOT/'workbench/openapi.json');schemas=schema['components']['schemas'];old=schemas['RenderPayload']
+    surface=surface_catalog();new=copy.deepcopy(old);new['properties']['stage']={'enum':['S5','S6']}
+    new['properties'].update(expression={'enum':surface['expressions'],'default':'neutral'},
+                             material={'enum':surface['materials'],'default':'graphite'},hair={'enum':surface['hairstyles'],'default':'swept'})
+    new['required']=['stage'];new['allOf']=[
+        {'if':{'properties':{'stage':{'const':'S5'}}},'then':{'properties':{'expression':{'const':'neutral'}},'not':{'required':['identity','weights']}}},
+        {'if':{'properties':{'stage':{'const':'S6'}}},'then':{'required':['identity'],'not':{'required':['weights']},'properties':{'identity':{'enum':[i['id'] for i in surface['identities']]}}}]
+    schemas['RenderPayload']={'oneOf':[old,new]}
+    schemas['Review']['properties']['viewMode']['enum']+=['material-control','hair-control']
+    schemas['Review']['properties']['viewMode']['description']='Stage-bound views. masses: S3-S6; edges-control: S4-S6; material-control/hair-control: S5-S6. No control view can accept the candidate.'
+    schema['info'].update(version='1.2.0',description='S2-S6 opt-in numerical/CSS research. Human review deferred by owner; no automated ART_PASS or default promotion. S6 tests new PCA modes, not real-person recognition.')
+    schema['paths']['/api/v1/catalog']['get']['summary']='S2-S6 catalog, new-mode identities, expressions, materials and hair choices'
+    return schema
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -200,9 +222,9 @@ class Handler(BaseHTTPRequestHandler):
                 path=ROOT/'workbench'/STATIC[p];kind='text/css; charset=utf-8' if p.endswith('.css') else ('text/javascript; charset=utf-8' if p.endswith('.mjs') else 'text/html; charset=utf-8')
                 return self.send(200,path.read_bytes(),kind)
             if p=='/api/v1/health':return self.send(200,{'apiVersion':'1','requiresLogin':True,'remote':self.server.remote,'accessTokenRequired':bool(TOKEN),'artStatus':'ART_UNVERIFIED','modelReady':(CACHE/'source-verification.json').exists(),'blenderAvailable':bool(os.getenv('PORTRAIT_BLENDER') or shutil.which('blender'))})
-            if p=='/api/v1/openapi':return self.send(200,json_file(ROOT/'workbench/openapi.json'))
+            if p=='/api/v1/openapi':return self.send(200,openapi_schema())
             s=self.session()
-            if p=='/api/v1/catalog':return self.send(200,{'identities':CONFIG['identities'],'lights':CONFIG['lights'],'sourceDigest':source_digest(),'thresholds':CONFIG['thresholds'],'stages':list(STAGES),'session':{'name':s['name']}})
+            if p=='/api/v1/catalog':return self.send(200,{'identities':CONFIG['identities'],'lights':CONFIG['lights'],'sourceDigest':source_digest(),'thresholds':CONFIG['thresholds'],'stages':list(STAGES),'surface':surface_catalog(),'session':{'name':s['name']}})
             if p=='/api/v1/stages':return self.send(200,json_file(ROOT/'research/sketch/stages.json'))
             if p=='/api/v1/jobs':
                 with db() as c:rows=c.execute('SELECT * FROM jobs ORDER BY created DESC LIMIT 30').fetchall()
@@ -231,6 +253,9 @@ class Handler(BaseHTTPRequestHandler):
                     if d.get('stage','S2')=='S2':
                         from validate import html
                         document=html(d)
+                    elif d['stage'] in ('S5','S6'):
+                        from surface_document import document as build_document
+                        document=build_document(d)
                     else:
                         from validate_studies import document as build_document
                         document=build_document(d)

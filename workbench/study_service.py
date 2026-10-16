@@ -1,14 +1,17 @@
-"""Explicit S3/S4 API operations; no arbitrary paths, commands or uploads."""
+"""Explicit stage dispatch; no arbitrary paths, commands or uploads."""
 import copy,json,os,shutil,subprocess,sys
 import numpy as np
 from model import ROOT,CACHE,CONFIG,canonical,sha,save_json,source_digest as s2_digest,unit
 from study_light import compile_light,describe,source_digest as s3_digest,content_hash
 from study_edges import describe_edges,source_digest as s4_digest
 
-STAGES=('S2','S3','S4')
+STAGES=('S2','S3','S4','S5','S6')
 
 def current_digest(stage):
     if stage not in STAGES:raise ValueError('Unregistered sketch stage')
+    if stage in ('S5','S6'):
+        from surface_registry import source_digest
+        return source_digest(stage)
     return {'S2':s2_digest,'S3':s3_digest,'S4':s4_digest}[stage]()
 
 
@@ -20,6 +23,9 @@ def checked(path,stage):
 
 
 def render(payload,model):
+    if payload.get('stage') in ('S5','S6'):
+        from surface_service import render as render_surface
+        return render_surface(payload,model)
     stage=payload['stage'];weights=payload['weights'];light=unit(payload['light']).tolist()
     key=stage.lower()+'-'+sha(canonical({'weights':weights,'light':light,'stage':stage,'source':current_digest(stage)}))[:24]
     cached=checked(CACHE/'renders'/(key+'.json'),stage)
@@ -51,6 +57,9 @@ def render(payload,model):
 
 
 def verify(ident,descriptor):
+    if descriptor.get('stage') in ('S5','S6'):
+        from surface_service import verify as verify_surface
+        return verify_surface(ident,descriptor)
     if descriptor['sourceDigest']!=current_digest(descriptor['stage']):raise ValueError('STALE_RENDER')
     blender=os.getenv('PORTRAIT_BLENDER') or shutil.which('blender')
     if not blender:raise RuntimeError('DEPENDENCY_MISSING: independent validation requires Blender')
