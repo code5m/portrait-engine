@@ -41,7 +41,7 @@ jobs:
       - name: Verify pinned MIT reference assets
         run: python scripts/prepare-sketch-s0.py
       - name: Render Blender reference and Freestyle probe (not CSS)
-        run: blender --background --python scripts/reference-sketch-s0.py
+        run: blender --background --python-exit-code 1 --python scripts/reference-sketch-s0.py
       - name: Capture existing portraits and actual CSS calibration
         run: |
           python test/engine-v1-visual.py

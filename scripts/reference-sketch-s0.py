@@ -1,6 +1,7 @@
-"""Run with Blender --background --python. Offline REFERENCE, never CSS output.
-The emission shader evaluates a Lambertian-direction diagnostic without GI:
-L = ambient + direct * max(0, dot(N,L)). It is not real skin illumination.
+"""Run with Blender --background --python-exit-code 1 --python.
+Offline REFERENCE, never CSS output. The emission shader evaluates a
+Lambertian-direction diagnostic without GI: ambient + direct * max(0,N dot L).
+It is not real skin illumination.
 """
 import bpy,json,hashlib
 from pathlib import Path
@@ -61,10 +62,20 @@ mesh=bpy.data.meshes.new('ICT Light neutral reference');mesh.from_pydata(verts,[
 obj=bpy.data.objects.new('ICT reference only',mesh);scene.collection.objects.link(obj);attach(obj)
 dot.inputs[1].default_value=Vector(CONFIG['lights'][0]['direction']).normalized();render('ict-neutral-reference.png')
 scene.render.use_freestyle=True
-lines=scene.view_layers[0].freestyle_settings.linesets
+settings=scene.view_layers[0].freestyle_settings
+settings.mode='EDITOR'
+lines=settings.linesets
 if not len(lines):lines.new('Contours')
-style=lines[0].linestyle;style.color=(0.02,0.02,0.02);style.thickness=1.0
-lines[0].select_silhouette=True;lines[0].select_crease=False;lines[0].select_border=True
+# An empty factory scene can have a line set but no linked style data-block.
+# Initialize it explicitly instead of assuming UI defaults were created.
+line_set=lines[0]
+if line_set.linestyle is None:
+    line_set.linestyle=bpy.data.linestyles.new('S0 reference contour')
+style=line_set.linestyle
+style.color=(0.02,0.02,0.02);style.thickness=1.0
+line_set.select_by_edge_types=True;line_set.select_by_visibility=True
+line_set.visibility='VISIBLE';line_set.select_silhouette=True
+line_set.select_crease=False;line_set.select_border=True
 render('ict-neutral-freestyle.png')
 report={'blenderVersion':bpy.app.version_string,'viewTransform':scene.view_settings.view_transform,'look':scene.view_settings.look,'purpose':'calibration plus upstream head import; NOT CSS and NOT a realism verdict','referenceScenes':9,'ictVertices':len(verts),'ictFaces':len(faces),'outputs':records}
 (OUT/'reference-manifest.json').write_text(json.dumps(report,indent=2))
