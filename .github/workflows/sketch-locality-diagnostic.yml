@@ -1,0 +1,45 @@
+name: Diagnostic only / sketch edge locality
+on:
+  pull_request:
+    paths: ['scripts/diagnose-sketch-locality.py', '.github/workflows/sketch-locality-diagnostic.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  diagnose:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install actual reference and browser
+        run: |
+          sudo apt-get update -qq > "$RUNNER_TEMP/apt.log" 2>&1
+          sudo apt-get install -y --no-install-recommends blender >> "$RUNNER_TEMP/apt.log" 2>&1 || { tail -40 "$RUNNER_TEMP/apt.log"; exit 1; }
+          python -m pip install -q -r workbench/requirements.txt
+          python -m playwright install --with-deps chromium > "$RUNNER_TEMP/browser.log" 2>&1 || { tail -40 "$RUNNER_TEMP/browser.log"; exit 1; }
+      - name: Prepare model and exact numerical source key
+        id: source
+        run: |
+          python workbench/model.py
+          PYTHONPATH=workbench python -c "from study_light import source_digest as a; from study_edges import source_digest as b; print('key='+a()+'-'+b())" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            data/workbench/studies/S3
+            data/workbench/studies/S4
+          key: sketch-numeric-head-c-${{ steps.source.outputs.key }}
+          fail-on-cache-miss: true
+      - name: Independent reference, no numerical recompilation
+        run: |
+          blender --background --python-exit-code 1 --python workbench/run_study_shard.py -- reference head-c > "$RUNNER_TEMP/reference.log" 2>&1 || { tail -50 "$RUNNER_TEMP/reference.log"; exit 1; }
+          grep 'S3_REFERENCE_COMPLETE' "$RUNNER_TEMP/reference.log"
+      - name: Diagnose hard and soft locality without promoting a stage
+        run: python -u scripts/diagnose-sketch-locality.py
