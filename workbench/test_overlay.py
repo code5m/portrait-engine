@@ -2,9 +2,9 @@
 import copy,unittest
 from types import SimpleNamespace
 import numpy as np
-from shapely.geometry import Polygon,LineString,Point,GeometryCollection
+from shapely.geometry import Polygon,LineString,Point,GeometryCollection,box
 from study_light import area_geometry,area_intersection
-from study_edges import describe_edges
+from study_edges import describe_edges,visible_intensity,crease_support,classify
 from run_study_shard import select_identity
 from model import CONFIG
 
@@ -35,7 +35,8 @@ class AreaOverlayTests(unittest.TestCase):
             p=SimpleNamespace(camera={'center':[1.,1.],'span':4.},grid=1e-8,
                 visible=[shape],footprints=[shape],silhouette=shape,tri=vertices[faces],regions=np.array([0]))
             scene={'projection':p,'faceIndices':np.array([0]),'cameraFaces':faces,
-                   'cameraVertices':vertices,'shaded':np.array([[.3,.4,.5]])}
+                   'cameraVertices':vertices,'shaded':np.array([[.3,.4,.5]]),
+                   'unlit':np.array([[.1,.1,.1]]),'lit':[polygon]}
             result=describe_edges(scene,{'sourceDigest':'synthetic','limitations':[]})
             self.assertIs(p.visible[0],shape,'S4 must not mutate frozen S2 projection')
             return result
@@ -49,4 +50,24 @@ class AreaOverlayTests(unittest.TestCase):
         with self.assertRaises(ValueError):select_identity(CONFIG,'not-a-registered-person')
         bad={**CONFIG,'identities':[got[0],got[0]]}
         with self.assertRaises(ValueError):select_identity(bad,got[0]['id'])
+    def test_occluded_direct_light_cannot_create_a_crease(self):
+        area=box(0,0,1,1)
+        scene={'shaded':np.array([[.8,.8,.8],[.2,.2,.2]]),
+               'unlit':np.full((2,3),.1),'lit':[Polygon(),Polygon()]}
+        values=visible_intensity(scene,[area,area])
+        self.assertTrue(np.allclose(values,[.1,.1]))
+        self.assertEqual(classify(40,abs(values[0]-values[1])*255),'lost')
+        self.assertEqual(classify(40,abs(.8-.2)*255),'hard','Old unshadowed control exposes the defect')
+        scene['lit']=[area,area]
+        self.assertTrue(np.allclose(visible_intensity(scene,[area,area]),[.8,.2]))
+        scene['lit']=[box(0,0,.5,1),area]
+        self.assertTrue(np.allclose(visible_intensity(scene,[area,area]),[.45,.2]))
+        scene['shaded'][0,0]=np.nan
+        with self.assertRaises(ValueError):visible_intensity(scene,[area,area])
+    def test_crease_requires_two_visible_sides_not_an_occluded_neighbor(self):
+        left=box(0,0,1,1);right=box(1,0,2,1);line=LineString([(1,0),(1,1)])
+        self.assertAlmostEqual(crease_support(line,left,right,1e-8).length,1)
+        self.assertTrue(crease_support(line,left,Polygon(),1e-8).is_empty)
+        part=crease_support(line,left,box(1,.5,2,1),1e-8)
+        self.assertAlmostEqual(part.length,.5,places=6)
 if __name__=='__main__':unittest.main()

@@ -39,9 +39,32 @@ class StudyRenderingTests(unittest.TestCase):
                 frames[stage]=np.asarray(Image.open(io.BytesIO(target.screenshot())).convert('RGB'))
                 self.assertEqual(target.evaluate('(el)=>getComputedStyle(el).clipPath'),'none')
             self.assertTrue(np.array_equal(frames['S3'],frames['S4']),'Empty ink must be an exact no-op')
-            # Negative control reproduces the removed double-antialiasing bug.
             page.evaluate('(rings)=>{document.getElementById("portrait").style.clipPath=clipPath(rings)}',rings)
             bad=np.asarray(Image.open(io.BytesIO(page.locator('#portrait').screenshot())).convert('RGB'))
             self.assertFalse(np.array_equal(frames['S3'],bad),'Regression control must detect re-clipping')
             self.assertEqual(errors,[]);browser.close()
+
+    def test_native_css_edge_subpaths_preserve_holes_and_empty_gaps(self):
+        full=[[[0,0],[100,0],[100,100],[0,100]]]
+        rings=[[[10,10],[30,10],[30,30],[10,30]],[[15,15],[25,15],[25,25],[15,25]],
+               [[70,70],[90,70],[90,90],[70,90]]]
+        d={'renderer':'HTML_CSS_REGIONS','stage':'S4','geometry':{'geometryHash':'synthetic'},
+           'contentHash':'synthetic','contourPoints':4,'toneRegions':[{'gray':200,'rings':full}],
+           'silhouetteRings':full,'edgeContourPoints':12,
+           'edgeRegions':[{'gray':25,'opacity':.45,'blurPixels':0,'rings':rings},
+                          {'gray':25,'opacity':.18,'blurPixels':.35,'rings':[]}],
+           'controlEdgeRegions':[]}
+        with tempfile.TemporaryDirectory() as tmp,sync_playwright() as p:
+            browser=p.chromium.launch(headless=True,args=['--no-sandbox']);page=browser.new_page()
+            path=Path(tmp)/'subpaths.html';path.write_text(document(d),encoding='utf8')
+            page.goto(path.as_uri());page.wait_for_selector('body[data-ready="1"]')
+            target=page.locator('#portrait')
+            pixels=np.asarray(Image.open(io.BytesIO(target.screenshot())).convert('RGB'))
+            self.assertEqual(int(pixels[64,64,0]),200,'Hole must not receive ink')
+            self.assertEqual(int(pixels[160,160,0]),200,'Separate rings must not be connected by ink')
+            self.assertLess(int(pixels[40,40,0]),150);self.assertLess(int(pixels[256,256,0]),150)
+            self.assertTrue(target.locator('.edge-ribbon i').first.evaluate('(el)=>el.style.clipPath.startsWith("shape(")'))
+            self.assertEqual(target.locator('img,svg,canvas').count(),0)
+            self.assertEqual(page.evaluate('()=>{try{edgeClipPath([[[0,0],[NaN,1],[1,0]]]);return "bad"}catch(e){return e.name}}'),'RangeError')
+            browser.close()
 if __name__=='__main__':unittest.main()

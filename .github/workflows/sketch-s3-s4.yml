@@ -80,6 +80,7 @@ jobs:
           python workbench/test_studies.py
           python workbench/test_overlay.py
           python workbench/test_study_rendering.py
+          python workbench/test_archive_studies.py
       - name: Verify pinned numerical model
         run: python workbench/model.py
       - name: Compute complete source-bound cache key
@@ -115,6 +116,13 @@ jobs:
       - name: Real S3/S4 API, views, reference verification and isolated feedback
         if: matrix.identity == 'head-a'
         run: python workbench/test_study_ui.py
+      - name: Pack exact measured receipts and full-resolution evidence
+        run: python workbench/archive_studies.py pack "$STUDY_IDENTITY"
+      - name: Transfer this run's evidence without artifact ZIP storage
+        uses: actions/cache/save@v4
+        with:
+          path: data/workbench/receipts
+          key: sketch-proof-${{ github.run_id }}-${{ env.SOURCE_HEAD_SHA }}-${{ matrix.identity }}
       - name: Publish truthful stage summary
         if: always()
         run: |
@@ -138,6 +146,11 @@ jobs:
     needs: [plan, study]
     if: always()
     runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    env:
+      SOURCE_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
     steps:
       - name: Require all six identity shards, never a partial green result
         env:
@@ -147,3 +160,46 @@ jobs:
           test "$PLAN_RESULT" = success
           test "$STUDY_RESULT" = success
           echo 'All 18 registered scenes plus the actual S3/S4 workbench passed. ART_UNVERIFIED.'
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Restore measured head-a evidence
+        uses: actions/cache/restore@v4
+        with:
+          path: data/workbench/receipts
+          key: sketch-proof-${{ github.run_id }}-${{ env.SOURCE_HEAD_SHA }}-head-a
+          fail-on-cache-miss: true
+      - name: Restore measured head-b evidence
+        uses: actions/cache/restore@v4
+        with:
+          path: data/workbench/receipts
+          key: sketch-proof-${{ github.run_id }}-${{ env.SOURCE_HEAD_SHA }}-head-b
+          fail-on-cache-miss: true
+      - name: Restore measured head-c evidence
+        uses: actions/cache/restore@v4
+        with:
+          path: data/workbench/receipts
+          key: sketch-proof-${{ github.run_id }}-${{ env.SOURCE_HEAD_SHA }}-head-c
+          fail-on-cache-miss: true
+      - name: Restore measured reserved-d evidence
+        uses: actions/cache/restore@v4
+        with:
+          path: data/workbench/receipts
+          key: sketch-proof-${{ github.run_id }}-${{ env.SOURCE_HEAD_SHA }}-reserved-d
+          fail-on-cache-miss: true
+      - name: Restore measured reserved-e evidence
+        uses: actions/cache/restore@v4
+        with:
+          path: data/workbench/receipts
+          key: sketch-proof-${{ github.run_id }}-${{ env.SOURCE_HEAD_SHA }}-reserved-e
+          fail-on-cache-miss: true
+      - name: Restore measured reserved-f evidence
+        uses: actions/cache/restore@v4
+        with:
+          path: data/workbench/receipts
+          key: sketch-proof-${{ github.run_id }}-${{ env.SOURCE_HEAD_SHA }}-reserved-f
+          fail-on-cache-miss: true
+      - name: Archive all original measurements and PNGs on a new evidence branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 workbench/archive_studies.py publish

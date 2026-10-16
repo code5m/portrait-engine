@@ -26,12 +26,37 @@ def classify(angle,contrast,occlusion=False):
     return 'hard' if angle>=35 and contrast>=16 else 'soft'
 
 
+def visible_intensity(scene, visible_areas):
+    """Local face means of the light model actually painted by S3.
+
+    Crease contrast must not resurrect blocked direct light. Weight the lit
+    and dark branches by camera-visible area, with no image/identity input.
+    """
+    shaded=np.asarray(scene['shaded'],dtype=float)
+    unlit=np.asarray(scene['unlit'],dtype=float)
+    if shaded.shape!=unlit.shape or shaded.shape!=(len(visible_areas),3):
+        raise ValueError('Expected matching three-vertex irradiance arrays')
+    if not np.isfinite(shaded).all() or not np.isfinite(unlit).all():
+        raise ValueError('Finite irradiance required')
+    if len(scene['lit'])!=len(visible_areas):raise ValueError('Mismatched visibility')
+    fractions=np.array([min(1.,max(0.,lit.area/area.area)) if area.area>0 else 0.
+                        for lit,area in zip(scene['lit'],visible_areas)])
+    return fractions*shaded.mean(axis=1)+(1-fractions)*unlit.mean(axis=1)
+
+
+def crease_support(line,left,right,grid):
+    """A crease needs BOTH adjacent faces visible at its geometric edge.
+
+    One-sided visible boundaries are already handled as camera occlusions;
+    do not add an extra crease by unioning a hidden neighbor into the test.
+    """
+    if left.is_empty or right.is_empty:return GeometryCollection()
+    return line.intersection(left.buffer(grid*4)).intersection(right.buffer(grid*4))
+
+
 def describe_edges(scene,result):
     settings=json.loads((ROOT/'research/sketch/s4-protocol.json').read_text())
     p=scene['projection'];pixel=p.camera['span']/CONFIG['frameSize'];tol=.10*pixel
-    # GEOS GeometryCollection.boundary is None even when the collection
-    # contains painted polygons. Take the boundary of the same areal domain
-    # used by S3, not of zero-area contact debris. Do not mutate frozen S2.
     visible_areas=[area_geometry(g,p.grid) for g in p.visible]
     silhouette=area_geometry(p.silhouette,p.grid)
     cuts=[]
@@ -48,7 +73,7 @@ def describe_edges(scene,result):
         for a,b in [(ids[0],ids[1]),(ids[1],ids[2]),(ids[2],ids[0])]:
             key=tuple(sorted((int(a),int(b))));shared.setdefault(key,[]).append(local)
     tri=p.tri;normals=unit(np.cross(tri[:,1]-tri[:,0],tri[:,2]-tri[:,0]))
-    intensity=scene['shaded'].mean(axis=1)
+    intensity=visible_intensity(scene,visible_areas)
     for (a,b),neighbors in shared.items():
         if len(neighbors)!=2:continue
         i,j=neighbors
@@ -57,7 +82,7 @@ def describe_edges(scene,result):
         kind=classify(angle,contrast);counts[kind]+=1
         if kind=='lost':continue
         line=LineString(scene['cameraVertices'][[a,b],:2])
-        visible=line.intersection(union_all([visible_areas[i],visible_areas[j]]).buffer(p.grid*4))
+        visible=crease_support(line,visible_areas[i],visible_areas[j],p.grid)
         if visible.length>pixel*.3:(hard if kind=='hard' else soft).append(visible)
     def overlay(lines,width,opacity,blur,name):
         geometry=union_all(lines).buffer(width*pixel/2,quad_segs=3).intersection(silhouette)
@@ -75,11 +100,12 @@ def describe_edges(scene,result):
              edgeRegions=edges,controlEdgeRegions=control,
              edgeClassification={'counts':counts,'occlusionLengthPixels':round(occlusion.length/pixel,2),
                                  'control':'every semantic boundary','candidate':'only camera occlusion, silhouette and contrast-supported creases',
+                                 'contrastModel':'camera-visible area-weighted S3 lit and shadow branches; both crease sides must be visible',
                                  'automaticQualityVerdict':'NONE'})
     extra=sum(len(r) for layer in edges+control for r in layer['rings'])
     d['edgeContourPoints']=extra
     if extra>settings['maxEdgePoints']:raise ValueError('S4 edge complexity budget exceeded')
     if len(canonical(d))>settings['maxDescriptorBytes']:raise ValueError('S4 descriptor byte budget exceeded')
-    d['limitations']+=['Edge selection is a hypothesis, not an artistic verdict','Only local crease ink is feathered; surface tones and true silhouettes are not globally blurred']
+    d['limitations']+=['Edge selection is a hypothesis, not an artistic verdict','Only local crease ink is feathered; surface tones and true silhouettes are not globally blurred','Crease contrast uses area-weighted face means, not a continuous edge-local integral']
     d['contentHash']=content_hash(d)
     return d

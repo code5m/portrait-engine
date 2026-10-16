@@ -1,7 +1,5 @@
 name: Diagnostic only / sketch edge locality
 on:
-  pull_request:
-    paths: ['scripts/diagnose-sketch-locality.py', '.github/workflows/sketch-locality-diagnostic.yml']
   workflow_dispatch:
 permissions:
   contents: read
