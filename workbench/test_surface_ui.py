@@ -68,14 +68,18 @@ def run(stage):
                     page.click('#generate');expect(page.locator('#candidate')).not_to_have_attribute('data-content-hash',first_hash,timeout=900000)
                     expect(page.locator('#machine-badge')).to_have_text(re.compile(r'\u672a\u8fd0\u884c$'))
                     assert page.locator('#candidate').get_attribute('data-geometry-hash')==first_geometry
+                    charcoal_hash=page.locator('#candidate').get_attribute('data-content-hash')
                     page.select_option('#material','graphite');page.select_option('#hair','short');page.click('#generate')
+                    expect(page.locator('#candidate')).not_to_have_attribute('data-content-hash',charcoal_hash,timeout=900000)
                     expect(page.locator('#status')).to_contain_text('\u4efb\u52a1\u5b8c\u6210',timeout=900000)
                     assert page.locator('#candidate').get_attribute('data-geometry-hash')==first_geometry
                     page.click('[data-tab=history]');page.wait_for_selector('#history button')
                     page.click('[data-tab=stages]');expect(page.locator('#stage-grid article')).to_have_count(7)
-                    page.click('[data-tab=lab]')
+                    # Export belongs to history; use the real visible UI, never force-click a hidden tab.
+                    page.click('[data-tab=history]');expect(page.locator('#export')).to_be_visible()
                     with page.expect_download() as event:page.click('#export')
                     exported_reviews=data/'reviews.json';event.value.save_as(str(exported_reviews));assert json.loads(exported_reviews.read_text())['reviews']==[]
+                    page.click('[data-tab=lab]');expect(page.locator('#candidate')).to_be_visible()
                     assert not errors,errors;browser.close()
                 with sqlite3.connect(data/'state.sqlite3') as db:assert db.execute('SELECT COUNT(*) FROM reviews').fetchone()[0]==0
                 receipt={'stage':stage,'status':'PASS','sourceHead':os.getenv('SOURCE_HEAD_SHA'),'ciRun':os.getenv('GITHUB_RUN_ID'),
