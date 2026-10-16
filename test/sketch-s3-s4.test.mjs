@@ -4,9 +4,12 @@ import fs from 'node:fs';
 import crypto from 'node:crypto';
 const read=p=>fs.readFileSync(new URL('../'+p,import.meta.url),'utf8');
 const json=p=>JSON.parse(read(p));
-test('S3/S4 are explicit API stages and preserve the frozen S2 painter',()=>{
+test('S3/S4 remain explicit compatible stages in the extended registry and preserve the frozen S2 painter',()=>{
  const server=read('workbench/server.py'),renderer=read('workbench/study_renderer.mjs');
- assert.match(server,/STAGES=\('S2','S3','S4'\)/);assert.match(server,/descriptor_digest/);
+ const registered=server.match(/^STAGES=\(([^\n]+)\)$/m);
+ assert.ok(registered,'Explicit stage tuple required');
+ assert.deepEqual([...registered[1].matchAll(/'(S\d+)'/g)].map(m=>m[1]),['S2','S3','S4','S5','S6']);
+ assert.match(server,/descriptor_digest/);
  assert.match(renderer,/import \{draw as drawBase, clipPath\} from '\.\/renderer.mjs'/);
  assert.doesNotMatch(renderer,/getContext\(|createElement\(['"](?:canvas|svg|img)|data:image/);
  assert.doesNotMatch(renderer,/target\.style\.filter/);
