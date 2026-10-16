@@ -6,12 +6,18 @@ from __future__ import annotations
 import math,time
 import numpy as np
 from shapely.geometry import Polygon,GeometryCollection
-from shapely.ops import unary_union
 from shapely.strtree import STRtree
-from shapely import make_valid
-from model import CONFIG,canonical,sha,source_digest
+from shapely import make_valid,set_precision,union_all
+from model import CONFIG,ROOT,LOCK,canonical,sha,source_digest
 
 REGIONS=['head','forehead','orbit','nose','cheek','mouth','jaw','eyes']
+
+def precision_geometry(geometry,grid):
+    """Robust overlay, not image smoothing: snap to 1e-5 pixel coordinates.
+    This is 10000 times finer than the existing .1px simplifier. Preserve holes
+    and disconnected polygons; never skip an identity or use its convex hull.
+    """
+    return set_precision(make_valid(geometry),grid,mode='valid_output')
 
 def clip(points,values,threshold=0.):
     out=[]
@@ -47,7 +53,8 @@ class Projection:
         cross=np.cross(tri[:,1]-tri[:,0],tri[:,2]-tri[:,0]);ok=cross[:,2]>1e-9
         self.tri=tri[ok];self.normals=n[f[ok]];self.regions=r[ok]
         points=self.tri[:,:,:2]
-        self.footprints=[Polygon(x) for x in points]
+        self.grid=model.camera['span']/CONFIG['frameSize']*1e-5
+        self.footprints=[precision_geometry(Polygon(x),self.grid) for x in points]
         self.tree=STRtree(self.footprints)
         self.planes=np.linalg.solve(np.concatenate([points,np.ones((len(points),3,1))],axis=2),self.tri[:,:,2,None])[...,0]
         self.visible=[];occluded=0;cut_count=0
@@ -64,15 +71,15 @@ class Projection:
                 if np.max(delta)<1e-7:continue
                 cp=clip(q,delta,1e-7)
                 if len(cp)>=3:
-                    cut=Polygon(cp).intersection(p)
+                    cut=precision_geometry(Polygon(cp),self.grid).intersection(p)
                     if cut.area>1e-9:cuts.append(cut)
-            visible=make_valid(p.difference(unary_union(cuts))) if cuts else p
+            visible=p.difference(union_all(cuts,grid_size=self.grid)) if cuts else p
             if visible.area < p.area-1e-7:occluded+=1
             cut_count+=len(cuts);self.visible.append(visible)
-        self.silhouette=unary_union(self.visible)
+        self.silhouette=union_all(self.visible,grid_size=self.grid)
         self.camera=model.camera;self.signature=model.signature(weights)
         self.source=source_digest();self.timing=round(time.perf_counter()-tick,3)
-        self.visibility={'frontTriangles':len(points),'partlyOrFullyOccluded':occluded,'depthCuts':cut_count,'method':'projected plane-depth clipping; no raster depth buffer'}
+        self.visibility={'frontTriangles':len(points),'partlyOrFullyOccluded':occluded,'depthCuts':cut_count,'method':'projected plane-depth clipping; no raster depth buffer','overlayGridPixels':1e-5}
     def describe(self,light,levels=24):
         if levels not in (3,24):raise ValueError('Supported tone budgets: 3 or 24')
         tick=time.perf_counter();direction=np.asarray(light,dtype=float)
@@ -91,16 +98,17 @@ class Projection:
                     if values.min()>=t:parts.append(visible);continue
                     cut=clip(tri[:,:2],values,t)
                     if len(cut)>=3:
-                        part=visible.intersection(Polygon(cut))
+                        part=visible.intersection(precision_geometry(Polygon(cut),self.grid))
                         if not part.is_empty:parts.append(part)
-                shape=unary_union(parts)
+                shape=union_all(parts,grid_size=self.grid)
             regions.append({'gray':round(255*(lo+span*(k+.5)/levels)),'rings':region_data(shape,self.camera,tol)})
         semantic=[]
         for k,label in enumerate(REGIONS):
-            g=unary_union([p for p,r in zip(self.visible,self.regions) if r==k])
+            g=union_all([p for p,r in zip(self.visible,self.regions) if r==k],grid_size=self.grid)
             semantic.append({'name':label,'gray':100+k*17,'rings':region_data(g,self.camera,tol)})
         result={'schemaVersion':1,'renderer':'HTML_CSS_REGIONS','stage':'S2','artStatus':'ART_UNVERIFIED','sourceDigest':self.source,
                 'geometry':self.signature,'light':direction.tolist(),'frameSize':CONFIG['frameSize'],'camera':self.camera,
+                'attribution':{'repository':LOCK['repository'],'commit':LOCK['commit'],'license':'MIT','notice':(ROOT/'workbench/ICT-LICENSE.txt').read_text()},
                 'toneRegions':regions,'structureRegions':semantic,'visibility':self.visibility,
                 'limitations':['Surface partitions are not actual skull or muscle anatomy','Fixed frontal orthographic view, neutral expression','No skin texture, hair, cast-light occlusion or bounce model','Finite tone bands; no human realism certification'],
                 'timingSeconds':{'visibility':self.timing,'toneCompile':round(time.perf_counter()-tick,3)}}

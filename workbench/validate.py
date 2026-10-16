@@ -7,8 +7,6 @@ from pathlib import Path
 import numpy as np
 from PIL import Image,ImageDraw
 from playwright.sync_api import sync_playwright
-from shapely.geometry import Polygon
-from shapely.ops import unary_union
 from model import CONFIG,CACHE,ROOT,source_digest,save_json,canonical,sha
 
 def html(descriptor,mode='tone'):
@@ -28,7 +26,6 @@ def assess(path,reference):
     b=ref[...,:3].mean(-1)*alpha+255*(1-alpha)
     mask=alpha>.5;cmask=c<248;union=np.count_nonzero(mask|cmask)
     inside=erode(mask);err=np.abs(c-b)
-    # Fixed central face windows are reported independently; not cherry-picked.
     feature=inside.copy();h,w=c.shape;feature[:int(h*.2)]=False;feature[int(h*.8):]=False;feature[:,:int(w*.22)]=False;feature[:,int(w*.78):]=False
     if not inside.any() or not feature.any():raise AssertionError('Blank reference head')
     return {'fullMAE':round(float(err.mean()),5),'interiorMAE':round(float(err[inside].mean()),5),
@@ -52,7 +49,6 @@ def validate_one(page,ident):
     meta=json.loads((CACHE/'reference'/(ident+'.json')).read_text())
     if meta['geometryHash']!=d['geometry']['geometryHash'] or meta['camera']!=d['camera']:raise AssertionError('Reference/CSS geometry differs')
     if sha((CACHE/'reference'/(ident+'.png')).read_bytes()) != meta['imageHash']:raise AssertionError('Reference image changed after rendering')
-    if d['geometry']['nonAffineRMS'] < CONFIG['thresholds']['minIdentityNonAffineRMS']:raise AssertionError('Identity is only a global affine deformation')
     metrics=assess(out/(ident+'-tone.png'),CACHE/'reference'/(ident+'.png'))
     failed=[]
     for key in ['fullMAE','interiorMAE','featureMAE']:
@@ -85,9 +81,10 @@ if __name__=='__main__':
         assert len(ids)==18 and len(set(ids))==18
         assert len({x['geometryHash'] for x in results})==6, 'Identity geometry collided or changed with light'
         assert all(len({x['geometryHash'] for x in results if x['renderId'].startswith(i['id']+'-')})==1 for i in CONFIG['identities'])
+        assert all(x['nonAffineRMS']>=CONFIG['thresholds']['minIdentityNonAffineRMS'] for x in results),'Registered identity fixture was only a global affine deformation'
     report={'stage':'S2','status':('STRUCTURE_STUDY_COMPLETE' if full_run else 'SAMPLE_CHECK_COMPLETE') if all(x['status']=='PASS' for x in results) else 'FAILED','artStatus':'ART_UNVERIFIED','humanObservers':0,
             'sourceDigest':source_digest(),'ciRun':os.getenv('GITHUB_RUN_ID'),'ciCommit':os.getenv('GITHUB_SHA'),'sourceHeadCommit':os.getenv('SOURCE_HEAD_SHA'),
-            'counts':{'identities':6,'scenarios':len(ids),'cssFrames':2*len(ids),'referenceFrames':len(ids)},'metrics':results,
+            'counts':{'identities':6 if full_run else len({r['geometryHash'] for r in results}),'scenarios':len(ids),'cssFrames':2*len(ids),'referenceFrames':len(ids)},'metrics':results,
             'limitations':['Neutral frontal head surface only, not skull/muscle anatomy','No portrait artistic certification','No full GI, skin, hair or cast-light shadows','Numeric PCA identities, not identified real people']}
     save_json(CACHE/('S2-result.json' if full_run else 'sample-result.json'),report)
     print('S2_COMPLETION_JSON' if full_run else 'SAMPLE_CHECK_JSON',canonical(report).decode(),flush=True)
@@ -97,7 +94,6 @@ if __name__=='__main__':
         with Image.open(CACHE/'captures'/(ident+'-tone.png')) as im:contact.paste(im.convert('RGB'),(i%3*320,i//3*350+26))
         pen.text((i%3*320+8,i//3*350+6),ident,fill='black')
     contact.save(CACHE/'S2-contact.png')
-    # Small real browser contact, recoverable despite GitHub artifact quota.
     small=contact.copy();small.thumbnail((480,1050));buf=io.BytesIO();small.save(buf,format='JPEG',quality=65)
     print('S2_PREVIEW_JPEG '+base64.b64encode(buf.getvalue()).decode(),flush=True)
     if report['status']=='FAILED':raise SystemExit(1)

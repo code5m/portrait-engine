@@ -1,9 +1,9 @@
-"""Local-first research API and workbench. No arbitrary command/URL/path APIs.
-Non-loopback serving requires an explicit bearer secret; browser writes require
-same-origin session+CSRF. Machine and human results are stored separately.
+"""Local-first API. Allowlisted computation only; separate machine/human records.
+Network binding requires explicit access credentials. Trusted research group,
+not a public multi-tenant service. All saved human claims remain self-reported.
 """
 from __future__ import annotations
-import argparse,concurrent.futures,contextlib,hashlib,hmac,http.cookies,json,os,queue,re,secrets,shutil,sqlite3,subprocess,sys,threading,time
+import argparse,contextlib,hashlib,hmac,http.cookies,json,os,queue,re,secrets,shutil,sqlite3,subprocess,sys,threading,time
 from http.server import BaseHTTPRequestHandler,ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlsplit,unquote
@@ -18,10 +18,8 @@ def db():
     CACHE.mkdir(parents=True,exist_ok=True)
     c=sqlite3.connect(CACHE/'state.sqlite3',timeout=15);c.row_factory=sqlite3.Row
     try:
-        with c:
-            yield c
-    finally:
-        c.close()
+        with c:yield c
+    finally:c.close()
 
 def initialize():
     with db() as c:
@@ -59,7 +57,7 @@ def operation(op,payload):
         ident=payload['renderId'];d=read_render(ident)
         if d['sourceDigest']!=source_digest():raise ValueError('STALE_RENDER: regenerate using current source')
         blender=os.getenv('PORTRAIT_BLENDER') or shutil.which('blender')
-        if not blender:raise RuntimeError('DEPENDENCY_MISSING: Blender is needed for independent machine verification; rendering/review remain available')
+        if not blender:raise RuntimeError('DEPENDENCY_MISSING: independent machine verification requires Blender')
         spec=CACHE/'specs'/(ident+'.json')
         if not spec.exists():save_json(spec,{'id':ident,'weights':d['geometry']['weights'],'light':d['light']})
         log=CACHE/'logs'/(ident+'.log');log.parent.mkdir(parents=True,exist_ok=True)
@@ -94,19 +92,31 @@ def validate_render_payload(data):
     return {'weights':weights,'light':lights[data.get('light','left')]}
 
 def review_payload(data,d):
-    allowed={'renderId','sourceDigest','contentHash','verdict','scores','note','annotations','humanConfirmed'}
+    allowed={'renderId','sourceDigest','contentHash','verdict','scores','note','annotations','humanConfirmed','viewMode'}
     if set(data)-allowed:raise ValueError('Unknown review field; machine status cannot be supplied')
     if data.get('sourceDigest')!=source_digest() or data.get('sourceDigest')!=d['sourceDigest'] or data.get('contentHash')!=d['contentHash']:raise ValueError('STALE_REVIEW: sample/source changed')
     if data.get('verdict') not in ('accept','revise','reject'):raise ValueError('Choose accept, revise or reject')
     if data.get('humanConfirmed') is not True:raise ValueError('Human confirmation required')
     scores=data.get('scores',{})
-    if set(scores)!=set(DIMS) or any(type(v) is not int or not 1<=v<=5 for v in scores.values()):raise ValueError('All five scores must be integers 1..5')
+    if not isinstance(scores,dict) or set(scores)!=set(DIMS) or any(type(v) is not int or not 1<=v<=5 for v in scores.values()):raise ValueError('All five scores must be integers 1..5')
+    if data.get('viewMode','tone') not in ('tone','structure'):raise ValueError('Unknown review view')
     if not isinstance(data.get('note',''),str) or len(data.get('note',''))>2000:raise ValueError('Note too long')
     annotations=data.get('annotations',[])
     if not isinstance(annotations,list) or len(annotations)>30:raise ValueError('At most 30 annotations')
     for a in annotations:
         if not isinstance(a,dict) or set(a)!={'x','y','note'} or any(type(a[k]) not in (int,float) or not 0<=a[k]<=1 for k in ('x','y')) or not isinstance(a['note'],str) or len(a['note'])>300:raise ValueError('Invalid annotation')
-    return {**data,'reviewType':'AUTOMATED_TEST' if os.getenv('PORTRAIT_TEST_MODE')=='1' else 'OWNER_SELF_REPORTED','blinded':False,'observerIndependence':'NOT_VERIFIED','artStatus':'ART_UNVERIFIED'}
+    return {**data,'viewMode':data.get('viewMode','tone'),'reviewType':'AUTOMATED_TEST' if os.getenv('PORTRAIT_TEST_MODE')=='1' else 'OWNER_SELF_REPORTED','blinded':False,'observerIndependence':'NOT_VERIFIED','artStatus':'ART_UNVERIFIED'}
+
+def validation(ident,d):
+    path=CACHE/'machine'/(ident+'.json');machine=json_file(path) if path.exists() else {'status':'NOT_RUN'}
+    if machine.get('contentHash')!=d['contentHash'] or machine.get('sourceDigest')!=source_digest():machine={'status':'STALE' if path.exists() else 'NOT_RUN'}
+    with db() as c:reviews=[json.loads(x['payload']) for x in c.execute('SELECT payload FROM reviews WHERE render_id=? AND source_digest=? AND content_hash=? ORDER BY created',(ident,source_digest(),d['contentHash']))]
+    # An acceptance must not erase another reviewer's unresolved rejection.
+    latest={r['reviewerSession']:r for r in reviews}
+    verdicts={r['verdict'] for r in latest.values()}
+    human='PENDING' if not verdicts else ('REJECT' if 'reject' in verdicts else ('REVISE' if 'revise' in verdicts else 'ACCEPT'))
+    decision='PENDING' if machine['status']!='PASS' or human=='PENDING' else ('OWNER_ACCEPTED' if human=='ACCEPT' else 'REVISION_REQUIRED')
+    return {'machine':machine,'human':{'status':human,'reviews':reviews,'selfReportedSessions':len(latest),'independentHumansVerified':False},'decision':decision,'artStatus':'ART_UNVERIFIED','independentObservers':'NOT_VERIFIED'}
 
 class Handler(BaseHTTPRequestHandler):
     server_version='PortraitWorkbench/1'
@@ -170,20 +180,14 @@ class Handler(BaseHTTPRequestHandler):
                 d=dict(r);d['result']=json.loads(d['result']) if d['result'] else None
                 return self.send(200,d)
             if p=='/api/v1/renders':
-                folder=CACHE/'renders';items=[]
-                for file in sorted(folder.glob('*.json'),key=lambda x:x.stat().st_mtime,reverse=True)[:60]:
+                items=[]
+                for file in sorted((CACHE/'renders').glob('*.json'),key=lambda x:x.stat().st_mtime,reverse=True)[:60]:
                     d=json_file(file);items.append({'id':file.stem,'weights':d['geometry']['weights'],'sourceDigest':d['sourceDigest'],'contentHash':d['contentHash']})
                 return self.send(200,{'renders':items})
             if p.startswith('/api/v1/renders/'):
                 parts=p.split('/');ident=parts[4];d=read_render(ident)
                 if len(parts)==5:return self.send(200,d)
-                if len(parts)==6 and parts[5]=='validation':
-                    path=CACHE/'machine'/(ident+'.json');machine=json_file(path) if path.exists() else {'status':'NOT_RUN'}
-                    if machine.get('contentHash')!=d['contentHash'] or machine.get('sourceDigest')!=source_digest():machine={'status':'STALE' if path.exists() else 'NOT_RUN'}
-                    with db() as c:reviews=[json.loads(x['payload']) for x in c.execute('SELECT payload FROM reviews WHERE render_id=? AND source_digest=? AND content_hash=? ORDER BY created',(ident,source_digest(),d['contentHash']))]
-                    human='PENDING' if not reviews else reviews[-1]['verdict'].upper()
-                    decision='PENDING' if machine['status']!='PASS' or human=='PENDING' else ('OWNER_ACCEPTED' if human=='ACCEPT' else 'REVISION_REQUIRED')
-                    return self.send(200,{'machine':machine,'human':{'status':human,'reviews':reviews},'decision':decision,'artStatus':'ART_UNVERIFIED','independentObservers':'NOT_VERIFIED'})
+                if len(parts)==6 and parts[5]=='validation':return self.send(200,validation(ident,d))
                 if len(parts)==6 and parts[5]=='reference.png':
                     path=CACHE/'reference'/(ident+'.png')
                     if not path.exists():raise FileNotFoundError('Run machine verification to create the reference')
@@ -226,9 +230,11 @@ class Handler(BaseHTTPRequestHandler):
                     if payload:raise ValueError('Prepare accepts no external URL/path/command')
                 else:raise ValueError('Allowed operations: prepare, render, verify')
                 ident=secrets.token_hex(12)
-                if JOBS.full():return self.send(429,{'error':'Queue full; wait for current jobs'})
-                with db() as c:c.execute('INSERT INTO jobs VALUES(?,?,?,?,?,?,?)',(ident,op,canonical(payload).decode(),'queued',None,None,time.time()))
-                JOBS.put_nowait((ident,op,payload));emit('job-created',{'id':ident,'operation':op})
+                with LOCK:
+                    if JOBS.full():return self.send(429,{'error':'Queue full; wait for current jobs'})
+                    with db() as c:c.execute('INSERT INTO jobs VALUES(?,?,?,?,?,?,?)',(ident,op,canonical(payload).decode(),'queued',None,None,time.time()))
+                    JOBS.put_nowait((ident,op,payload))
+                emit('job-created',{'id':ident,'operation':op})
                 return self.send(202,{'jobId':ident,'status':'queued'})
             if p=='/api/v1/reviews':
                 d=read_render(str(data.get('renderId','')));record=review_payload(data,d);ident=secrets.token_hex(12)

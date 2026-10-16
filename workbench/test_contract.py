@@ -4,14 +4,13 @@ from pathlib import Path
 import numpy as np
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 import server
-from geometry import Projection,clip,region_data
+from geometry import Projection,clip,region_data,precision_geometry
 from model import source_digest,save_json
 from shapely.geometry import Polygon
 
 class Dummy:
     camera={'center':[0,0],'span':4}
     def mesh(self,_):
-        # Two overlapping, positively oriented triangles at different depths.
         v=np.array([[-1,-1,0],[1,-1,0],[0,1,0],[-.3,-.3,1],[.3,-.3,1],[0,.4,1]])
         f=np.array([[0,1,2],[3,4,5]]);return v,f,np.tile([0,0,1.],(6,1)),np.array([1,3])
     def signature(self,_):return {'geometryHash':'0'*64,'weights':[0]*6,'camera':self.camera}
@@ -23,6 +22,14 @@ class GeometryTests(unittest.TestCase):
         self.assertEqual(p.visibility['partlyOrFullyOccluded'],1)
         d=p.describe([0,0,1]);self.assertEqual(len(d['toneRegions']),24)
         self.assertLess(d['contourPoints'],1000)
+    def test_nearly_coincident_overlay_is_valid_without_filling_holes(self):
+        from shapely import union_all
+        grid=4/320*1e-5
+        pieces=[Polygon([(0,0),(1,0),(1,1e-15),(1,1),(0,1)]),Polygon([(1-1e-14,0),(2,0),(2,1),(1,1)])]
+        result=union_all([precision_geometry(p,grid) for p in pieces],grid_size=grid)
+        self.assertTrue(result.is_valid);self.assertAlmostEqual(result.area,2)
+        donut=Polygon([(0,0),(3,0),(3,3),(0,3)],holes=[[(1,1),(2,1),(2,2),(1,2)]])
+        self.assertAlmostEqual(precision_geometry(donut,grid).area,8)
     def test_cut(self):
         points=np.array([[0.,0],[1,0],[0,1]])
         self.assertAlmostEqual(Polygon(clip(points,[0,1,0],.5)).area,.125)
@@ -64,9 +71,16 @@ class ApiTests(unittest.TestCase):
         st,v,_=self.request('GET','/api/v1/renders/test-render/validation',headers=h)
         self.assertEqual(v['machine']['status'],'NOT_RUN');self.assertEqual(v['human']['status'],'REVISE');self.assertEqual(v['artStatus'],'ART_UNVERIFIED')
         with server.db() as c:self.assertTrue(c.execute('SELECT * FROM reviews WHERE id=?',(d['id'],)).fetchone())
+    def test_other_reviewers_cannot_hide_an_unresolved_rejection(self):
+        a=self.login();b=self.login()
+        self.assertEqual(self.request('POST','/api/v1/reviews',{**self.review(),'verdict':'reject'},headers=a)[0],201)
+        self.assertEqual(self.request('POST','/api/v1/reviews',{**self.review(),'verdict':'accept'},headers=b)[0],201)
+        _,v,_=self.request('GET','/api/v1/renders/test-render/validation',headers=b)
+        self.assertEqual(v['human']['status'],'REJECT')
+        self.assertFalse(v['human']['independentHumansVerified'])
     def test_stale_incomplete_fake_machine_and_injection(self):
         h=self.login()
-        for change in [{'sourceDigest':'0'*64},{'scores':{'realism':5}},{'machineStatus':'PASS'},{'annotations':[{'x':-2,'y':.5,'note':'x'}]},{'humanConfirmed':False}]:
+        for change in [{'sourceDigest':'0'*64},{'scores':{'realism':5}},{'scores':None},{'viewMode':'pixels'},{'machineStatus':'PASS'},{'annotations':[{'x':-2,'y':.5,'note':'x'}]},{'humanConfirmed':False}]:
             self.assertEqual(self.request('POST','/api/v1/reviews',{**self.review(),**change},headers=h)[0],400)
         self.assertEqual(self.request('GET','/api/v1/renders/%2e%2e/reference.png',headers=h)[0],400)
         self.assertEqual(self.request('POST','/api/v1/jobs',{'operation':'render','payload':{'weights':[100]*6,'light':'left'}},headers=h)[0],400)
