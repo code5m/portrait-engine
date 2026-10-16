@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "stage": "S5",
+  "registeredBeforeMeasurement": true,
+  "hypothesis": "Object-space surface sections, tone-gated graphite marks and scalp-restricted fibres can add controllable drawing materials without changing the underlying S4 geometry or using raster textures.",
+  "scope": "Engineering study of form-following hatching, graphite/charcoal mark models and short/swept scalp fibres. Not realistic skin pores, individual 3D hair scattering, or artistic acceptance.",
+  "identities": "all six frozen S2 identities",
+  "expressions": ["neutral"],
+  "lights": "all three frozen S2 lights",
+  "hatchSections": 42,
+  "crossSections": 28,
+  "hairSections": 88,
+  "grainCandidates": 480,
+  "seed": 20261016,
+  "skinRegionIds": [0,1,3,4,6],
+  "protectedRegionIds": [2,5,7],
+  "hatchGrayCeiling": 192,
+  "crossGrayCeiling": 158,
+  "scalpHeightFraction": 0.20,
+  "scalpTempleFraction": 0.06,
+  "materials": {
+    "graphite": {"hatchOpacity":0.075,"crossOpacity":0.055,"grainOpacity":0.065,"widthPixels":0.30,"grainRadiusPixels":0.16},
+    "charcoal": {"hatchOpacity":0.12,"crossOpacity":0.085,"grainOpacity":0.11,"widthPixels":0.44,"grainRadiusPixels":0.23}
+  },
+  "hairstyles": ["none","short","swept"],
+  "thresholds": {"maxLayers":5,"maxDOM":48,"maxAddedContourPoints":60000,"maxDescriptorBytes":4000000,"maxChangedFaceFraction":0.45,"maxAddedSkinError":5.0,"maxOutsideMaskDelta":1.0,"maxProtectedDelta":1.0,"minChangedPixels":20},
+  "controls": ["unchanged S4","same materials without hair","alternate charcoal material"],
+  "humanReview":"DEFERRED_BY_OWNER",
+  "artStatus":"ART_UNVERIFIED"
+}

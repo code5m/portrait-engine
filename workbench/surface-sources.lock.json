@@ -1,0 +1,18 @@
+{
+  "repository":"USC-ICT/ICT-FaceKit",
+  "commit":"da5f95a607f5e6b37755b38d3385d7f2853732e5",
+  "license":"MIT",
+  "sourceMeaning":"identity006-008 are PCA shape modes, not real subject identities; expression files are registered blendshape poses.",
+  "files":[
+    ["FaceXModel/identity006.obj","212b3d5caa9fb5adddb189a4271f0baa8fbcca37"],
+    ["FaceXModel/identity007.obj","3d9f4c1ac5a40d1d49801336fea7e66a07e0efdd"],
+    ["FaceXModel/identity008.obj","830799f121b018e71eefe20560cd3f81b8fa3d45"],
+    ["FaceXModel/mouthSmile_L.obj","a14dbeec97d5e0c97fae7c6a3ac442eb9a722c22"],
+    ["FaceXModel/mouthSmile_R.obj","938568ab15338b99015859c2ca9ceeac311418fb"],
+    ["FaceXModel/mouthFrown_L.obj","66652a96ee961ea8096754d3a560bbf63b360bbd"],
+    ["FaceXModel/mouthFrown_R.obj","cfc292f6bdf8d7a8147dd16c20338ba9caf7fcc7"],
+    ["FaceXModel/eyeBlink_L.obj","558766e17c65c329632c5fbe77741bdcaea50e1e"],
+    ["FaceXModel/eyeBlink_R.obj","8f77c2ad8d653a5cc7fab2df4f7261af4c3473ce"],
+    ["FaceXModel/jawOpen.obj","c8c8e01e9fa77d8493ca769216211214ba4a29c8"]
+  ]
+}
