@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "frameSize": 256,
+  "orthoScale": 3.4,
+  "ambient": 0.08,
+  "direct": 0.72,
+  "curveSamples": 160,
+  "groundNormal": [0, 0.9, 0.5],
+  "receiverAlbedo": 0.55,
+  "bounceStrength": 0.35,
+  "profiles": [
+    {"id":"sphere","kind":"ellipsoid","radii":[1,1,1],"split":"baseline"},
+    {"id":"wide","kind":"ellipsoid","radii":[1.15,0.82,0.9],"split":"baseline"},
+    {"id":"tall","kind":"ellipsoid","radii":[0.78,1.22,1.02],"split":"baseline"},
+    {"id":"unseen-flat","kind":"ellipsoid","radii":[0.93,1.08,0.69],"split":"holdout"},
+    {"id":"unseen-deep","kind":"ellipsoid","radii":[0.65,0.91,1.23],"split":"holdout"},
+    {"id":"cylinder","kind":"cylinder","radius":0.72,"halfHeight":0.94,"tilt":22,"split":"baseline"},
+    {"id":"unseen-cylinder","kind":"cylinder","radius":0.89,"halfHeight":0.67,"tilt":32,"split":"holdout"},
+    {"id":"wedge","kind":"wedge","half":[0.78,0.84,0.72],"yaw":24,"split":"baseline"},
+    {"id":"unseen-wedge","kind":"wedge","half":[0.64,1.05,0.83],"yaw":-31,"split":"holdout"}
+  ],
+  "lights": [
+    {"id":"left","direction":[-0.65,0.4,0.65]},
+    {"id":"front","direction":[0,0.4,1]},
+    {"id":"right","direction":[0.65,0.4,0.65]}
+  ],
+  "holdoutLights": [
+    {"id":"novel-left","direction":[-0.4,0.7,0.55]},
+    {"id":"novel-front","direction":[0.35,0.3,1]},
+    {"id":"novel-high","direction":[-0.1,0.9,0.65]}
+  ],
+  "protocol": {
+    "registeredBeforeMeasurement": true,
+    "regionBudget": 32,
+    "selectedInteriorMAE": 6,
+    "selectedFullMAE": 6,
+    "selectedEdgeMAE": 35,
+    "referenceInteriorMAE": 4,
+    "shadowIoU": 0.96,
+    "shadowCentroidPixels": 2,
+    "gradientAdoptionRatio": 0.9,
+    "flat32AdoptionRatio": 0.7,
+    "gradientEdgeAllowance": 1,
+    "holdoutRule": "No parameter tuning after holdout results; failed candidate stays rejected."
+  }
+}

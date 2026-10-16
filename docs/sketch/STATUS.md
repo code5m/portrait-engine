@@ -2,16 +2,16 @@
 
 > 研究的是通用生成能力，人物作品是验证手段，写实质量是核心衡量标准。
 
-- **已完成：S0 — COMPLETE（参考工具与形体明暗校准，不是人像写实完成）。**
-- 证据：[S0.json](../../research/sketch/evidence/S0.json)；报告：[S0.md](S0.md)。
-- 真实参考实验：[Actions 38830775186](https://github.com/code5m/portrait-engine/actions/runs/38830775186)，测试源分支提交 `df72c4c965b5e9bfdeb8245e6a0d0ddb50df0cbf`；报告另记录了实际 PR 合并检出 SHA。
-- **当前待开始：S1 — READY**。S1 尚无完成实验，不得标记 COMPLETE；S2–S6 为 NOT_STARTED。
-- **恢复后的首个操作：**读取 [S1.md](S1.md)，在相同几何/光向/相机下比较 16 个平色区域、16 个带内连续渐变区域、32 个平色区域的 CSS 结果；固定最多 32 区域/形体，记录全图/内部/边缘误差、DOM 和实际图像，再决定采用哪种表示。不要重新安装/重做已经完成的 S0。
-- S1 后续才增加圆柱/楔形和受光面投影，分别验证形体阴影、投影、反光，不把常数 ambient 当成真实反光。
-- 全局艺术状态：**ART_UNVERIFIED，独立真人观察者 0 位**。
+## S0 已验证并合并
 
-## 每阶段完成必须持久记录
+PR #10 已合并，main 提交 `a1b047e3b7336fcc0a9ce28971a0429e3e5989c2`。合并前最新 head `fefdb3452b9077da8b5c7480b0a9b19c22d1c35d` 的 Verify 38833657429、Research Governance 38833657542（实际 3×3×5 / 默认像素锁）、S0 参考校准 38833657385、Visual study 38833657398 均成功。原始归档错误已更正并保留失败记录，不重复安装或重做 S0 研发。
 
-同一 PR 更新阶段报告、实际 CI 证据和源码摘要、`research/sketch/stages.json`、本断点。测试会阻止缺少报告/证据的 COMPLETE，并在 S0 实现与已记录证据不一致时失败。
+## 当前 S1 / IN_PROGRESS
 
-S0 中一次 Freestyle 初始化失败及错误退出码缺陷已保留在 [ATTEMPTS.md](ATTEMPTS.md)；没有通过降低原有 MAE 容差放行。生产 `src/`、`styles/`、`standalone.html` 本阶段保持不变。
+读取 [S1.md](S1.md)、[S1-ATTEMPTS.md](S1-ATTEMPTS.md)。已实现 A16/B16/C32、解析曲线、圆柱/楔形、接收平面投影、明确假设的半球反光、离线中文实验页、独立解析评估和 Blender 参考脚本。当前必须运行 GitHub 的真实 file:// 浏览器及 Blender，不能将 sandbox inline 调试当阶段完成。
+
+恢复顺序：检查 S1 PR 最新源码 SHA 与工作流；修复真实失败而不放宽协议；逐项保存实际 S1_COMPLETION_JSON；报告、证据、stages.json、本断点同 PR 更新；再次验证最新提交全部必要工作流后合并。原 S0 源码保持不动。
+
+S1 通过以后才转 S2：头部结构、三身份和预留身份参数；尚未实现，不提前宣称。
+
+全局 ART_UNVERIFIED，独立真人观察者 0。Actions artifact 配额不足，不声称完整图附件已上传；实验日志提供紧凑参考图与结果，源代码可复现。
