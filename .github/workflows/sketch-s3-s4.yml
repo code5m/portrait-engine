@@ -1,0 +1,95 @@
+name: Sketch S3-S4 / geometry light and selective edges
+on:
+  pull_request:
+    paths: ['workbench/**', 'research/sketch/**', 'docs/sketch/**', 'test/**', '.github/workflows/sketch-s3-s4.yml']
+  push:
+    branches: [main]
+    paths: ['workbench/**', 'research/sketch/**', 'docs/sketch/**', 'test/**', '.github/workflows/sketch-s3-s4.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: sketch-s3-s4-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  study:
+    name: S3-S4 ${{ matrix.split }} / real reference and CSS
+    runs-on: ubuntu-24.04
+    timeout-minutes: 55
+    strategy:
+      fail-fast: false
+      matrix:
+        split: [baseline, holdout]
+    env:
+      SOURCE_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Preserve S0-S2 evidence and default production renderer
+        run: |
+          npm run verify
+          git diff --exit-code -- standalone.html
+          node --check workbench/app.mjs
+          node --check workbench/study_renderer.mjs
+          python -m py_compile workbench/*.py
+      - name: Install numerical compiler and independent reference
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends blender
+          python -m pip install -r workbench/requirements.txt
+          python -m playwright install --with-deps chromium
+      - name: Synthetic math and API safety, not human evidence
+        run: |
+          python workbench/test_contract.py
+          python workbench/test_studies.py
+      - name: Verify pinned numerical model
+        run: python workbench/model.py
+      - name: Compute complete source-bound cache key
+        id: source
+        run: |
+          PYTHONPATH=workbench python -c "from study_light import source_digest as a; from study_edges import source_digest as b; print('key='+a()+'-'+b())" >> "$GITHUB_OUTPUT"
+      - name: Restore compiled numerical regions only
+        id: compiled
+        uses: actions/cache@v4
+        with:
+          path: |
+            data/workbench/studies/S3
+            data/workbench/studies/S4
+          key: sketch-numeric-${{ matrix.split }}-${{ steps.source.outputs.key }}
+      - name: Fresh independent physical reference and radiometry
+        run: |
+          blender --background --python-exit-code 1 --python workbench/study_reference.py -- ${{ matrix.split }}
+          python workbench/validate_studies.py --calibration-only
+      - name: Resolve light/camera visibility and compile bounded regions
+        if: steps.compiled.outputs.cache-hit != 'true'
+        run: python workbench/study_light.py ${{ matrix.split }}
+      - name: Real file-navigation CSS matrix and predeclared stage guards
+        run: python workbench/validate_studies.py ${{ matrix.split }}
+      - name: Real S3/S4 API, views, reference verification and isolated feedback
+        if: matrix.split == 'baseline'
+        run: python workbench/test_study_ui.py
+      - name: Publish truthful stage summary
+        if: always()
+        run: |
+          echo '### S3 / S4 research, not ART_PASS' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Independent Cycles shadow rays; numerical CSS contours; local edge ribbons only. Human observers: 0.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'All baseline and reserved cases are required. A passing job does not prove artistic superiority.' >> "$GITHUB_STEP_SUMMARY"
+      - name: Attach evidence when quota permits
+        if: always()
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: sketch-s3-s4-${{ matrix.split }}-${{ github.run_id }}
+          path: |
+            data/workbench/studies/*result.json
+            data/workbench/studies/*.png
+            data/workbench/studies/captures/*.png
+            data/workbench/studies/reference/*.png
+          retention-days: 14

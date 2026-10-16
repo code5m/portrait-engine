@@ -1,0 +1,12 @@
+{
+ "schemaVersion":1,"stage":"S4","registeredBeforeHeadMeasurement":true,
+ "hypothesis":"Selecting camera occlusions, silhouettes and contrast-supported creases avoids uniformly outlining every semantic partition while preserving the unchanged S3 form.",
+ "inkGray":25,"hardWidthPixels":0.8,"hardOpacity":0.45,
+ "softWidthPixels":0.8,"softOpacity":0.18,"softFeatherPixels":0.35,
+ "maxEdgePoints":32000,"maxDescriptorBytes":2600000,
+ "outsideEdgePixelTolerance":1,"maxInkFraction":0.12,"maxAddedInteriorError":2.5,"silhouetteIoU":0.975,
+ "classification":"Camera occlusion is hard. Otherwise angle<12deg or linear contrast<5/255 is lost; angle>=35deg and contrast>=16/255 is hard; remaining supported creases are soft.",
+ "control":"All semantic outlines equally hard. Candidate masks derive from geometry, not screenshots.",
+ "decision":"All fixed scenes must preserve unselected image regions, bound ink area/error/DOM and omit weak geometry edges. Artistic superiority requires actual human review; this gate cannot certify it.",
+ "artStatus":"ART_UNVERIFIED"
+}
