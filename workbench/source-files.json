@@ -1,0 +1,12 @@
+[
+  "research/sketch/s2-protocol.json",
+  "workbench/source-files.json",
+  "workbench/sources.json",
+  "workbench/model.py",
+  "workbench/geometry.py",
+  "workbench/renderer.mjs",
+  "workbench/reference.py",
+  "workbench/validate.py",
+  "workbench/requirements.txt",
+  "workbench/test_contract.py"
+]

@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "stage": "S2",
+  "hypothesis": "One source-traceable morphable head surface can produce non-affine identities, visible anatomical-region diagrams and texture-free CSS tone regions without one DOM element per mesh face.",
+  "scope": "Surface anatomy study; not a skull/muscle model, finished pencil drawing, identity recognition or artistic certification.",
+  "source": "ICT Face Model Light, first six identity modes, pinned MIT assets",
+  "frameSize": 320,
+  "levels": 24,
+  "ambient": 0.10,
+  "direct": 0.72,
+  "simplifyPixels": 0.10,
+  "identities": [
+    {"id":"head-a","label":"A","split":"baseline","weights":[1.2,-0.5,0.6,0,0.2,0]},
+    {"id":"head-b","label":"B","split":"baseline","weights":[-1.1,0.8,-0.7,0.4,0,0.3]},
+    {"id":"head-c","label":"C","split":"baseline","weights":[0.1,-1.0,1.2,-0.6,0.5,-0.4]},
+    {"id":"reserved-d","label":"D","split":"holdout","weights":[-0.5,-0.6,0.3,1.0,-0.8,0.7]},
+    {"id":"reserved-e","label":"E","split":"holdout","weights":[0.8,0.4,-0.9,-0.7,0.8,-0.6]},
+    {"id":"reserved-f","label":"F","split":"holdout","weights":[-0.8,0.2,0.9,0.8,0.6,-0.9]}
+  ],
+  "lights": [
+    {"id":"left","direction":[-0.6,0.4,0.75]},
+    {"id":"front","direction":[0,0.4,1]},
+    {"id":"right","direction":[0.6,0.4,0.75]}
+  ],
+  "views": [0],
+  "thresholds": {
+    "fullMAE": 7,
+    "interiorMAE": 9,
+    "featureMAE": 14,
+    "silhouetteIoU": 0.975,
+    "maxToneRegions": 25,
+    "maxStructureRegions": 12,
+    "maxContourPoints": 60000,
+    "minIdentityNonAffineRMS": 0.0005,
+    "maxDescriptorBytes": 2000000
+  },
+  "holdoutPolicy": "Reserved coefficient combinations, no person-specific CSS and no fitting to held-out image scores. Not independent human blind review.",
+  "humanPolicy": "Owner reviews may accept/reject/revise a frozen sample; automated checks and individual sessions never produce ART_PASS or verified independent-observer counts.",
+  "reference": "Same geometry, orthographic camera and direct-normal illumination in an independent Blender shader; camera visibility is tested. No cast shadows, occluded illumination or skin shader in this stage."
+}

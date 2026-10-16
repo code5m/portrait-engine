@@ -10,3 +10,7 @@ portrait-*.png
 # Browser-generated study evidence belongs in CI artifacts, never runtime source.
 test-results/
 __pycache__/
+
+# Local workbench models, generated samples and private human reviews.
+data/workbench/
+.venv-workbench/

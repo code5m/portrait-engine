@@ -1,0 +1,7 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Portrait API</title><link rel="stylesheet" href="/style.css"><main class="main"><a href="/">返回工作台</a><h1>API / 可复现的素描研究</h1><p>人工意见与机器检查分开保存；任何一方都不自动产生 ART_PASS。</p><p><a href="/api/v1/openapi">OpenAPI 3.1 JSON</a></p><h2>1. 建立会话</h2><pre>curl -c cookies.txt -H 'Content-Type: application/json' \
+  -d '{"name":"Reviewer"}' http://127.0.0.1:4186/api/v1/session</pre><p>从返回值取 csrf，后续写入请求携带 Cookie 和 X-CSRF-Token。共享部署时还需访问口令。</p><h2>2. 生成样本</h2><pre>POST /api/v1/jobs
+{"operation":"render","payload":{"identity":"head-a","light":"left"}}
+GET /api/v1/jobs/{jobId}
+GET /api/v1/renders/{renderId}</pre><h2>3. 机器验证</h2><pre>POST /api/v1/jobs
+{"operation":"verify","payload":{"renderId":"..."}}
+GET /api/v1/renders/{renderId}/validation</pre><p>首次使用先提交 {"operation":"prepare"}。它只下载锁定版本和哈希的 MIT 模型。验证需要 Blender 和 Chromium，不会执行客户端提交的命令。</p><h2>4. 人工评审</h2><p>POST /api/v1/reviews 需要样本的 contentHash/sourceDigest、五项评分、接受/修改/拒绝决定、观察确认。可以记录问题坐标。旧样本的评价不会被挪用到新版本。</p><p>详细字段见上方 OpenAPI。这不是公网已部署的服务；单机启动后即可使用，跨网络分享需要自己的 TLS 反向代理和口令。也可以使用配置的操作员 Bearer 令牌调用 API。</p></main></html>
