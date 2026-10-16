@@ -8,6 +8,9 @@ from __future__ import annotations
 import json,runpy,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
+# Blender --python does not add the script directory to its import path.
+# Resolve our own modules exactly as the existing independent reference does.
+sys.path.insert(0,str(ROOT/'workbench'))
 PHASES={'compile':'study_light.py','reference':'study_reference.py','validate':'validate_studies.py'}
 
 
