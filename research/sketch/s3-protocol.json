@@ -1,0 +1,12 @@
+{
+  "schemaVersion":1,"stage":"S3","registeredBeforeHeadMeasurement":true,
+  "hypothesis":"Geometric light visibility improves same-model head shadow fidelity without image inputs, and preserves whole-to-part tone grouping across six identities.",
+  "levels":31,"fillUp":[0,-1,0],"fillStrength":0.08,"shadowErrorRatio":0.85,
+  "identities":"All six unchanged S2 identities; baseline and reserved combinations evaluated separately",
+  "lights":"All three unchanged S2 lights; fixed frontal neutral camera",
+  "thresholds":{"fullMAE":7,"interiorMAE":10,"featureMAE":15,"silhouetteIoU":0.975,"maxContourPoints":60000,"maxDescriptorBytes":2000000},
+  "radiometryCalibrationMAE":2,
+  "reference":"Independent Cycles diffuse direct illumination and actual shadow rays; declared unoccluded hemisphere fill, not full GI",
+  "decision":"Every scene must meet fidelity limits. On independent shadow ROIs of at least20 pixels, selected error <=85% of the no-shadow control. No artistic quality conclusion follows automatically.",
+  "artStatus":"ART_UNVERIFIED"
+}

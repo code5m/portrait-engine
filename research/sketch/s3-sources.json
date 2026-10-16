@@ -1,0 +1,4 @@
+[
+ "research/sketch/s2-protocol.json","workbench/sources.json","workbench/model.py","workbench/geometry.py","workbench/renderer.mjs","workbench/validate.py","workbench/requirements.txt","workbench/ICT-LICENSE.txt",
+ "research/sketch/s3-protocol.json","research/sketch/s3-sources.json","workbench/study_light.py","workbench/study_reference.py","workbench/study_renderer.mjs","workbench/validate_studies.py","workbench/test_studies.py","workbench/run_study_shard.py"
+]

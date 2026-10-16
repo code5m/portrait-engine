@@ -42,8 +42,47 @@ jobs:
         run: python -m unittest discover -s workbench -p test_contract.py -v
       - name: Verify pinned MIT model and six non-affine identities
         run: python workbench/model.py
+      - name: Hash the complete frozen S2 numerical and evaluation sources
+        id: source
+        run: |
+          PYTHONPATH=workbench python -c "from model import source_digest; print('key='+source_digest())" >> "$GITHUB_OUTPUT"
+      - name: Restore only exact-source numerical descriptors, never old PASS reports
+        id: numeric
+        uses: actions/cache/restore@v4
+        with:
+          path: data/workbench/renders
+          key: sketch-s2-numeric-${{ runner.os }}-${{ steps.source.outputs.key }}
       - name: Compile vector visibility and tone regions (not pixels or triangle DOM)
+        if: steps.numeric.outputs.cache-hit != 'true'
         run: python workbench/geometry.py
+      - name: Validate every descriptor against the frozen cohort and model
+        run: |
+          PYTHONPATH=workbench python - <<'PY'
+          import json
+          import numpy as np
+          from model import CONFIG,CACHE,HeadModel,source_digest,canonical,sha,unit
+          model=HeadModel();expected={i['id']+'-'+l['id'] for i in CONFIG['identities'] for l in CONFIG['lights']}
+          assert len(expected)==18
+          assert {p.stem for p in (CACHE/'renders').glob('*.json')}==expected
+          for identity in CONFIG['identities']:
+              geometry=model.signature(identity['weights'])
+              for light in CONFIG['lights']:
+                  case=identity['id']+'-'+light['id']
+                  d=json.loads((CACHE/'renders'/(case+'.json')).read_text())
+                  assert d['stage']=='S2' and d['sourceDigest']==source_digest()
+                  assert d['fixtureId']==case and d['split']==identity['split']
+                  assert d['geometry']==geometry
+                  assert np.allclose(d['light'],unit(light['direction']),rtol=0,atol=1e-14)
+                  payload={k:v for k,v in d.items() if k not in {'contentHash','timingSeconds','fixtureId','split'}}
+                  assert d['contentHash']==sha(canonical(payload))
+          print('S2_ALL_18_NUMERIC_DESCRIPTORS_VALIDATED; fresh reference, CSS and UI still required')
+          PY
+      - name: Save only validated numerical descriptors
+        if: steps.numeric.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: data/workbench/renders
+          key: sketch-s2-numeric-${{ runner.os }}-${{ steps.source.outputs.key }}
       - name: Independently render 18 matching Blender references
         run: |
           blender --background --python-exit-code 1 --python workbench/reference.py > /tmp/s2-blender.log 2>&1 || { tail -80 /tmp/s2-blender.log; exit 1; }
