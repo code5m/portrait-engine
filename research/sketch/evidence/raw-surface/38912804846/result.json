@@ -1,0 +1,103 @@
+{
+  "artStatus": "ART_UNVERIFIED",
+  "counts": {
+    "S5": 0,
+    "S6": 0
+  },
+  "failures": [
+    {
+      "caseId": "head-a-neutral",
+      "reason": "No receipt; required case did not finish"
+    },
+    {
+      "caseId": "head-b-neutral",
+      "reason": "No receipt; required case did not finish"
+    },
+    {
+      "caseId": "head-c-neutral",
+      "reason": "No receipt; required case did not finish"
+    },
+    {
+      "caseId": "reserved-d-neutral",
+      "reason": "No receipt; required case did not finish"
+    },
+    {
+      "caseId": "reserved-e-neutral",
+      "reason": "No receipt; required case did not finish"
+    },
+    {
+      "caseId": "reserved-f-neutral",
+      "reason": "No receipt; required case did not finish"
+    },
+    {
+      "caseId": "novel-a-neutral",
+      "reason": "No receipt; required case did not finish"
+    },
+    {
+      "caseId": "novel-a-smile",
+      "reason": "No receipt; required case did not finish"
+    },
+    {
+      "caseId": "novel-a-frown",
+      "reason": "No receipt; required case did not finish"
+    },
+    {
+      "caseId": "novel-a-blink",
+      "reason": "No receipt; required case did not finish"
+    },
+    {
+      "caseId": "novel-a-jaw-open",
+      "reason": "No receipt; required case did not finish"
+    },
+    {
+      "caseId": "novel-b-neutral",
+      "reason": "No receipt; required case did not finish"
+    },
+    {
+      "caseId": "novel-b-smile",
+      "reason": "No receipt; required case did not finish"
+    },
+    {
+      "caseId": "novel-b-frown",
+      "reason": "No receipt; required case did not finish"
+    },
+    {
+      "caseId": "novel-b-blink",
+      "reason": "No receipt; required case did not finish"
+    },
+    {
+      "caseId": "novel-b-jaw-open",
+      "reason": "No receipt; required case did not finish"
+    },
+    {
+      "caseId": "novel-c-neutral",
+      "reason": "No receipt; required case did not finish"
+    },
+    {
+      "caseId": "novel-c-smile",
+      "reason": "No receipt; required case did not finish"
+    },
+    {
+      "caseId": "novel-c-frown",
+      "reason": "No receipt; required case did not finish"
+    },
+    {
+      "caseId": "novel-c-blink",
+      "reason": "No receipt; required case did not finish"
+    },
+    {
+      "caseId": "novel-c-jaw-open",
+      "reason": "No receipt; required case did not finish"
+    },
+    {
+      "caseId": "aggregate",
+      "reason": "Incomplete S5 matrix"
+    }
+  ],
+  "humanObservers": 0,
+  "humanReview": "DEFERRED_BY_OWNER",
+  "run": "38912804846",
+  "schemaVersion": 1,
+  "sourceHead": "166e32cc2bce53d273e086e0f6af4c869eb80593",
+  "status": "FAIL"
+}
