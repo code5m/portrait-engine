@@ -1,5 +1,5 @@
 """Synthetic surface regression tests, not human artwork observations."""
-import copy,json,tempfile,unittest
+import copy,json,tempfile,unittest,io,urllib.error,hashlib
 from pathlib import Path
 import numpy as np
 from shapely.geometry import Polygon,box
@@ -12,7 +12,7 @@ from surface_registry import S5,S6,cases,case_specs,validate_payload,source_dige
 from surface import prepare_geometry,describe,sections,rings_area,from_percent
 from surface_document import document
 from validate_studies import document as base_document
-from archive_surface import image_check
+from archive_surface import image_check,build_archive_tree
 import server
 
 
@@ -31,6 +31,33 @@ class SurfaceTests(unittest.TestCase):
         cls.p=Projection(Plane(),[0]*6);scene=compile_light(Plane(),[0]*6,[0,0,1],cls.p)
         cls.parent=describe_edges(scene,light_description(scene));cls.g=prepare_geometry(cls.p)
         cls.d=describe(cls.parent,cls.g)
+    def test_archive_tree_is_bounded_atomic_and_exposes_http_validation(self):
+        base='a'*40
+        entries=[{'path':'research/sketch/evidence/raw-surface/42/f%03d.json'%i,
+                  'mode':'100644','type':'blob','content':'{}'} for i in range(103)]
+        calls=[];current={'sha':base}
+        def fake_api(path,body):
+            self.assertEqual(path,'/git/trees')
+            self.assertEqual(body['base_tree'],current['sha'])
+            self.assertLessEqual(len(body['tree']),45)
+            calls.extend(x['path'] for x in body['tree'])
+            current['sha']=hashlib.sha1(str(len(calls)).encode()).hexdigest()
+            return {'sha':current['sha']}
+        sha=build_archive_tree(fake_api,base,entries)
+        self.assertEqual(sha,current['sha'])
+        self.assertEqual(calls,[x['path'] for x in entries])
+        self.assertEqual(len(calls),103)
+        with self.assertRaisesRegex(ValueError,'Duplicate'):
+            build_archive_tree(fake_api,base,[entries[0],entries[0]])
+        with self.assertRaisesRegex(ValueError,'unsafe'):
+            build_archive_tree(fake_api,base,[{'path':'research/sketch/evidence/../private.json',
+                                               'mode':'100644','type':'blob','content':'{}'}])
+        def rejecting_api(path,body):
+            raise urllib.error.HTTPError('https://api.github.com/',422,'Unprocessable Entity',{},
+                                         io.BytesIO(b'{"message":"tree too large"}'))
+        with self.assertRaisesRegex(RuntimeError,'HTTP 422.*tree too large'):
+            build_archive_tree(rejecting_api,base,entries[:1])
+
     def test_registered_complete_case_counts(self):
         self.assertEqual(len(cases('S5'))*3,18);self.assertEqual(len(cases('S6'))*3,45)
         self.assertEqual(len({c['id'] for c in cases('S5')+cases('S6')}),21)
