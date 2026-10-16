@@ -1,0 +1,69 @@
+name: S2 Head Structure and Human-Machine Workbench
+on:
+  pull_request:
+    paths: ['workbench/**', 'research/sketch/s2*', 'research/sketch/stages.json', 'research/sketch/evidence/S2.json', 'test/workbench*', '.github/workflows/workbench-s2.yml']
+  push:
+    branches: [main]
+    paths: ['workbench/**', 'research/sketch/s2*', 'research/sketch/stages.json', 'research/sketch/evidence/S2.json', 'test/workbench*', '.github/workflows/workbench-s2.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: s2-workbench-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  s2:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    env:
+      SOURCE_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Preserve production renderer and all prior stage evidence
+        run: |
+          npm run verify
+          git diff --exit-code -- standalone.html src styles
+          python -m py_compile workbench/*.py
+      - name: Install numerical geometry, real browser and independent reference tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends blender > /tmp/blender-install.log 2>&1 || { tail -80 /tmp/blender-install.log; exit 1; }
+          python -m pip install -r workbench/requirements.txt --quiet
+          python -m playwright install --with-deps chromium > /tmp/chromium-install.log 2>&1 || { tail -80 /tmp/chromium-install.log; exit 1; }
+      - name: Synthetic mathematics and API security tests (not human ratings)
+        run: python -m unittest discover -s workbench -p test_contract.py -v
+      - name: Verify pinned MIT model and six non-affine identities
+        run: python workbench/model.py
+      - name: Compile vector visibility and tone regions (not pixels or triangle DOM)
+        run: python workbench/geometry.py
+      - name: Independently render 18 matching Blender references
+        run: |
+          blender --background --python-exit-code 1 --python workbench/reference.py > /tmp/s2-blender.log 2>&1 || { tail -80 /tmp/s2-blender.log; exit 1; }
+          tail -5 /tmp/s2-blender.log
+      - name: Actual Chromium file renders and immutable measured S2 evidence
+        run: python workbench/validate.py
+      - name: Real workbench operations and synthetic review isolation
+        run: python workbench/test_ui.py
+      - name: Archive actual evidence when account quota allows
+        if: always()
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: s2-workbench-${{ github.run_id }}
+          path: |
+            data/workbench/S2-*.json
+            data/workbench/S2-*.png
+            data/workbench/workbench-*.png
+            data/workbench/source-verification.json
+            data/workbench/machine/
+            data/workbench/captures/
+            data/workbench/reference/
+          retention-days: 14

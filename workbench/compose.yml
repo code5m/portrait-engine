@@ -1,0 +1,14 @@
+services:
+  portrait:
+    build:
+      context: ..
+      dockerfile: workbench/Dockerfile
+    ports:
+      - "127.0.0.1:4186:4186"
+    environment:
+      PORTRAIT_TOKEN: ${PORTRAIT_TOKEN:?Set a random token of at least 32 characters}
+    volumes:
+      - portrait-reviews:/app/data/workbench
+    restart: unless-stopped
+volumes:
+  portrait-reviews:

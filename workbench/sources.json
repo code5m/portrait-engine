@@ -1,0 +1,16 @@
+{
+ "repository":"USC-ICT/ICT-FaceKit",
+ "commit":"da5f95a607f5e6b37755b38d3385d7f2853732e5",
+ "license":"MIT",
+ "files":[
+  ["LICENSE","b48fef2f199ff2009537e07175b87ec334f23ec4"],
+  ["FaceXModel/generic_neutral_mesh.obj","95f024e9aaf27db239f3fe43957e988b993cd1ca"],
+  ["FaceXModel/identity000.obj","63b34c3b216b3396a59addb5df0fe725f47701a6"],
+  ["FaceXModel/identity001.obj","0b1f8e1ebffb03be9dc525a676e846fb9579b823"],
+  ["FaceXModel/identity002.obj","dd90138d3b80a7f094ea09f31d715f4e3296d636"],
+  ["FaceXModel/identity003.obj","9d29deee9b06b6701fc1260089eeaf0f53f0d1d7"],
+  ["FaceXModel/identity004.obj","5efb8a521b701526070ae24c5c602f14aca9c04b"],
+  ["FaceXModel/identity005.obj","ea69539e34562832856e04e6e17f4d1ecc3e329f"],
+  ["FaceXModel/vertex_indices.json","1a3c7749855e05a889087c49c2886c932d8f94dc"]
+ ]
+}
