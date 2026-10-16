@@ -9,7 +9,27 @@ from shapely.geometry import Polygon, GeometryCollection, LineString
 from shapely.affinity import affine_transform
 from shapely import union_all
 from model import ROOT, CACHE, CONFIG, HeadModel, canonical, sha, save_json, unit
-from geometry import Projection, clip, precision_geometry, region_data, srgb, linear, REGIONS
+from geometry import Projection, clip, precision_geometry, region_data, srgb, linear, REGIONS, polygons
+
+
+def area_geometry(geometry, grid):
+    """Painting accepts area only, not mixed-dimensional contact remnants.
+
+    Empty/line/point contacts have exactly zero painted area. Removing them
+    before fixed-precision overlays avoids GEOS mixed-dimension assertions;
+    all polygon holes and disconnected area components remain represented.
+    """
+    parts=polygons(geometry)
+    if not parts:return Polygon()
+    normalized=precision_geometry(union_all(parts,grid_size=grid),grid)
+    parts=polygons(normalized)
+    return union_all(parts,grid_size=grid) if parts else Polygon()
+
+
+def area_intersection(a,b,grid):
+    left=area_geometry(a,grid);right=area_geometry(b,grid)
+    if left.is_empty or right.is_empty:return Polygon()
+    return area_geometry(left.intersection(right,grid_size=grid),grid)
 
 
 def frame(direction):
@@ -35,8 +55,6 @@ class LightView:
         v,f,n,s=self.model.mesh(weights)
         v=v@self.rotation.T; f=f.copy()
         tri=v[f]; backwards=np.cross(tri[:,1]-tri[:,0],tri[:,2]-tri[:,0])[:,2]<0
-        # Shadow rays hit both sides. Reorient only the light-view culling
-        # adapter, leaving the original geometry and camera normals untouched.
         f[backwards]=f[backwards,::-1]
         return v,f,n@self.rotation.T,s
     def signature(self,weights):return self.model.signature(weights)
@@ -74,13 +92,25 @@ def compile_light(model, weights, direction, projection=None):
     lookup={int(face):i for i,face in enumerate(face_light)}
     lit=[];dark=[]
     for i,face in enumerate(face_camera):
-        visible=p.visible[i];j=lookup.get(int(face))
+        visible=area_geometry(p.visible[i],p.grid);j=lookup.get(int(face))
         if j is None or visible.is_empty:
-            yes=GeometryCollection()
+            yes=Polygon()
         else:
-            lifted=to_camera(light_projection.visible[j],light_projection.planes[j],r)
-            yes=visible.intersection(precision_geometry(lifted,p.grid))
-        lit.append(yes);dark.append(visible.difference(yes))
+            light_visible=area_geometry(light_projection.visible[j],p.grid)
+            footprint=area_geometry(light_projection.footprints[j],p.grid)
+            if light_visible.equals(footprint):
+                # A fully visible face is the same face in both coordinate
+                # systems. Do not clip it a second time against round-trip
+                # coordinate noise and create an artificial seam per triangle.
+                yes=visible
+            else:
+                lifted=to_camera(light_visible,light_projection.planes[j],r)
+                # A four-grid-unit outward numerical guard is 0.00004 pixels,
+                # not visual feathering; it is clipped back to the exact face.
+                lifted=area_geometry(lifted,p.grid).buffer(p.grid*4,join_style=2)
+                yes=area_intersection(visible,lifted,p.grid)
+        lit.append(yes)
+        dark.append(area_geometry(visible.difference(yes,grid_size=p.grid),p.grid))
     settings=protocol(); up=unit(settings['fillUp'])
     gain=float(settings['fillStrength'])
     fill=gain*(1+p.normals@up)/2
@@ -99,12 +129,12 @@ def threshold_shape(scene, threshold, cast=True):
     for visible,values in branches:
         for triangle,v,g in zip(p.tri,values,visible):
             if g.is_empty or v.max()<threshold:continue
-            if v.min()>=threshold:parts.append(g);continue
+            if v.min()>=threshold:parts.append(area_geometry(g,p.grid));continue
             points=clip(triangle[:,:2],v,threshold)
             if len(points)>=3:
-                cut=precision_geometry(Polygon(points),p.grid).intersection(g)
+                cut=area_intersection(Polygon(points),g,p.grid)
                 if not cut.is_empty:parts.append(cut)
-    return union_all(parts,grid_size=p.grid) if parts else GeometryCollection()
+    return area_geometry(union_all(parts,grid_size=p.grid),p.grid) if parts else Polygon()
 
 
 def describe(scene, cast=True, levels=31):
@@ -125,7 +155,7 @@ def describe(scene, cast=True, levels=31):
     actual_shadow=[]
     for area,normal in zip(scene['dark'],p.normals):
         if np.max(normal@scene['direction'])>0 and not area.is_empty:actual_shadow.append(area)
-    cast_shape=union_all(actual_shadow,grid_size=p.grid)
+    cast_shape=area_geometry(union_all(actual_shadow,grid_size=p.grid),p.grid)
     d={'schemaVersion':1,'renderer':'HTML_CSS_REGIONS','stage':'S3','artStatus':'ART_UNVERIFIED',
        'sourceDigest':source_digest(),'geometry':p.signature,'light':scene['direction'].tolist(),
        'frameSize':CONFIG['frameSize'],'camera':p.camera,'toneRegions':tones,'structureRegions':structures,
@@ -140,7 +170,8 @@ def describe(scene, cast=True, levels=31):
        'timingSeconds':{'visibility':scene['timeSeconds'],'toneCompile':round(time.perf_counter()-t,3)},
        'limitations':['Neutral frontal surface only','Finite tonal bands remain','Uniform hemisphere fill ignores indirect occlusion','No skin or hair and no artistic certification']}
     d['contourPoints']=sum(len(r) for region in tones+structures for r in region['rings'])
-    if d['contourPoints']>settings['thresholds']['maxContourPoints']:raise ValueError('S3 contour budget exceeded')
+    if d['contourPoints']>settings['thresholds']['maxContourPoints']:
+        raise ValueError('S3 contour budget exceeded: '+str(d['contourPoints'])+' > '+str(settings['thresholds']['maxContourPoints']))
     if len(canonical(d))>settings['thresholds']['maxDescriptorBytes']:raise ValueError('S3 byte budget exceeded')
     d['contentHash']=content_hash(d)
     return d
@@ -154,10 +185,12 @@ if __name__=='__main__':
         camera=Projection(model,identity['weights'])
         for light in CONFIG['lights']:
             ident=identity['id']+'-'+light['id']
+            print('S3_S4_COMPILE_START',ident,flush=True)
             scene=compile_light(model,identity['weights'],light['direction'],camera)
             for label,cast,levels in [('control',False,31),('tone',True,31),('masses',True,3)]:
                 result=describe(scene,cast,levels);result['fixtureId']=ident;result['split']=identity['split']
                 save_json(CACHE/'studies/S3'/ident/(label+'.json'),result)
+                print('S3_DESCRIPTOR',ident,label,result['contourPoints'],flush=True)
                 if label=='tone':tone=result
             from study_edges import describe_edges
             edge=describe_edges(scene,tone)
