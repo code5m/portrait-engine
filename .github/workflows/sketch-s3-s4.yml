@@ -34,21 +34,23 @@ jobs:
           python-version: '3.12'
       - name: Preserve S0-S2 evidence and default production renderer
         run: |
-          npm run verify
+          npm run verify > "$RUNNER_TEMP/verify.log" 2>&1 || { tail -80 "$RUNNER_TEMP/verify.log"; exit 1; }
+          tail -12 "$RUNNER_TEMP/verify.log"
           git diff --exit-code -- standalone.html
           node --check workbench/app.mjs
           node --check workbench/study_renderer.mjs
           python -m py_compile workbench/*.py
       - name: Install numerical compiler and independent reference
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends blender
-          python -m pip install -r workbench/requirements.txt
-          python -m playwright install --with-deps chromium
+          sudo apt-get update -qq > "$RUNNER_TEMP/apt.log" 2>&1 || { tail -40 "$RUNNER_TEMP/apt.log"; exit 1; }
+          sudo apt-get install -y --no-install-recommends blender >> "$RUNNER_TEMP/apt.log" 2>&1 || { tail -40 "$RUNNER_TEMP/apt.log"; exit 1; }
+          python -m pip install -q -r workbench/requirements.txt
+          python -m playwright install --with-deps chromium > "$RUNNER_TEMP/browser.log" 2>&1 || { tail -40 "$RUNNER_TEMP/browser.log"; exit 1; }
       - name: Synthetic math and API safety, not human evidence
         run: |
           python workbench/test_contract.py
           python workbench/test_studies.py
+          python workbench/test_overlay.py
       - name: Verify pinned numerical model
         run: python workbench/model.py
       - name: Compute complete source-bound cache key
@@ -65,13 +67,14 @@ jobs:
           key: sketch-numeric-${{ matrix.split }}-${{ steps.source.outputs.key }}
       - name: Fresh independent physical reference and radiometry
         run: |
-          blender --background --python-exit-code 1 --python workbench/study_reference.py -- ${{ matrix.split }}
+          blender --background --python-exit-code 1 --python workbench/study_reference.py -- ${{ matrix.split }} > "$RUNNER_TEMP/reference.log" 2>&1 || { tail -60 "$RUNNER_TEMP/reference.log"; exit 1; }
+          grep 'S3_REFERENCE_COMPLETE' "$RUNNER_TEMP/reference.log"
           python workbench/validate_studies.py --calibration-only
       - name: Resolve light/camera visibility and compile bounded regions
         if: steps.compiled.outputs.cache-hit != 'true'
-        run: python workbench/study_light.py ${{ matrix.split }}
+        run: python -u workbench/study_light.py ${{ matrix.split }}
       - name: Real file-navigation CSS matrix and predeclared stage guards
-        run: python workbench/validate_studies.py ${{ matrix.split }}
+        run: python -u workbench/validate_studies.py ${{ matrix.split }}
       - name: Real S3/S4 API, views, reference verification and isolated feedback
         if: matrix.split == 'baseline'
         run: python workbench/test_study_ui.py
