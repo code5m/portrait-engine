@@ -164,9 +164,19 @@ def openapi_schema():
     surface=surface_catalog();new=copy.deepcopy(old);new['properties']['stage']={'enum':['S5','S6']}
     new['properties'].update(expression={'enum':surface['expressions'],'default':'neutral'},
                              material={'enum':surface['materials'],'default':'graphite'},hair={'enum':surface['hairstyles'],'default':'swept'})
-    new['required']=['stage'];new['allOf']=[
-        {'if':{'properties':{'stage':{'const':'S5'}}},'then':{'properties':{'expression':{'const':'neutral'}},'not':{'required':['identity','weights']}}},
-        {'if':{'properties':{'stage':{'const':'S6'}}},'then':{'required':['identity'],'not':{'required':['weights']},'properties':{'identity':{'enum':[i['id'] for i in surface['identities']]}}}]
+    s5_condition={
+        'if':{'properties':{'stage':{'const':'S5'}}},
+        'then':{'properties':{'expression':{'const':'neutral'}},'not':{'required':['identity','weights']}}
+    }
+    s6_condition={
+        'if':{'properties':{'stage':{'const':'S6'}}},
+        'then':{
+            'required':['identity'],
+            'not':{'required':['weights']},
+            'properties':{'identity':{'enum':[i['id'] for i in surface['identities']]}}
+        }
+    }
+    new['required']=['stage'];new['allOf']=[s5_condition,s6_condition]
     schemas['RenderPayload']={'oneOf':[old,new]}
     schemas['Review']['properties']['viewMode']['enum']+=['material-control','hair-control']
     schemas['Review']['properties']['viewMode']['description']='Stage-bound views. masses: S3-S6; edges-control: S4-S6; material-control/hair-control: S5-S6. No control view can accept the candidate.'
