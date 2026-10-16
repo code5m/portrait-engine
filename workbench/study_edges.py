@@ -9,7 +9,7 @@ from shapely import union_all
 from shapely.geometry import LineString,GeometryCollection
 from model import ROOT,CONFIG,canonical,sha,unit
 from geometry import region_data
-from study_light import content_hash
+from study_light import content_hash,area_geometry
 
 
 def source_digest():
@@ -29,13 +29,19 @@ def classify(angle,contrast,occlusion=False):
 def describe_edges(scene,result):
     settings=json.loads((ROOT/'research/sketch/s4-protocol.json').read_text())
     p=scene['projection'];pixel=p.camera['span']/CONFIG['frameSize'];tol=.10*pixel
+    # GEOS GeometryCollection.boundary is None even when the collection
+    # contains painted polygons. Take the boundary of the same areal domain
+    # used by S3, not of zero-area contact debris. Do not mutate frozen S2.
+    visible_areas=[area_geometry(g,p.grid) for g in p.visible]
+    silhouette=area_geometry(p.silhouette,p.grid)
     cuts=[]
-    for visible,footprint in zip(p.visible,p.footprints):
+    for visible,footprint in zip(visible_areas,p.footprints):
         if not visible.is_empty:
+            footprint=area_geometry(footprint,p.grid)
             internal=visible.boundary.difference(footprint.boundary.buffer(pixel*.002))
             if internal.length>pixel*.5:cuts.append(internal)
     occlusion=union_all(cuts).simplify(tol,preserve_topology=True) if cuts else GeometryCollection()
-    hard=[p.silhouette.boundary,occlusion];soft=[];counts={'hard':0,'soft':0,'lost':0}
+    hard=[silhouette.boundary,occlusion];soft=[];counts={'hard':0,'soft':0,'lost':0}
     shared={}
     for local,face in enumerate(scene['faceIndices']):
         ids=scene['cameraFaces'][face]
@@ -51,18 +57,18 @@ def describe_edges(scene,result):
         kind=classify(angle,contrast);counts[kind]+=1
         if kind=='lost':continue
         line=LineString(scene['cameraVertices'][[a,b],:2])
-        visible=line.intersection(union_all([p.visible[i],p.visible[j]]).buffer(p.grid*4))
+        visible=line.intersection(union_all([visible_areas[i],visible_areas[j]]).buffer(p.grid*4))
         if visible.length>pixel*.3:(hard if kind=='hard' else soft).append(visible)
     def overlay(lines,width,opacity,blur,name):
-        geometry=union_all(lines).buffer(width*pixel/2,quad_segs=3).intersection(p.silhouette)
+        geometry=union_all(lines).buffer(width*pixel/2,quad_segs=3).intersection(silhouette)
         return {'name':name,'gray':settings['inkGray'],'opacity':opacity,'blurPixels':blur,
                 'rings':region_data(geometry,p.camera,tol)}
     edges=[overlay(hard,settings['hardWidthPixels'],settings['hardOpacity'],0,'geometric-hard'),
            overlay(soft,settings['softWidthPixels'],settings['softOpacity'],settings['softFeatherPixels'],'geometric-soft')]
     boundaries=[]
     for region_id in np.unique(p.regions):
-        areas=[v for v,r in zip(p.visible,p.regions) if r==region_id and not v.is_empty]
-        if areas:boundaries.append(union_all(areas,grid_size=p.grid).boundary)
+        areas=[v for v,r in zip(visible_areas,p.regions) if r==region_id and not v.is_empty]
+        if areas:boundaries.append(area_geometry(union_all(areas,grid_size=p.grid),p.grid).boundary)
     control=[overlay(boundaries,settings['hardWidthPixels'],settings['hardOpacity'],0,'all-region-outlines')]
     d=copy.deepcopy(result)
     d.update(stage='S4',sourceDigest=source_digest(),parentSourceDigest=result['sourceDigest'],

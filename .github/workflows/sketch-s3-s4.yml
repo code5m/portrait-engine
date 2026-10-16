@@ -12,16 +12,44 @@ concurrency:
   group: sketch-s3-s4-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  study:
-    name: S3-S4 ${{ matrix.split }} / real reference and CSS
+  plan:
+    name: Enumerate every frozen identity
     runs-on: ubuntu-24.04
-    timeout-minutes: 55
+    outputs:
+      identities: ${{ steps.matrix.outputs.identities }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - id: matrix
+        run: |
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=json.loads(Path('research/sketch/s2-protocol.json').read_text())
+          ids=[x['id'] for x in p['identities']]
+          assert len(ids)==len(set(ids))==6
+          assert len(p['lights'])==3
+          assert sum(x['split']=='baseline' for x in p['identities'])==3
+          assert sum(x['split']=='holdout' for x in p['identities'])==3
+          with open(os.environ['GITHUB_OUTPUT'],'a') as out:out.write('identities='+json.dumps(ids)+'\n')
+          print('ALL_18_SCENES_REQUIRED',json.dumps(ids))
+          PY
+  study:
+    needs: plan
+    name: S3-S4 ${{ matrix.identity }} / three lights and CSS
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
     strategy:
       fail-fast: false
+      max-parallel: 6
       matrix:
-        split: [baseline, holdout]
+        identity: ${{ fromJSON(needs.plan.outputs.identities) }}
     env:
       SOURCE_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      STUDY_IDENTITY: ${{ matrix.identity }}
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
     steps:
       - uses: actions/checkout@v4
         with:
@@ -46,7 +74,7 @@ jobs:
           sudo apt-get install -y --no-install-recommends blender >> "$RUNNER_TEMP/apt.log" 2>&1 || { tail -40 "$RUNNER_TEMP/apt.log"; exit 1; }
           python -m pip install -q -r workbench/requirements.txt
           python -m playwright install --with-deps chromium > "$RUNNER_TEMP/browser.log" 2>&1 || { tail -40 "$RUNNER_TEMP/browser.log"; exit 1; }
-      - name: Synthetic math and API safety, not human evidence
+      - name: Synthetic math, mixed-area boundaries and API safety
         run: |
           python workbench/test_contract.py
           python workbench/test_studies.py
@@ -64,35 +92,49 @@ jobs:
           path: |
             data/workbench/studies/S3
             data/workbench/studies/S4
-          key: sketch-numeric-${{ matrix.split }}-${{ steps.source.outputs.key }}
+          key: sketch-numeric-${{ matrix.identity }}-${{ steps.source.outputs.key }}
       - name: Fresh independent physical reference and radiometry
         run: |
-          blender --background --python-exit-code 1 --python workbench/study_reference.py -- ${{ matrix.split }} > "$RUNNER_TEMP/reference.log" 2>&1 || { tail -60 "$RUNNER_TEMP/reference.log"; exit 1; }
+          blender --background --python-exit-code 1 --python workbench/run_study_shard.py -- reference "$STUDY_IDENTITY" > "$RUNNER_TEMP/reference.log" 2>&1 || { tail -60 "$RUNNER_TEMP/reference.log"; exit 1; }
           grep 'S3_REFERENCE_COMPLETE' "$RUNNER_TEMP/reference.log"
           python workbench/validate_studies.py --calibration-only
       - name: Resolve light/camera visibility and compile bounded regions
         if: steps.compiled.outputs.cache-hit != 'true'
-        run: python -u workbench/study_light.py ${{ matrix.split }}
+        run: python -u workbench/run_study_shard.py compile "$STUDY_IDENTITY"
       - name: Real file-navigation CSS matrix and predeclared stage guards
-        run: python -u workbench/validate_studies.py ${{ matrix.split }}
+        run: python -u workbench/run_study_shard.py validate "$STUDY_IDENTITY"
       - name: Real S3/S4 API, views, reference verification and isolated feedback
-        if: matrix.split == 'baseline'
+        if: matrix.identity == 'head-a'
         run: python workbench/test_study_ui.py
       - name: Publish truthful stage summary
         if: always()
         run: |
           echo '### S3 / S4 research, not ART_PASS' >> "$GITHUB_STEP_SUMMARY"
           echo 'Independent Cycles shadow rays; numerical CSS contours; local edge ribbons only. Human observers: 0.' >> "$GITHUB_STEP_SUMMARY"
-          echo 'All baseline and reserved cases are required. A passing job does not prove artistic superiority.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Every registered identity and every light is required by the all-scenes gate.' >> "$GITHUB_STEP_SUMMARY"
       - name: Attach evidence when quota permits
         if: always()
         continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
-          name: sketch-s3-s4-${{ matrix.split }}-${{ github.run_id }}
+          name: sketch-s3-s4-${{ matrix.identity }}-${{ github.run_id }}
           path: |
             data/workbench/studies/*result.json
             data/workbench/studies/*.png
             data/workbench/studies/captures/*.png
             data/workbench/studies/reference/*.png
           retention-days: 14
+  all-scenes:
+    name: S3-S4 all 18 scenes and workbench gate
+    needs: [plan, study]
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Require all six identity shards, never a partial green result
+        env:
+          PLAN_RESULT: ${{ needs.plan.result }}
+          STUDY_RESULT: ${{ needs.study.result }}
+        run: |
+          test "$PLAN_RESULT" = success
+          test "$STUDY_RESULT" = success
+          echo 'All 18 registered scenes plus the actual S3/S4 workbench passed. ART_UNVERIFIED.'
