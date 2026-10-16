@@ -33,7 +33,12 @@ class LightView:
     def __init__(self,model,rotation):self.model=model;self.rotation=rotation;self.camera=model.camera
     def mesh(self,weights):
         v,f,n,s=self.model.mesh(weights)
-        return v@self.rotation.T,f,n@self.rotation.T,s
+        v=v@self.rotation.T; f=f.copy()
+        tri=v[f]; backwards=np.cross(tri[:,1]-tri[:,0],tri[:,2]-tri[:,0])[:,2]<0
+        # Shadow rays hit both sides. Reorient only the light-view culling
+        # adapter, leaving the original geometry and camera normals untouched.
+        f[backwards]=f[backwards,::-1]
+        return v,f,n@self.rotation.T,s
     def signature(self,weights):return self.model.signature(weights)
 
 
@@ -64,7 +69,8 @@ def compile_light(model, weights, direction, projection=None):
     r=frame(direction); l=r[2]; light_projection=Projection(LightView(model,r),weights)
     vertices,faces,normals,regions=model.mesh(weights)
     face_camera=forward_faces(vertices,faces)
-    face_light=forward_faces(vertices@r.T,faces)
+    light_vertices,light_faces,_,_=LightView(model,r).mesh(weights)
+    face_light=forward_faces(light_vertices,light_faces)
     lookup={int(face):i for i,face in enumerate(face_light)}
     lit=[];dark=[]
     for i,face in enumerate(face_camera):

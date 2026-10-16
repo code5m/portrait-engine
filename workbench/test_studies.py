@@ -56,6 +56,19 @@ class StudyTests(unittest.TestCase):
         d=describe(s,levels=3);self.assertEqual(len(d['toneRegions']),3)
         e=describe_edges(s,d);self.assertEqual(e['geometry'],d['geometry']);self.assertEqual(e['toneRegions'],d['toneRegions'])
         self.assertEqual(e['artStatus'],'ART_UNVERIFIED')
+    def test_back_facing_mesh_also_casts_a_shadow(self):
+        class ReversedOccluder(TwoPlanes):
+            def mesh(self,weights):
+                v,f,n,regions=super().mesh(weights)
+                f[2:]=f[2:,::-1]
+                return v,f,n,regions
+        model=ReversedOccluder();scene=compile_light(model,[0]*6,[-.6,0,.8])
+        self.assertAlmostEqual(sum(g.area for g in scene['dark']),.64,places=4)
+        v,f,_,_=model.mesh(None);l=unit([-.6,0,.8]);p=scene['projection']
+        for point in [[-.75,0,0],[-1.8,0,0],[.8,.8,0]]:
+            xy=Point(*point[:2])
+            for i,area in enumerate(p.visible):
+                if area.contains(xy):self.assertEqual(scene['lit'][i].contains(xy),not ray_hits(np.array(point),l,v,f))
     def test_explicit_edge_hierarchy(self):
         self.assertEqual(classify(1,1,True),'hard')
         self.assertEqual(classify(45,20),'hard');self.assertEqual(classify(20,10),'soft')
