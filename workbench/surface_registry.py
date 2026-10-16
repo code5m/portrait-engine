@@ -14,7 +14,9 @@ SOURCE_FILES=(
  'workbench/surface_document.py','workbench/surface_reference.py',
  'workbench/surface_validate.py','workbench/run_surface_matrix.py',
  'workbench/test_surface.py','workbench/test_surface_ui.py',
- 'workbench/archive_surface.py','workbench/server.py','workbench/app.mjs')
+ 'workbench/archive_surface.py','workbench/server.py','workbench/app.mjs',
+ 'workbench/study_service.py','workbench/openapi.json',
+ '.github/workflows/sketch-s5-s6.yml','.github/actions/surface-case/action.yml')
 
 
 def source_digest(stage):
@@ -47,6 +49,8 @@ def catalog():
 def validate_payload(data):
     if not isinstance(data,dict) or set(data)-{'stage','identity','weights','expression','light','material','hair'}:
         raise ValueError('Unknown surface render field')
+    for field in ('stage','identity','expression','light','material','hair'):
+        if field in data and not isinstance(data[field],str):raise ValueError('Expected a registered string: '+field)
     stage=data.get('stage')
     if stage not in STAGES:raise ValueError('Choose S5 or S6')
     material=data.get('material','graphite');hair=data.get('hair','swept')
@@ -91,8 +95,5 @@ def case_specs(case_id):
     return [validate_payload({'stage':c['stage'],'identity':c['identity'],'expression':c['expression'],'light':l['id']}) for l in CONFIG['lights']]
 
 
-def geometry_spec(spec):
-    return {k:spec[k] for k in ('weights','extraWeights','expression')}
-
-
+def geometry_spec(spec):return {k:spec[k] for k in ('weights','extraWeights','expression')}
 def sample_id(spec):return spec['identity']+'-'+spec['expression']+'-'+spec['lightId']

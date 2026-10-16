@@ -24,7 +24,10 @@ def run():
                 response=page.goto('http://127.0.0.1:4197/')
                 assert 'unsafe-eval' not in response.headers['content-security-policy']
                 page.fill('#reviewer-name','AUTOMATED_STUDY_TEST');page.click('#login-form button')
-                expect(page.locator('#pipeline option')).to_have_count(3)
+                # Shared workbench grew to five opt-in stages; historical S3/S4
+                # generation, verification and review tests remain unchanged.
+                expect(page.locator('#pipeline option')).to_have_count(5)
+                assert page.locator('#pipeline option').evaluate_all('(items)=>items.map(x=>x.value)')==['S2','S3','S4','S5','S6']
                 sample_hashes=[]
                 for stage in ['S3','S4']:
                     page.select_option('#pipeline',stage);page.select_option('#identity','head-a');page.click('#generate')
