@@ -7,10 +7,10 @@ import numpy as np
 from PIL import Image,ImageDraw
 from playwright.sync_api import sync_playwright
 from shapely.geometry import Polygon,GeometryCollection
-from shapely import union_all,contains_xy
+from shapely import union_all,contains_xy,make_valid,symmetric_difference
 from model import ROOT,CACHE,CONFIG,canonical,sha,save_json
 from validate import assess,erode
-from study_light import source_digest as s3_digest,protocol,srgb,content_hash
+from study_light import source_digest as s3_digest,protocol,srgb,content_hash,area_geometry
 from study_edges import source_digest as s4_digest
 
 
@@ -29,9 +29,17 @@ def ref_rgb(path):
 
 
 def contour_geometry(rings):
-    g=GeometryCollection()
+    """Decode CSS even-odd area, including self-crossings after serialization.
+
+    GEOS polygon validity is stricter than CSS polygon(evenodd). Linework
+    repair keeps both bow-tie lobes; XOR retains holes and cancels duplicates.
+    The 1e-7 percentage grid is far below a pixel, not a new error allowance.
+    """
+    grid=1e-7;g=Polygon()
     for ring in rings:
-        if len(ring)>=3:g=g.symmetric_difference(Polygon(ring))
+        if len(ring)>=3:
+            area=area_geometry(make_valid(Polygon(ring)),grid)
+            g=area_geometry(symmetric_difference(g,area,grid_size=grid),grid)
     return g
 
 
@@ -42,6 +50,7 @@ def capture(page,d,path,mode='tone',edge='selected'):
     assert target.locator('img,canvas,svg,video,iframe,object').count()==0
     assert target.locator('*').count()<=40,'Unbounded DOM complexity'
     assert target.evaluate('(el)=>getComputedStyle(el).filter')=='none','Full face filtering forbidden'
+    assert target.evaluate('(el)=>getComputedStyle(el).clipPath')=='none','S4 must not reclip the entire S3 face'
     if d['stage']=='S4' and edge=='selected' and mode=='tone':
         assert target.locator('.edge-ribbon').count()==2
     target.screenshot(path=str(path));return sha(path.read_bytes())

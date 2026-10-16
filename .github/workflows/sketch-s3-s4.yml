@@ -79,6 +79,7 @@ jobs:
           python workbench/test_contract.py
           python workbench/test_studies.py
           python workbench/test_overlay.py
+          python workbench/test_study_rendering.py
       - name: Verify pinned numerical model
         run: python workbench/model.py
       - name: Compute complete source-bound cache key
@@ -87,7 +88,7 @@ jobs:
           PYTHONPATH=workbench python -c "from study_light import source_digest as a; from study_edges import source_digest as b; print('key='+a()+'-'+b())" >> "$GITHUB_OUTPUT"
       - name: Restore compiled numerical regions only
         id: compiled
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: |
             data/workbench/studies/S3
@@ -101,6 +102,14 @@ jobs:
       - name: Resolve light/camera visibility and compile bounded regions
         if: steps.compiled.outputs.cache-hit != 'true'
         run: python -u workbench/run_study_shard.py compile "$STUDY_IDENTITY"
+      - name: Save source-bound descriptors before independent evaluation
+        if: steps.compiled.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            data/workbench/studies/S3
+            data/workbench/studies/S4
+          key: sketch-numeric-${{ matrix.identity }}-${{ steps.source.outputs.key }}
       - name: Real file-navigation CSS matrix and predeclared stage guards
         run: python -u workbench/run_study_shard.py validate "$STUDY_IDENTITY"
       - name: Real S3/S4 API, views, reference verification and isolated feedback

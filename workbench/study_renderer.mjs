@@ -18,13 +18,15 @@ export function draw(target, descriptor, mode='tone', edgeMode='selected') {
   if (descriptor.stage!=='S4' || mode!=='tone' || edgeMode==='none') return;
   const layers=edgeMode==='all'?descriptor.controlEdgeRegions:descriptor.edgeRegions;
   if (!Array.isArray(layers)||layers.length>3||descriptor.edgeContourPoints>32000) throw new RangeError('Edge budget');
-  target.style.clipPath=clipPath(descriptor.silhouetteRings);
   for (const region of layers) {
     if (!Number.isInteger(region.gray)||region.gray<0||region.gray>255 ||
         !Number.isFinite(region.opacity)||region.opacity<0||region.opacity>1 ||
         !Number.isFinite(region.blurPixels)||region.blurPixels<0||region.blurPixels>.5) throw new RangeError('Unsafe ink');
     const wrapper=document.createElement('span'); wrapper.className='edge-ribbon';
     wrapper.style.cssText='position:absolute;inset:0;display:block;pointer-events:none';
+    // Clip only this ink layer. Clipping target would anti-alias the entire
+    // already-painted S3 face again, changing pixels unrelated to edges.
+    wrapper.style.clipPath=clipPath(descriptor.silhouetteRings);
     if (region.blurPixels)wrapper.style.filter=`blur(${region.blurPixels}px)`;
     wrapper.style.opacity=String(region.opacity);
     const ink=document.createElement('i');ink.className='tone-region';
