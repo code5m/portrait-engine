@@ -27,10 +27,11 @@ def classify(angle,contrast,occlusion=False):
 
 
 def visible_intensity(scene, visible_areas):
-    """Local face means of the light model actually painted by S3.
+    """Retained area-mean diagnostic control, not the current ink selector.
 
-    Crease contrast must not resurrect blocked direct light. Weight the lit
-    and dark branches by camera-visible area, with no image/identity input.
+    This removes blocked direct light globally, but shadow fractions elsewhere
+    in a face can still masquerade as local crease contrast. crease_parts
+    below instead intersects the actual illumination domains at the edge.
     """
     shaded=np.asarray(scene['shaded'],dtype=float)
     unlit=np.asarray(scene['unlit'],dtype=float)
@@ -54,10 +55,36 @@ def crease_support(line,left,right,grid):
     return line.intersection(left.buffer(grid*4)).intersection(right.buffer(grid*4))
 
 
+def crease_parts(line,angle,lit,dark,shaded,unlit,grid):
+    """Classify a crease only where its sides share an illumination branch.
+
+    A different fraction of shadow elsewhere in two faces is not a local
+    crease contrast. Lit/lit segments use direct+fill values, dark/dark use
+    fill values. A light-visibility transition is already painted by S3 and
+    is not converted into an extra geometric-crease outline here.
+    """
+    classify(angle,0)
+    if len(lit)!=2 or len(dark)!=2:raise ValueError('Two adjacent visibility domains required')
+    arrays=[np.asarray(shaded,dtype=float),np.asarray(unlit,dtype=float)]
+    if any(a.shape!=(2,3) or not np.isfinite(a).all() or (a<0).any() for a in arrays):
+        raise ValueError('Two finite nonnegative vertex-irradiance triples required')
+    if not np.isfinite(grid) or grid<=0:raise ValueError('Positive finite precision grid required')
+    selected={'hard':[],'soft':[]}
+    for areas,values in zip((lit,dark),arrays):
+        contrast=float(abs(values[0].mean()-values[1].mean())*255)
+        kind=classify(angle,contrast)
+        if kind=='lost':continue
+        segment=crease_support(line,areas[0],areas[1],grid)
+        if not segment.is_empty:selected[kind].append(segment)
+    return {kind:union_all(parts) if parts else GeometryCollection() for kind,parts in selected.items()}
+
+
 def describe_edges(scene,result):
     settings=json.loads((ROOT/'research/sketch/s4-protocol.json').read_text())
     p=scene['projection'];pixel=p.camera['span']/CONFIG['frameSize'];tol=.10*pixel
     visible_areas=[area_geometry(g,p.grid) for g in p.visible]
+    lit_areas=[area_geometry(g,p.grid) for g in scene['lit']]
+    dark_areas=[area_geometry(g,p.grid) for g in scene['dark']]
     silhouette=area_geometry(p.silhouette,p.grid)
     cuts=[]
     for visible,footprint in zip(visible_areas,p.footprints):
@@ -73,17 +100,18 @@ def describe_edges(scene,result):
         for a,b in [(ids[0],ids[1]),(ids[1],ids[2]),(ids[2],ids[0])]:
             key=tuple(sorted((int(a),int(b))));shared.setdefault(key,[]).append(local)
     tri=p.tri;normals=unit(np.cross(tri[:,1]-tri[:,0],tri[:,2]-tri[:,0]))
-    intensity=visible_intensity(scene,visible_areas)
     for (a,b),neighbors in shared.items():
         if len(neighbors)!=2:continue
         i,j=neighbors
         angle=float(np.degrees(np.arccos(np.clip(normals[i]@normals[j],-1,1))))
-        contrast=float(abs(intensity[i]-intensity[j])*255)
-        kind=classify(angle,contrast);counts[kind]+=1
-        if kind=='lost':continue
         line=LineString(scene['cameraVertices'][[a,b],:2])
-        visible=crease_support(line,visible_areas[i],visible_areas[j],p.grid)
-        if visible.length>pixel*.3:(hard if kind=='hard' else soft).append(visible)
+        parts=crease_parts(line,angle,[lit_areas[i],lit_areas[j]],[dark_areas[i],dark_areas[j]],
+                           scene['shaded'][[i,j]],scene['unlit'][[i,j]],p.grid)
+        accepted=[]
+        for kind,segment in parts.items():
+            if segment.length>pixel*.3:
+                (hard if kind=='hard' else soft).append(segment);accepted.append(kind)
+        counts['hard' if 'hard' in accepted else 'soft' if 'soft' in accepted else 'lost']+=1
     def overlay(lines,width,opacity,blur,name):
         geometry=union_all(lines).buffer(width*pixel/2,quad_segs=3).intersection(silhouette)
         return {'name':name,'gray':settings['inkGray'],'opacity':opacity,'blurPixels':blur,
@@ -99,13 +127,14 @@ def describe_edges(scene,result):
     d.update(stage='S4',sourceDigest=source_digest(),parentSourceDigest=result['sourceDigest'],
              edgeRegions=edges,controlEdgeRegions=control,
              edgeClassification={'counts':counts,'occlusionLengthPixels':round(occlusion.length/pixel,2),
+                                 'countModel':'highest accepted segment class per shared mesh edge; unsupported edges are lost',
                                  'control':'every semantic boundary','candidate':'only camera occlusion, silhouette and contrast-supported creases',
-                                 'contrastModel':'camera-visible area-weighted S3 lit and shadow branches; both crease sides must be visible',
+                                 'contrastModel':'separate S3 lit/lit and dark/dark crease segments; no whole-face shadow fraction or duplicate shadow-transition outline',
                                  'automaticQualityVerdict':'NONE'})
     extra=sum(len(r) for layer in edges+control for r in layer['rings'])
     d['edgeContourPoints']=extra
     if extra>settings['maxEdgePoints']:raise ValueError('S4 edge complexity budget exceeded')
     if len(canonical(d))>settings['maxDescriptorBytes']:raise ValueError('S4 descriptor byte budget exceeded')
-    d['limitations']+=['Edge selection is a hypothesis, not an artistic verdict','Only local crease ink is feathered; surface tones and true silhouettes are not globally blurred','Crease contrast uses area-weighted face means, not a continuous edge-local integral']
+    d['limitations']+=['Edge selection is a hypothesis, not an artistic verdict','Only local crease ink is feathered; surface tones and true silhouettes are not globally blurred','Within an illumination branch, crease contrast still uses vertex-mean face irradiance rather than a continuous cross-edge derivative']
     d['contentHash']=content_hash(d)
     return d
