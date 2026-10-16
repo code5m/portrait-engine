@@ -1,0 +1,59 @@
+name: Sketch S1 / forms, shadows and bounded reflection
+on:
+  pull_request:
+    paths: ['research/sketch/**', 'study/sketch-s1*', 'study/sketch-s0.mjs', 'scripts/*sketch-s1.py', 'scripts/sketch_s1_model.py', 'scripts/sketch_s1_provenance.py', 'test/sketch-s1*', '.github/workflows/sketch-s1.yml']
+  push:
+    branches: [main]
+    paths: ['research/sketch/**', 'study/sketch-s1*', 'study/sketch-s0.mjs', 'scripts/*sketch-s1.py', 'scripts/sketch_s1_model.py', 'scripts/sketch_s1_provenance.py', 'test/sketch-s1*', '.github/workflows/sketch-s1.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: sketch-s1-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  s1:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      SOURCE_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify full project, finite geometry, isolation and evidence contracts
+        run: |
+          mkdir -p test-results/sketch-s1
+          npm run verify > test-results/sketch-s1/project-tests.log 2>&1 || { cat test-results/sketch-s1/project-tests.log; exit 1; }
+          git diff --exit-code -- src styles standalone.html
+          python scripts/build-sketch-s1.py
+          python scripts/build-sketch-s1.py --check
+          python -m py_compile scripts/*sketch-s1.py scripts/sketch_s1_model.py scripts/sketch_s1_provenance.py
+      - name: Install independent reference and real browser
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends blender > test-results/sketch-s1/install.log 2>&1 || { tail -60 test-results/sketch-s1/install.log; exit 1; }
+          python -m pip install playwright pillow numpy scipy --quiet
+          python -m playwright install --with-deps chromium > test-results/sketch-s1/browser-install.log 2>&1 || { tail -60 test-results/sketch-s1/browser-install.log; exit 1; }
+      - name: Render all 81 independent Blender frames and physical shadow masks
+        run: |
+          blender --background --python-exit-code 1 --python scripts/reference-sketch-s1.py > test-results/sketch-s1/blender.log 2>&1 || { tail -80 test-results/sketch-s1/blender.log; exit 1; }
+          tail -4 test-results/sketch-s1/blender.log
+      - name: Render 138 actual CSS frames via file navigation and test interactions
+        run: python scripts/capture-sketch-s1.py
+      - name: Apply unchanged protocol, reject inferior candidates, emit exact evidence
+        run: python scripts/assess-sketch-s1.py
+      - name: Archive files when account artifact quota permits
+        if: always()
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: sketch-s1-${{ github.run_id }}
+          path: test-results/sketch-s1/
+          retention-days: 14

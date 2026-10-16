@@ -1,0 +1,14 @@
+[
+  "research/sketch/s1-scenes.json",
+  "research/sketch/s1-sources.json",
+  "study/sketch-s0.mjs",
+  "study/sketch-s1.mjs",
+  "scripts/build-sketch-s1.py",
+  "scripts/sketch_s1_model.py",
+  "scripts/reference-sketch-s1.py",
+  "scripts/capture-sketch-s1.py",
+  "scripts/assess-sketch-s1.py",
+  "test/sketch-s1.test.mjs",
+  "scripts/sketch_s1_provenance.py",
+  ".github/workflows/sketch-s1.yml"
+]
