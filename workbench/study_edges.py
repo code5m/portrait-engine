@@ -10,6 +10,7 @@ from shapely.geometry import LineString,GeometryCollection
 from model import ROOT,CONFIG,canonical,sha,unit
 from geometry import region_data
 from study_light import content_hash,area_geometry
+from curvature_ridges import vertex_curvature,ridge_supported
 
 
 def source_digest():
@@ -100,9 +101,18 @@ def describe_edges(scene,result):
         for a,b in [(ids[0],ids[1]),(ids[1],ids[2]),(ids[2],ids[0])]:
             key=tuple(sorted((int(a),int(b))));shared.setdefault(key,[]).append(local)
     tri=p.tri;normals=unit(np.cross(tri[:,1]-tri[:,0],tri[:,2]-tri[:,0]))
+    curvature,boundary=vertex_curvature(scene['cameraVertices'],scene['cameraFaces'])
+    ridge_candidates=0
     for (a,b),neighbors in shared.items():
         if len(neighbors)!=2:continue
         i,j=neighbors
+        opposites=[next(int(x) for x in scene['cameraFaces'][scene['faceIndices'][n]] if x not in (a,b)) for n in (i,j)]
+        # A curved patch contains many tessellation edges but need not contain
+        # many structural strokes. Suppress cross-edge curvature non-maxima
+        # before applying the unchanged lighting and angle classification.
+        if not ridge_supported(curvature,boundary,(a,b),opposites):
+            counts['lost']+=1;continue
+        ridge_candidates+=1
         angle=float(np.degrees(np.arccos(np.clip(normals[i]@normals[j],-1,1))))
         line=LineString(scene['cameraVertices'][[a,b],:2])
         parts=crease_parts(line,angle,[lit_areas[i],lit_areas[j]],[dark_areas[i],dark_areas[j]],
@@ -127,14 +137,16 @@ def describe_edges(scene,result):
     d.update(stage='S4',sourceDigest=source_digest(),parentSourceDigest=result['sourceDigest'],
              edgeRegions=edges,controlEdgeRegions=control,
              edgeClassification={'counts':counts,'occlusionLengthPixels':round(occlusion.length/pixel,2),
+                                 'ridgeCandidates':ridge_candidates,
+                                 'ridgeModel':'3D cotangent mean-curvature magnitude; edge mean exceeds both opposite-vertex flanks; open boundaries excluded from crease selection',
                                  'countModel':'highest accepted segment class per shared mesh edge; unsupported edges are lost',
-                                 'control':'every semantic boundary','candidate':'only camera occlusion, silhouette and contrast-supported creases',
+                                 'control':'every semantic boundary','candidate':'camera occlusion, silhouette and contrast-supported curvature-ridge creases',
                                  'contrastModel':'separate S3 lit/lit and dark/dark crease segments; no whole-face shadow fraction or duplicate shadow-transition outline',
                                  'automaticQualityVerdict':'NONE'})
     extra=sum(len(r) for layer in edges+control for r in layer['rings'])
     d['edgeContourPoints']=extra
     if extra>settings['maxEdgePoints']:raise ValueError('S4 edge complexity budget exceeded')
     if len(canonical(d))>settings['maxDescriptorBytes']:raise ValueError('S4 descriptor byte budget exceeded')
-    d['limitations']+=['Edge selection is a hypothesis, not an artistic verdict','Only local crease ink is feathered; surface tones and true silhouettes are not globally blurred','Within an illumination branch, crease contrast still uses vertex-mean face irradiance rather than a continuous cross-edge derivative']
+    d['limitations']+=['Edge selection is a hypothesis, not an artistic verdict','Only local crease ink is feathered; surface tones and true silhouettes are not globally blurred','Within an illumination branch, crease contrast still uses vertex-mean face irradiance rather than a continuous cross-edge derivative','Local curvature maxima can be triangulation-sensitive; this is not a proven view-invariant drawing algorithm']
     d['contentHash']=content_hash(d)
     return d

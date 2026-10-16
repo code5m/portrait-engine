@@ -1,0 +1,22 @@
+{
+  "recordType": "CI_OBSERVED_SUMMARY_NOT_RAW_REPORT",
+  "ciRun": "38861970860",
+  "sourceHeadCommit": "a5da52b9eabf5da3901af3747169212c1791995f",
+  "ciCommit": "ad5d0a1d19321e2bd05cbbed78e712c96470caea",
+  "S3SourceDigest": "d9a1cb98657b19855ddb6c2328cda3c270730fe5ce6c05173d6be9bcbb227e85",
+  "S4SourceDigest": "e7a6cd003d8d60820df32b86760191479882e5c2be9d75774a1681d36cc4e351",
+  "status": "FAILED_ATTEMPT",
+  "humanObservers": 0,
+  "artStatus": "ART_UNVERIFIED",
+  "counts": {"compiledScenes":18,"S3PassedScenes":18,"S4PassedScenes":14,"S4FailedScenes":4},
+  "S4Failures": [
+    {"id":"head-a-front","job":116846440091,"failures":["edge-ink-overwhelms-face"],"inkFraction":0.124286,"outsideAllowedChange":0},
+    {"id":"head-c-front","job":116846440062,"failures":["edge-ink-overwhelms-face"],"inkFraction":0.121977,"outsideAllowedChange":0},
+    {"id":"reserved-d-front","job":116846440155,"failures":["edge-ink-overwhelms-face"],"inkFraction":0.122294,"outsideAllowedChange":0},
+    {"id":"reserved-e-front","job":116846440068,"failures":["edge-ink-overwhelms-face"],"inkFraction":0.125881,"outsideAllowedChange":0}
+  ],
+  "passingWholeShards": [{"id":"head-b","job":116846440103},{"id":"reserved-f","job":116846440070}],
+  "advancedUI": "NOT_RUN: head-a matrix failed before the UI step",
+  "artifactZIP": "UPLOAD_FAILED: Actions storage quota",
+  "limitations": ["This is a selected-field summary of actual completed CI outputs, not a replacement for their full raw JSON or screenshots.","Passed head-b/reserved-f proof packs were cached, but the all-scenes gate did not publish a full-cohort evidence branch."]
+}

@@ -7,6 +7,9 @@ from study_light import area_geometry,area_intersection
 from study_edges import describe_edges,visible_intensity,crease_support,crease_parts,classify
 from run_study_shard import select_identity
 from model import CONFIG
+# unittest.main discovers imported TestCase subclasses too: the geometry-only
+# ridge controls run in the same preflight job before any expensive head work.
+from test_curvature_ridges import CurvatureTests
 
 class AreaOverlayTests(unittest.TestCase):
     def test_mixed_dimension_contacts_keep_holes_and_disconnected_areas(self):
