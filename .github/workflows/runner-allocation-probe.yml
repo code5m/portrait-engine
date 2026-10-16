@@ -1,0 +1,21 @@
+name: Runner allocation probe (no dependencies)
+on:
+  push:
+    branches:
+      - ci/runner-probe-20261016
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  runner-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Confirm runner allocation and shell execution
+        shell: bash
+        run: |
+          echo "RUNNER_PROBE_EXECUTED"
+          echo "RUN_ID=$GITHUB_RUN_ID"
+          echo "RUN_ATTEMPT=$GITHUB_RUN_ATTEMPT"
+          echo "RUNNER_OS=$RUNNER_OS"
+          test "$RUNNER_OS" = Linux
