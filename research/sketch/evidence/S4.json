@@ -1,0 +1,449 @@
+{
+  "archiveTransport": "Git repository full-resolution PNG evidence; not an Actions ZIP",
+  "artStatus": "ART_UNVERIFIED",
+  "ciCommit": "f6f2d7eb2ca9d84534c6ddc3f50c0ccffe5b3de4",
+  "ciRun": "38866567327",
+  "counts": {
+    "cssFrames": 36,
+    "identities": 6,
+    "scenes": 18
+  },
+  "humanObservers": 0,
+  "imageArchiveAvailable": true,
+  "limits": [
+    "Fixed frontal neutral surface and three lights only",
+    "Reserved coefficient combinations exposed during debugging; not blind generalization",
+    "No skin, hair or independent human artistic evaluation"
+  ],
+  "metrics": [
+    {
+      "captureHash": "8e603a6f5555c4a2742cd9c61006a50d3a0fda64d564ecabb346b5cf90192a67",
+      "classification": {
+        "hard": 39,
+        "lost": 32532,
+        "soft": 389
+      },
+      "controlHash": "4a92b8be3adeaf06e7f1e9e37692f2ab71d292d617985b66418f3cb3df6af7a0",
+      "edgePoints": 5101,
+      "failures": [],
+      "geometryHash": "0391b3bfa6dceaecfb01f821713379e7153e68d198b5d0ea1e4d072af4a78178",
+      "id": "head-a-left",
+      "inkFraction": 0.07756,
+      "metrics": {
+        "featureMAE": 3.5575,
+        "fullMAE": 1.60251,
+        "interiorMAE": 3.38676,
+        "silhouetteIoU": 0.987103
+      },
+      "outsideAllowedChange": 0.0,
+      "parentInteriorMAE": 2.6301,
+      "status": "PASS"
+    },
+    {
+      "captureHash": "9eab42541377936ae0a89840bb1047c0223aa32b1d2991803c8fb2339c6ab7e5",
+      "classification": {
+        "hard": 103,
+        "lost": 32426,
+        "soft": 431
+      },
+      "controlHash": "8d2aade649188ae73fa4c5ee58b4b7e7b0ea6df35720a3258bd8153374b5826b",
+      "edgePoints": 5784,
+      "failures": [],
+      "geometryHash": "0391b3bfa6dceaecfb01f821713379e7153e68d198b5d0ea1e4d072af4a78178",
+      "id": "head-a-front",
+      "inkFraction": 0.085387,
+      "metrics": {
+        "featureMAE": 4.06486,
+        "fullMAE": 1.79006,
+        "interiorMAE": 3.74711,
+        "silhouetteIoU": 0.987161
+      },
+      "outsideAllowedChange": 0.0,
+      "parentInteriorMAE": 2.84949,
+      "status": "PASS"
+    },
+    {
+      "captureHash": "e1d3477b8139341bb119c21f1c0d8ef03779be4d0d389282fe8180ca48ac699e",
+      "classification": {
+        "hard": 40,
+        "lost": 32528,
+        "soft": 392
+      },
+      "controlHash": "ff3b2f028306c626dd59699a2d019dab67058b87a7be525890c9855e6bc86b7f",
+      "edgePoints": 5187,
+      "failures": [],
+      "geometryHash": "0391b3bfa6dceaecfb01f821713379e7153e68d198b5d0ea1e4d072af4a78178",
+      "id": "head-a-right",
+      "inkFraction": 0.078452,
+      "metrics": {
+        "featureMAE": 3.56735,
+        "fullMAE": 1.614,
+        "interiorMAE": 3.39175,
+        "silhouetteIoU": 0.987016
+      },
+      "outsideAllowedChange": 0.0,
+      "parentInteriorMAE": 2.61694,
+      "status": "PASS"
+    },
+    {
+      "captureHash": "acec483bb50c6f2e1f10190ada5ceede8177f9dcaeb21b274ff5dabc25a299f8",
+      "classification": {
+        "hard": 27,
+        "lost": 32315,
+        "soft": 347
+      },
+      "controlHash": "c590e4100a117d22057b89f26ebc48f04bfa1154b520c62e0e8307b5205ab3ac",
+      "edgePoints": 5131,
+      "failures": [],
+      "geometryHash": "0268b8c475e1844f98742f76da41e4ee2a68ce97b4598cd4835d850d86894ec7",
+      "id": "head-b-left",
+      "inkFraction": 0.071735,
+      "metrics": {
+        "featureMAE": 3.58455,
+        "fullMAE": 1.89459,
+        "interiorMAE": 3.42554,
+        "silhouetteIoU": 0.988117
+      },
+      "outsideAllowedChange": 0.0,
+      "parentInteriorMAE": 2.68662,
+      "status": "PASS"
+    },
+    {
+      "captureHash": "1250bed88d970989cdba479617b9f75b0876f5d4abe89c8f2053d20cf99e95b1",
+      "classification": {
+        "hard": 94,
+        "lost": 32251,
+        "soft": 344
+      },
+      "controlHash": "ee5b2a2fe2179d6784d95040496983fa1221f7a3ec9ede80bbce2685bfdfa874",
+      "edgePoints": 5472,
+      "failures": [],
+      "geometryHash": "0268b8c475e1844f98742f76da41e4ee2a68ce97b4598cd4835d850d86894ec7",
+      "id": "head-b-front",
+      "inkFraction": 0.074057,
+      "metrics": {
+        "featureMAE": 3.94632,
+        "fullMAE": 2.04703,
+        "interiorMAE": 3.62193,
+        "silhouetteIoU": 0.988069
+      },
+      "outsideAllowedChange": 0.0,
+      "parentInteriorMAE": 2.86881,
+      "status": "PASS"
+    },
+    {
+      "captureHash": "cc84c813cd79a587946d9a79c315faba2e5b202b7d81dea545bd0854562eabcf",
+      "classification": {
+        "hard": 30,
+        "lost": 32305,
+        "soft": 354
+      },
+      "controlHash": "99ccf88df942c4b8daa0324166988cf4e9af96ca3ffe479030919ba63b22f220",
+      "edgePoints": 5187,
+      "failures": [],
+      "geometryHash": "0268b8c475e1844f98742f76da41e4ee2a68ce97b4598cd4835d850d86894ec7",
+      "id": "head-b-right",
+      "inkFraction": 0.072007,
+      "metrics": {
+        "featureMAE": 3.59976,
+        "fullMAE": 1.89958,
+        "interiorMAE": 3.43972,
+        "silhouetteIoU": 0.988093
+      },
+      "outsideAllowedChange": 0.0,
+      "parentInteriorMAE": 2.67814,
+      "status": "PASS"
+    },
+    {
+      "captureHash": "8b956013d1456f3136874c361155e2b1358bbbfb8fae831ed04159393c6e4fc1",
+      "classification": {
+        "hard": 41,
+        "lost": 32652,
+        "soft": 403
+      },
+      "controlHash": "47b411502161230c7377999c4f832fdee2be444f22f10eadbecc4555bddc8c5c",
+      "edgePoints": 5228,
+      "failures": [],
+      "geometryHash": "ecec0d435a871662135fd6917f6490eaa0b4c6b77374824a2aa6be42e8156551",
+      "id": "head-c-left",
+      "inkFraction": 0.072069,
+      "metrics": {
+        "featureMAE": 3.54697,
+        "fullMAE": 1.78143,
+        "interiorMAE": 3.31293,
+        "silhouetteIoU": 0.987902
+      },
+      "outsideAllowedChange": 0.0,
+      "parentInteriorMAE": 2.61012,
+      "status": "PASS"
+    },
+    {
+      "captureHash": "54af1b243f1fc81f0fcdc6d01479506be7ea65460864262e33b7895df5116052",
+      "classification": {
+        "hard": 92,
+        "lost": 32541,
+        "soft": 463
+      },
+      "controlHash": "450132b0a790d00be37955bedde78a7f1aef38882c75efbb93bd071046fdc51e",
+      "edgePoints": 5928,
+      "failures": [],
+      "geometryHash": "ecec0d435a871662135fd6917f6490eaa0b4c6b77374824a2aa6be42e8156551",
+      "id": "head-c-front",
+      "inkFraction": 0.079678,
+      "metrics": {
+        "featureMAE": 4.09315,
+        "fullMAE": 1.98213,
+        "interiorMAE": 3.63447,
+        "silhouetteIoU": 0.987902
+      },
+      "outsideAllowedChange": 0.0,
+      "parentInteriorMAE": 2.84816,
+      "status": "PASS"
+    },
+    {
+      "captureHash": "e5e909fe2586e73f157c55447ad79d97c009a9bdfcd7052f33a0819ea7ba62b9",
+      "classification": {
+        "hard": 40,
+        "lost": 32642,
+        "soft": 414
+      },
+      "controlHash": "15b2309375f18dec8a89c8990ddcf977fa80f0d5c311833823853738b85dbe89",
+      "edgePoints": 5302,
+      "failures": [],
+      "geometryHash": "ecec0d435a871662135fd6917f6490eaa0b4c6b77374824a2aa6be42e8156551",
+      "id": "head-c-right",
+      "inkFraction": 0.072889,
+      "metrics": {
+        "featureMAE": 3.54018,
+        "fullMAE": 1.78815,
+        "interiorMAE": 3.31417,
+        "silhouetteIoU": 0.987852
+      },
+      "outsideAllowedChange": 0.0,
+      "parentInteriorMAE": 2.59914,
+      "status": "PASS"
+    },
+    {
+      "captureHash": "c94af7ae05715277e35e46d596817d1d46a2bdf21224a65b05f9ad8666b45c8f",
+      "classification": {
+        "hard": 32,
+        "lost": 32302,
+        "soft": 388
+      },
+      "controlHash": "a493e5ba19cf705f183c335742ef61b87bbcd5d85feac0c255e6fec744cd9480",
+      "edgePoints": 5452,
+      "failures": [],
+      "geometryHash": "e4cfe6664dee2df6ead080b24060ed730582dd74042b4c6c89d4c38a02c51715",
+      "id": "reserved-d-left",
+      "inkFraction": 0.077126,
+      "metrics": {
+        "featureMAE": 3.6137,
+        "fullMAE": 1.82705,
+        "interiorMAE": 3.47547,
+        "silhouetteIoU": 0.988505
+      },
+      "outsideAllowedChange": 0.0,
+      "parentInteriorMAE": 2.68224,
+      "status": "PASS"
+    },
+    {
+      "captureHash": "cc7cea49ba7a646dfd2fd4fe004575ac267aff72524658ff3860464d090d501d",
+      "classification": {
+        "hard": 83,
+        "lost": 32234,
+        "soft": 405
+      },
+      "controlHash": "9fd0a902efc46e5ba140b2bc9dcf25b61763aaf0707db329f90ecf4b9440b4ab",
+      "edgePoints": 5835,
+      "failures": [],
+      "geometryHash": "e4cfe6664dee2df6ead080b24060ed730582dd74042b4c6c89d4c38a02c51715",
+      "id": "reserved-d-front",
+      "inkFraction": 0.07982,
+      "metrics": {
+        "featureMAE": 4.0213,
+        "fullMAE": 1.99962,
+        "interiorMAE": 3.72298,
+        "silhouetteIoU": 0.988505
+      },
+      "outsideAllowedChange": 0.0,
+      "parentInteriorMAE": 2.94031,
+      "status": "PASS"
+    },
+    {
+      "captureHash": "87049539128c3ca809c119ea5af314791d8663c04ccbc76171337a1f9e00feec",
+      "classification": {
+        "hard": 32,
+        "lost": 32289,
+        "soft": 401
+      },
+      "controlHash": "62a9cddd7be72585457798f989913aa6bdc955b4e6950d45bf1f2840061bf2bd",
+      "edgePoints": 5495,
+      "failures": [],
+      "geometryHash": "e4cfe6664dee2df6ead080b24060ed730582dd74042b4c6c89d4c38a02c51715",
+      "id": "reserved-d-right",
+      "inkFraction": 0.077567,
+      "metrics": {
+        "featureMAE": 3.60831,
+        "fullMAE": 1.84217,
+        "interiorMAE": 3.48624,
+        "silhouetteIoU": 0.988379
+      },
+      "outsideAllowedChange": 0.0,
+      "parentInteriorMAE": 2.70178,
+      "status": "PASS"
+    },
+    {
+      "captureHash": "5d9a7e9f4ea299ec55da87eb25be4f8c186745faefdc50c19dd4a775ccbe134c",
+      "classification": {
+        "hard": 54,
+        "lost": 32436,
+        "soft": 416
+      },
+      "controlHash": "e35427558ad0587c657d7d20647a40e43a50282dea12c48459ad0d05fd64b45f",
+      "edgePoints": 5547,
+      "failures": [],
+      "geometryHash": "6a201af111db27b1c9ec3a0f93c9ed64b270008d44ac80fe8ab20cc5e5271ac1",
+      "id": "reserved-e-left",
+      "inkFraction": 0.082003,
+      "metrics": {
+        "featureMAE": 3.84418,
+        "fullMAE": 1.70454,
+        "interiorMAE": 3.5316,
+        "silhouetteIoU": 0.986965
+      },
+      "outsideAllowedChange": 0.0,
+      "parentInteriorMAE": 2.6293,
+      "status": "PASS"
+    },
+    {
+      "captureHash": "c0ee42632f56c00ad37eeab5ee514143170f3bc6210e50a3bfeed3e26b94ea08",
+      "classification": {
+        "hard": 107,
+        "lost": 32327,
+        "soft": 472
+      },
+      "controlHash": "9d258ce7112d9e51f2b0b01bc5bea230684c8027957c115e70132bd080e41b18",
+      "edgePoints": 6067,
+      "failures": [],
+      "geometryHash": "6a201af111db27b1c9ec3a0f93c9ed64b270008d44ac80fe8ab20cc5e5271ac1",
+      "id": "reserved-e-front",
+      "inkFraction": 0.088851,
+      "metrics": {
+        "featureMAE": 4.31532,
+        "fullMAE": 1.88632,
+        "interiorMAE": 3.87096,
+        "silhouetteIoU": 0.986489
+      },
+      "outsideAllowedChange": 0.0,
+      "parentInteriorMAE": 2.90979,
+      "status": "PASS"
+    },
+    {
+      "captureHash": "7eb87e34f9dc39af86130c2ec886cfbd206021d697a4f3e4eb5c9c02d707ce16",
+      "classification": {
+        "hard": 51,
+        "lost": 32436,
+        "soft": 419
+      },
+      "controlHash": "4913263aab7ee25fb07dbd75204d49bc221eb8d1e8435e5feaa41e72fc200d75",
+      "edgePoints": 5532,
+      "failures": [],
+      "geometryHash": "6a201af111db27b1c9ec3a0f93c9ed64b270008d44ac80fe8ab20cc5e5271ac1",
+      "id": "reserved-e-right",
+      "inkFraction": 0.082779,
+      "metrics": {
+        "featureMAE": 3.89417,
+        "fullMAE": 1.71819,
+        "interiorMAE": 3.56682,
+        "silhouetteIoU": 0.98705
+      },
+      "outsideAllowedChange": 0.0,
+      "parentInteriorMAE": 2.66881,
+      "status": "PASS"
+    },
+    {
+      "captureHash": "9f75ff21cc6db4a954dd5756c65b4d26c050c8a181d0acd3eb6905fa9069ad95",
+      "classification": {
+        "hard": 34,
+        "lost": 32647,
+        "soft": 396
+      },
+      "controlHash": "8a1b9217389a77b483f49b6b6f0a70d45c0e8247be41312c2eab49ef3f2aea8e",
+      "edgePoints": 5387,
+      "failures": [],
+      "geometryHash": "15f8fda76d06206a7c6047e30a06c40b17f147c4dd3a3189af2f0b330a85b8a5",
+      "id": "reserved-f-left",
+      "inkFraction": 0.070293,
+      "metrics": {
+        "featureMAE": 3.45693,
+        "fullMAE": 1.8947,
+        "interiorMAE": 3.36678,
+        "silhouetteIoU": 0.989791
+      },
+      "outsideAllowedChange": 0.0,
+      "parentInteriorMAE": 2.67912,
+      "status": "PASS"
+    },
+    {
+      "captureHash": "471be7dd2803cbf9740e983f8f5128e1bca9d018b58a4963bfbebd345c5f0fb8",
+      "classification": {
+        "hard": 83,
+        "lost": 32539,
+        "soft": 455
+      },
+      "controlHash": "3396cc4c2ca3e12b56d6222d2e4014f32566f48446f99f06c17fb5d955b13c34",
+      "edgePoints": 6026,
+      "failures": [],
+      "geometryHash": "15f8fda76d06206a7c6047e30a06c40b17f147c4dd3a3189af2f0b330a85b8a5",
+      "id": "reserved-f-front",
+      "inkFraction": 0.077909,
+      "metrics": {
+        "featureMAE": 3.98948,
+        "fullMAE": 2.08931,
+        "interiorMAE": 3.67427,
+        "silhouetteIoU": 0.989814
+      },
+      "outsideAllowedChange": 0.0,
+      "parentInteriorMAE": 2.89302,
+      "status": "PASS"
+    },
+    {
+      "captureHash": "36c3ed2442eacfdbf9174d783b1b40cdd1091674cd9661e90b10bc6157d6dc42",
+      "classification": {
+        "hard": 35,
+        "lost": 32642,
+        "soft": 400
+      },
+      "controlHash": "606a8f18d458524d66387619a5446297a0d734101697340b246616ba1a6acefb",
+      "edgePoints": 5411,
+      "failures": [],
+      "geometryHash": "15f8fda76d06206a7c6047e30a06c40b17f147c4dd3a3189af2f0b330a85b8a5",
+      "id": "reserved-f-right",
+      "inkFraction": 0.071105,
+      "metrics": {
+        "featureMAE": 3.46868,
+        "fullMAE": 1.90329,
+        "interiorMAE": 3.38357,
+        "silhouetteIoU": 0.989884
+      },
+      "outsideAllowedChange": 0.0,
+      "parentInteriorMAE": 2.67943,
+      "status": "PASS"
+    }
+  ],
+  "parentSourceDigest": "d9a1cb98657b19855ddb6c2328cda3c270730fe5ce6c05173d6be9bcbb227e85",
+  "rawReports": [
+    "research/sketch/evidence/raw/38866567327/S4-head-a.json",
+    "research/sketch/evidence/raw/38866567327/S4-head-b.json",
+    "research/sketch/evidence/raw/38866567327/S4-head-c.json",
+    "research/sketch/evidence/raw/38866567327/S4-reserved-d.json",
+    "research/sketch/evidence/raw/38866567327/S4-reserved-e.json",
+    "research/sketch/evidence/raw/38866567327/S4-reserved-f.json"
+  ],
+  "schemaVersion": 1,
+  "sourceDigest": "85cc67a2d0e53a8c46bfb63ebbed2016596f6a73d60c798eafa317b639e2073f",
+  "sourceHeadCommit": "6ad104b13107606a109e46c786d52566549fd3c4",
+  "stage": "S4",
+  "status": "TECHNICAL_STUDY_COMPLETE",
+  "uiEvidence": "research/sketch/evidence/raw/38866567327/UI-result.json"
+}
