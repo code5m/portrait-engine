@@ -9,6 +9,7 @@ from pathlib import Path
 from urllib.parse import urlsplit,unquote
 from model import ROOT,CACHE,CONFIG,HeadModel,prepare,source_digest,canonical,sha,save_json
 from surface_registry import catalog as surface_catalog,validate_payload as validate_surface_payload
+from stage_archive import stage_result,image_data,validate_stage_review
 STATIC={'/':'index.html','/app.mjs':'app.mjs','/style.css':'style.css','/renderer.mjs':'renderer.mjs',
         '/study_renderer.mjs':'study_renderer.mjs','/surface_renderer.mjs':'surface_renderer.mjs',
         '/pipeline_renderer.mjs':'pipeline_renderer.mjs','/api-guide':'api.html'}
@@ -39,6 +40,7 @@ def initialize():
         c.executescript('''PRAGMA journal_mode=WAL;
         CREATE TABLE IF NOT EXISTS jobs(id TEXT PRIMARY KEY,operation TEXT,payload TEXT,status TEXT,result TEXT,error TEXT,created REAL);
         CREATE TABLE IF NOT EXISTS reviews(id TEXT PRIMARY KEY,reviewer TEXT,render_id TEXT,source_digest TEXT,content_hash TEXT,payload TEXT,created REAL);
+         CREATE TABLE IF NOT EXISTS stage_reviews(id TEXT PRIMARY KEY,reviewer TEXT,stage TEXT,scene_id TEXT,revision TEXT,payload TEXT,created REAL);
         CREATE TABLE IF NOT EXISTS events(id INTEGER PRIMARY KEY,kind TEXT,payload,created REAL);
         ''')
         c.execute("UPDATE jobs SET status='failed',error='Server restarted; retry explicitly' WHERE status IN ('queued','running')")
@@ -236,6 +238,18 @@ class Handler(BaseHTTPRequestHandler):
             s=self.session()
             if p=='/api/v1/catalog':return self.send(200,{'identities':CONFIG['identities'],'lights':CONFIG['lights'],'sourceDigest':source_digest(),'thresholds':CONFIG['thresholds'],'stages':list(STAGES),'surface':surface_catalog(),'session':{'name':s['name']}})
             if p=='/api/v1/stages':return self.send(200,json_file(ROOT/'research/sketch/stages.json'))
+            if p=='/api/v1/stage-results':
+                return self.send(200,{'stages':[stage_result('S'+str(i),False) for i in range(7)]})
+            if p.startswith('/api/v1/stage-results/'):
+                parts=p.split('/')
+                if len(parts)==5:
+                    result=stage_result(parts[4])
+                    with db() as c:rows=c.execute('SELECT payload FROM stage_reviews WHERE stage=? ORDER BY created DESC',(parts[4],)).fetchall()
+                    result['reviews']=[json.loads(x['payload']) for x in rows]
+                    return self.send(200,result)
+                if len(parts)==8 and parts[5]=='images':
+                    return self.send(200,image_data(parts[4],parts[6],parts[7]),'image/png')
+                raise FileNotFoundError('Stage resource not found')
             if p=='/api/v1/jobs':
                 with db() as c:rows=c.execute('SELECT * FROM jobs ORDER BY created DESC LIMIT 30').fetchall()
                 return self.send(200,{'jobs':[dict(x) for x in rows]})
@@ -311,6 +325,16 @@ class Handler(BaseHTTPRequestHandler):
                     JOBS.put_nowait((ident,op,payload))
                 emit('job-created',{'id':ident,'operation':op})
                 return self.send(202,{'jobId':ident,'status':'queued'})
+            if p=='/api/v1/stage-reviews':
+                record=validate_stage_review(data)
+                ident=secrets.token_hex(12)
+                record.update(id=ident,reviewerSession=s['id'],reviewerLabel=s['name'],
+                              reviewType='AUTOMATED_TEST' if os.getenv('PORTRAIT_TEST_MODE')=='1' else 'OWNER_SELF_REPORTED',
+                              createdAt=time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()))
+                with db() as c:c.execute('INSERT INTO stage_reviews VALUES(?,?,?,?,?,?,?)',
+                    (ident,s['id'],record['stage'],record['sceneId'],record['revision'],canonical(record).decode(),time.time()))
+                emit('stage-review-created',{'id':ident,'stage':record['stage'],'sceneId':record['sceneId']})
+                return self.send(201,{'id':ident,'artStatus':'ART_UNVERIFIED'})
             if p=='/api/v1/reviews':
                 d=read_render(str(data.get('renderId','')));record=review_payload(data,d);ident=secrets.token_hex(12)
                 record.update(id=ident,reviewerSession=s['id'],reviewerLabel=s['name'],createdAt=time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()))
