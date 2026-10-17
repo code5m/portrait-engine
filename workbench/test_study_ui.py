@@ -21,7 +21,7 @@ def run():
             with sync_playwright() as p:
                 browser=p.chromium.launch(headless=True,args=['--no-sandbox']);page=browser.new_page(viewport={'width':1440,'height':1080});errors=[]
                 page.on('pageerror',lambda e:errors.append(str(e)))
-                response=page.goto('http://127.0.0.1:4197/')
+                response=page.goto('http://127.0.0.1:4197/workbench/')
                 assert 'unsafe-eval' not in response.headers['content-security-policy']
                 page.fill('#reviewer-name','AUTOMATED_STUDY_TEST');page.click('#login-form button')
                 # Shared workbench grew to five opt-in stages; historical S3/S4
