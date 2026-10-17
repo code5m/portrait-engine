@@ -1,0 +1,892 @@
+{
+  "artStatus": "ART_UNVERIFIED",
+  "files": {
+    "research/sketch/evidence/S3.json": {
+      "bytes": 19023,
+      "sha256": "656f15fcf49fa19c9bd3d62e78205750894b5ba982c5aacc58729e7dcd7b5cc1"
+    },
+    "research/sketch/evidence/S4.json": {
+      "bytes": 14617,
+      "sha256": "9b067a144f5a22be810031ece3fe1b56c1fbd5190b19e40b14190d06c45ba223"
+    },
+    "research/sketch/evidence/raw/39008089816/S3-head-a.json": {
+      "bytes": 2798,
+      "sha256": "8f659af2bd555ecd194358df2ea8d552ff81f28b6b751d06df43e3429231bde2"
+    },
+    "research/sketch/evidence/raw/39008089816/S3-head-b.json": {
+      "bytes": 2801,
+      "sha256": "a98677827517dc4423088f9154849cab8e960fdfc2137d5c5d12541a316470f6"
+    },
+    "research/sketch/evidence/raw/39008089816/S3-head-c.json": {
+      "bytes": 2802,
+      "sha256": "9978055eb8161a18dfd0e87cc9e5923defe43c4fbf06b3dff2b57efc66d36f5d"
+    },
+    "research/sketch/evidence/raw/39008089816/S3-reserved-d.json": {
+      "bytes": 2811,
+      "sha256": "0976e41f9fcf8dae8eedef461120f6f0f06e6c7562b5fb6c686036cf9ccb787a"
+    },
+    "research/sketch/evidence/raw/39008089816/S3-reserved-e.json": {
+      "bytes": 2809,
+      "sha256": "a6c795af41130e937e0714c9af669a5093495178a02eceaa474214712e20accf"
+    },
+    "research/sketch/evidence/raw/39008089816/S3-reserved-f.json": {
+      "bytes": 2812,
+      "sha256": "1e4bb4d85db4c01ffc2efabb8c1e9e36c4118547a583513e487b53002c63306d"
+    },
+    "research/sketch/evidence/raw/39008089816/S4-head-a.json": {
+      "bytes": 2266,
+      "sha256": "487f88fc17381fd88aeeea59c38c16977d577ab6fc78824c3a857544608f3faa"
+    },
+    "research/sketch/evidence/raw/39008089816/S4-head-b.json": {
+      "bytes": 2270,
+      "sha256": "ba899c594652383a783c0bcce30ad1a7aa23f3c6bab30c57ffd10d40414c4be7"
+    },
+    "research/sketch/evidence/raw/39008089816/S4-head-c.json": {
+      "bytes": 2270,
+      "sha256": "1fc27d225207116e592d98988576a5bef3f48fce2e0696de313823a56bd58d54"
+    },
+    "research/sketch/evidence/raw/39008089816/S4-reserved-d.json": {
+      "bytes": 2278,
+      "sha256": "0d3bc3b0ec5a923adc506f5619cf769062d1a9bcfbc871d30dde19d87dea9206"
+    },
+    "research/sketch/evidence/raw/39008089816/S4-reserved-e.json": {
+      "bytes": 2279,
+      "sha256": "959692ed93fbe1828cfc438e63ff506bcb5979e6041b99b740393c4554fa6ab4"
+    },
+    "research/sketch/evidence/raw/39008089816/S4-reserved-f.json": {
+      "bytes": 2280,
+      "sha256": "834c9a13cb67f4e1f266d20163a0935c41c954b5db90673b85bf783a51daf4e5"
+    },
+    "research/sketch/evidence/raw/39008089816/UI-result.json": {
+      "bytes": 416,
+      "sha256": "a28b2b467eedaad2d0225538685fe8d6e7eff54bd8322d06cdd2e9ec6617fb8a"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/comparison-head-a.png": {
+      "bytes": 63791,
+      "sha256": "1011dbbe18f262279df4ec887215d660f94533589d4d48e764e7e3f8c0872c52"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/images/head-a-front-S3.png": {
+      "bytes": 23109,
+      "sha256": "e38ebb4de206f59ab6a42e1306be70bbacd6f2825803b66eb0d4766ba5787075"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/images/head-a-front-S4.png": {
+      "bytes": 25412,
+      "sha256": "9eab42541377936ae0a89840bb1047c0223aa32b1d2991803c8fb2339c6ab7e5"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/images/head-a-front-all-edges.png": {
+      "bytes": 26477,
+      "sha256": "8d2aade649188ae73fa4c5ee58b4b7e7b0ea6df35720a3258bd8153374b5826b"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/images/head-a-front-control.png": {
+      "bytes": 23072,
+      "sha256": "c2114423f4d010eef630c3949f4c0d2bb776ce71d65de19327101b99b17b75e3"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/images/head-a-front-masses.png": {
+      "bytes": 12787,
+      "sha256": "937dc9e131c7e3496338fbebe73aa52e9874a5bf2bd7fcb423b475eb86b4e392"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/images/head-a-front-structure.png": {
+      "bytes": 8077,
+      "sha256": "a9eb2728010323541dd5a7eb4ba97cdd03ddef752dfcdc4fa96c3931c9575595"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/images/head-a-left-S3.png": {
+      "bytes": 22287,
+      "sha256": "eed0fc830a63992990cadad8660ae5d870b6451bd1e0d57c9df9a59e4a34e0f6"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/images/head-a-left-S4.png": {
+      "bytes": 24758,
+      "sha256": "8e603a6f5555c4a2742cd9c61006a50d3a0fda64d564ecabb346b5cf90192a67"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/images/head-a-left-all-edges.png": {
+      "bytes": 25878,
+      "sha256": "4a92b8be3adeaf06e7f1e9e37692f2ab71d292d617985b66418f3cb3df6af7a0"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/images/head-a-left-control.png": {
+      "bytes": 22765,
+      "sha256": "10965850ac1f386ff838bf699184d71efd8341692c488b39be58502cee8156dd"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/images/head-a-left-masses.png": {
+      "bytes": 11696,
+      "sha256": "3997c45eebb26c8c2b11ba426a85c5f5a0a3cfa6ce9d9021a5a2cda0399d0aa0"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/images/head-a-left-structure.png": {
+      "bytes": 8077,
+      "sha256": "a9eb2728010323541dd5a7eb4ba97cdd03ddef752dfcdc4fa96c3931c9575595"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/images/head-a-right-S3.png": {
+      "bytes": 22386,
+      "sha256": "50f1c9fa36ab098a3035eea0eaba66886f7e01cd01479b9c7a5c672327bb8c93"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/images/head-a-right-S4.png": {
+      "bytes": 24434,
+      "sha256": "e1d3477b8139341bb119c21f1c0d8ef03779be4d0d389282fe8180ca48ac699e"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/images/head-a-right-all-edges.png": {
+      "bytes": 25676,
+      "sha256": "ff3b2f028306c626dd59699a2d019dab67058b87a7be525890c9855e6bc86b7f"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/images/head-a-right-control.png": {
+      "bytes": 22918,
+      "sha256": "8c0ad524df3050ea454df0f0d6fc417b15348b1c3c7d7a266dacdf53651fcd10"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/images/head-a-right-masses.png": {
+      "bytes": 11714,
+      "sha256": "a2f40dc0033dc839be80bdf2c20f3a8b4a296c531b409e754d71fc453cac4e81"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/images/head-a-right-structure.png": {
+      "bytes": 8077,
+      "sha256": "a9eb2728010323541dd5a7eb4ba97cdd03ddef752dfcdc4fa96c3931c9575595"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/reference/calibration-0.25.png": {
+      "bytes": 2921,
+      "sha256": "f3555d3faefdc4c601eeb1ab7b9f811ed0a39d95c52eb22f5c21a02ae3728f94"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/reference/calibration-0.65.png": {
+      "bytes": 2921,
+      "sha256": "f4b772aee461c2923b676f85b2d88ac0cda7c09cc2d43e5dc4ca1abba9cf79b7"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/reference/calibration-1.0.png": {
+      "bytes": 2921,
+      "sha256": "a7ebfdb0571d8c8fdc272ec22673111ea5dfe54d1fa2d96dc5ddfcca72ecea1b"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/reference/head-a-front-shadow.json": {
+      "bytes": 459,
+      "sha256": "59d24c8006b66965eaf1abe4859e11c99bfb9fe35168114acecb21e448edeaa9"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/reference/head-a-front-shadow.png": {
+      "bytes": 41575,
+      "sha256": "72210692009db7e086ca86ba81ab16a04c901cadf47e33b5da78b5fe43c6a63f"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/reference/head-a-front-unshadowed.json": {
+      "bytes": 460,
+      "sha256": "436fa1c8bcfb5de052f35a228212d8f59e9331f86b8b3f4c0d0d2abde018b68b"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/reference/head-a-front-unshadowed.png": {
+      "bytes": 41495,
+      "sha256": "c87852375b9d430137196458bc8a74ce17740f52a244951c6d1ea0e8d94070b1"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/reference/head-a-left-shadow.json": {
+      "bytes": 458,
+      "sha256": "2458bcdad5c0933e9ca2927044a525b6c94767759a01e00f5e5de24a6815fc7d"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/reference/head-a-left-shadow.png": {
+      "bytes": 39937,
+      "sha256": "02a2e5991ff81ce0f0860a45b80d4f45c27f41227871c20ea0929f12205b9e60"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/reference/head-a-left-unshadowed.json": {
+      "bytes": 459,
+      "sha256": "3bb9d82c4ca2f09c9b22a32c41c3855aeec5a97a64e94c58cc3c6bdd7915aa25"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/reference/head-a-left-unshadowed.png": {
+      "bytes": 40561,
+      "sha256": "62964fafb5f0da9d276460b7fff50da5a32fed861c078d1007bd0092fae68217"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/reference/head-a-right-shadow.json": {
+      "bytes": 459,
+      "sha256": "10c164ec4409a866f94e1652886a91321f76bae73307756ae04217092c6477e5"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/reference/head-a-right-shadow.png": {
+      "bytes": 39589,
+      "sha256": "2badf7733a144b54dde89b5e11d08d2e79ad7e6baaabaf23968e2a466918d0b2"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/reference/head-a-right-unshadowed.json": {
+      "bytes": 460,
+      "sha256": "cedc26f55328df039419d3ed9faf2306f63c2d146b6d1e7a790e8d68a32cd14c"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/reference/head-a-right-unshadowed.png": {
+      "bytes": 40224,
+      "sha256": "3f671dbeaed94e65235ceacb1a6c2fefe74bf941beb7f26a9d6360947acc1856"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/workbench-S3.png": {
+      "bytes": 250525,
+      "sha256": "cf7da50c70c61e7d89afc5a4cecb32432eaac9b64cbea2e67796abc2c5a15e06"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-a/workbench-S4.png": {
+      "bytes": 257738,
+      "sha256": "f0ce4b872926c7b93259fb563166151589cb7a227a45ac760eeb533e39bedc19"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-b/comparison-head-b.png": {
+      "bytes": 70302,
+      "sha256": "5faa58824692db7bd68ea2ce959065763a047c5f12f5553e0d7aafa3a036bf0c"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-b/images/head-b-front-S3.png": {
+      "bytes": 26201,
+      "sha256": "1e0361b6385a10c6aa93ba8aa2ba1054f971bdde87be40bd9e77db3fe8af747e"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-b/images/head-b-front-S4.png": {
+      "bytes": 28720,
+      "sha256": "1250bed88d970989cdba479617b9f75b0876f5d4abe89c8f2053d20cf99e95b1"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-b/images/head-b-front-all-edges.png": {
+      "bytes": 29929,
+      "sha256": "ee5b2a2fe2179d6784d95040496983fa1221f7a3ec9ede80bbce2685bfdfa874"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-b/images/head-b-front-control.png": {
+      "bytes": 26138,
+      "sha256": "70f9478ff4549c11eafb3337f01e88c0471b7ca53d8a7dfabf360654c3641379"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-b/images/head-b-front-masses.png": {
+      "bytes": 13514,
+      "sha256": "4ea2a1f1426f6099d9463da327f6a1aef1db61997c4be10e35f61a1b2f8f7061"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-b/images/head-b-front-structure.png": {
+      "bytes": 8898,
+      "sha256": "79fa43f753b163a17e0c8784b6f25dbcfb471d51178149c1fb5b56f51a1d0422"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-b/images/head-b-left-S3.png": {
+      "bytes": 24912,
+      "sha256": "a13d3730c6cc372c494e4c90cb2b1980f488eeddddddc2bf6521de4ce31ce22c"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-b/images/head-b-left-S4.png": {
+      "bytes": 27764,
+      "sha256": "acec483bb50c6f2e1f10190ada5ceede8177f9dcaeb21b274ff5dabc25a299f8"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-b/images/head-b-left-all-edges.png": {
+      "bytes": 28898,
+      "sha256": "c590e4100a117d22057b89f26ebc48f04bfa1154b520c62e0e8307b5205ab3ac"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-b/images/head-b-left-control.png": {
+      "bytes": 25727,
+      "sha256": "29988ff7ff9c64c25a0af4aec0c17cddca28fbaea41df6f4a1305b93a7a2c289"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-b/images/head-b-left-masses.png": {
+      "bytes": 12306,
+      "sha256": "2825dce01c5a572951df9d9dd3e709affd682d7c0720b223051ba2669a56be79"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-b/images/head-b-left-structure.png": {
+      "bytes": 8898,
+      "sha256": "79fa43f753b163a17e0c8784b6f25dbcfb471d51178149c1fb5b56f51a1d0422"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-b/images/head-b-right-S3.png": {
+      "bytes": 24961,
+      "sha256": "c90cbdbb4575f873d38d5f9235e7260f153d7dd86bf208ab4684fb3a6d312a44"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-b/images/head-b-right-S4.png": {
+      "bytes": 27588,
+      "sha256": "cc84c813cd79a587946d9a79c315faba2e5b202b7d81dea545bd0854562eabcf"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-b/images/head-b-right-all-edges.png": {
+      "bytes": 28774,
+      "sha256": "99ccf88df942c4b8daa0324166988cf4e9af96ca3ffe479030919ba63b22f220"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-b/images/head-b-right-control.png": {
+      "bytes": 25870,
+      "sha256": "da5523bb4f6ffa6b22ec7b9b0f2f99295d275c26b593f894ae2afe4e3f4e67fc"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-b/images/head-b-right-masses.png": {
+      "bytes": 12473,
+      "sha256": "e44548149d48cf214d1fd505f9890e29f1398ed75fec505a84db72f872e6b257"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-b/images/head-b-right-structure.png": {
+      "bytes": 8898,
+      "sha256": "79fa43f753b163a17e0c8784b6f25dbcfb471d51178149c1fb5b56f51a1d0422"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-b/reference/calibration-0.25.png": {
+      "bytes": 2921,
+      "sha256": "cfa7229eb8613fd6ff872bf03d787277369b8601b262793c4a9c0e9ee397f4d8"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-b/reference/calibration-0.65.png": {
+      "bytes": 2921,
+      "sha256": "5c4cba7e462d9a695c1830cf293332cf64defa2ad2dabc59b0ea6513343081a4"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-b/reference/calibration-1.0.png": {
+      "bytes": 2921,
+      "sha256": "232d6e74e7c0c99d9fe6042e8e1082e6c5789a3aaee3584c7911770bc89e5426"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-b/reference/head-b-front-shadow.json": {
+      "bytes": 459,
+      "sha256": "6bf66bf295d6633d1be8b38bc48f13258c794ef1828e231babebf815cf51e504"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-b/reference/head-b-front-shadow.png": {
+      "bytes": 47487,
+      "sha256": "7b7da514d4023514b665a70bb4d575262b514c77617f2baf69b9c63bf6feaa93"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-b/reference/head-b-front-unshadowed.json": {
+      "bytes": 460,
+      "sha256": "c47be337337edb07d7b6fc281ba4e4d6558e549cdce690ef21f5924b06febe62"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-b/reference/head-b-front-unshadowed.png": {
+      "bytes": 47568,
+      "sha256": "703c0e8c66deee5629ebbe4d7d7ef3153fbf99e10d445d33685f49eba172cddf"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-b/reference/head-b-left-shadow.json": {
+      "bytes": 458,
+      "sha256": "9f2a9d696552e981d8bcce16cc1c2b8f2a2a81cd8ecd97b7d2fc785aaaf6b11b"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-b/reference/head-b-left-shadow.png": {
+      "bytes": 45191,
+      "sha256": "2f702eb714e974e0019ac63a4550a03d3d341831389a60fd5e1266b25ac43711"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-b/reference/head-b-left-unshadowed.json": {
+      "bytes": 459,
+      "sha256": "8969b5cbc988eae8078367d4bc072e655af287c01e5cbadf706a14f3cdcfe47a"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-b/reference/head-b-left-unshadowed.png": {
+      "bytes": 46298,
+      "sha256": "d1e095b51bb7de4a50eef1ab875534d8c111426534944b3d70cd063a9183789e"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-b/reference/head-b-right-shadow.json": {
+      "bytes": 459,
+      "sha256": "c2f20a8ab6e04d93193d40a414a1ed63082faef9e16ed4561e1be2d0407a6650"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-b/reference/head-b-right-shadow.png": {
+      "bytes": 45133,
+      "sha256": "c31090218112025b1fe32e445f236a83e869439e6393cbb43a1f58734c251b20"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-b/reference/head-b-right-unshadowed.json": {
+      "bytes": 460,
+      "sha256": "277f528799e40faa97b7a5d97934dbecab6cc9062066b79c0eaa160b842f78f6"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-b/reference/head-b-right-unshadowed.png": {
+      "bytes": 46152,
+      "sha256": "de73e8587cdaa04f736e02524152faa15e9d490cd97903b25692840c45a0370a"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-c/comparison-head-c.png": {
+      "bytes": 68123,
+      "sha256": "10fbabdf1291eec8972e9e22f7aee4f640fd606417812fefff1fefa0b0574a99"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-c/images/head-c-front-S3.png": {
+      "bytes": 25623,
+      "sha256": "1a6ca63a6b755e8aba38eaf27789ffa4c2a7549a439540a5199af4c5ef9f9de1"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-c/images/head-c-front-S4.png": {
+      "bytes": 28107,
+      "sha256": "54af1b243f1fc81f0fcdc6d01479506be7ea65460864262e33b7895df5116052"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-c/images/head-c-front-all-edges.png": {
+      "bytes": 29150,
+      "sha256": "450132b0a790d00be37955bedde78a7f1aef38882c75efbb93bd071046fdc51e"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-c/images/head-c-front-control.png": {
+      "bytes": 25441,
+      "sha256": "5563def1ddfce3ace1a8009a3973603534860873e2433570ba174610d61e4cf0"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-c/images/head-c-front-masses.png": {
+      "bytes": 13749,
+      "sha256": "d3f0346873b12984df7332070404962a21797c34f333c4a3770952ea3d3483a8"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-c/images/head-c-front-structure.png": {
+      "bytes": 8628,
+      "sha256": "71150d90e46917478fdaf499b3e0d31766e179d9c76a17ae9b72464d6376cce3"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-c/images/head-c-left-S3.png": {
+      "bytes": 24322,
+      "sha256": "e1e09e80bfe24386b1760501988c3259af65ac2a31a2748f0143f35f5b4dde02"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-c/images/head-c-left-S4.png": {
+      "bytes": 26879,
+      "sha256": "8b956013d1456f3136874c361155e2b1358bbbfb8fae831ed04159393c6e4fc1"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-c/images/head-c-left-all-edges.png": {
+      "bytes": 27967,
+      "sha256": "47b411502161230c7377999c4f832fdee2be444f22f10eadbecc4555bddc8c5c"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-c/images/head-c-left-control.png": {
+      "bytes": 24937,
+      "sha256": "c0d3fd815164d160861889061d1a8c68bc5d5fdb448d24d771e7a9549d20d585"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-c/images/head-c-left-masses.png": {
+      "bytes": 12094,
+      "sha256": "48b04640d104b9b2ea4f9f8a9235e9269a1114c59e9462dd32c1a30c711a2c0b"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-c/images/head-c-left-structure.png": {
+      "bytes": 8628,
+      "sha256": "71150d90e46917478fdaf499b3e0d31766e179d9c76a17ae9b72464d6376cce3"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-c/images/head-c-right-S3.png": {
+      "bytes": 24241,
+      "sha256": "ce805df4811b2ab9b7cd5e5d2e5c8638439aeb1c8b7814a4b63866a5f763f743"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-c/images/head-c-right-S4.png": {
+      "bytes": 26735,
+      "sha256": "e5e909fe2586e73f157c55447ad79d97c009a9bdfcd7052f33a0819ea7ba62b9"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-c/images/head-c-right-all-edges.png": {
+      "bytes": 27655,
+      "sha256": "15b2309375f18dec8a89c8990ddcf977fa80f0d5c311833823853738b85dbe89"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-c/images/head-c-right-control.png": {
+      "bytes": 25099,
+      "sha256": "4e12e75e2751fbb97097982bad1f7d69d9928802ab92d49342cf661c1f1a9d64"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-c/images/head-c-right-masses.png": {
+      "bytes": 12175,
+      "sha256": "0680db53b919557da413273a2ebab610819d209f742f94f47dc4bb904b304c6e"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-c/images/head-c-right-structure.png": {
+      "bytes": 8628,
+      "sha256": "71150d90e46917478fdaf499b3e0d31766e179d9c76a17ae9b72464d6376cce3"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-c/reference/calibration-0.25.png": {
+      "bytes": 2921,
+      "sha256": "015d6826d712cebbbe812004142e851aedda66d40ef9df66778817af735687a3"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-c/reference/calibration-0.65.png": {
+      "bytes": 2921,
+      "sha256": "b1c62e12a78503c64552d35a40f8073336f9742dc3abae489c6e3a23cee0cac0"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-c/reference/calibration-1.0.png": {
+      "bytes": 2921,
+      "sha256": "1edf46d3d6f4c75d79ed0acfc0402eb2208ab23f819120b097e40872bc695082"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-c/reference/head-c-front-shadow.json": {
+      "bytes": 459,
+      "sha256": "043c33f97b306033063aca7a33b918548ccc8952dfb670b0bad274448d659895"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-c/reference/head-c-front-shadow.png": {
+      "bytes": 46279,
+      "sha256": "87e1e5ddacd1f7fd2a62fbf056e0589d5accb2606a1583a8d8721ab9dd6fc735"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-c/reference/head-c-front-unshadowed.json": {
+      "bytes": 460,
+      "sha256": "14abb73ff26ec4f423337e0c28934bf06da82c109eb20de27bd70e73da1d76d8"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-c/reference/head-c-front-unshadowed.png": {
+      "bytes": 46376,
+      "sha256": "8eef194b96b7bffb041cf6d883da6df55a19d751e427b6b59d1c7562ee004685"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-c/reference/head-c-left-shadow.json": {
+      "bytes": 458,
+      "sha256": "8a39138eb5496820db515fc90dab63157db6795a7efea268e7535686f997f3cd"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-c/reference/head-c-left-shadow.png": {
+      "bytes": 44157,
+      "sha256": "751814264530d51761f9aa545bebee0944e0db41fc2020c5d0c735ade17449fc"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-c/reference/head-c-left-unshadowed.json": {
+      "bytes": 459,
+      "sha256": "78a6a9fbf55a589308546ae176e165d438b21bef7ff0b77311f7eb928a01c167"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-c/reference/head-c-left-unshadowed.png": {
+      "bytes": 45170,
+      "sha256": "68051c93b86e3cf2bfbb3cb377fd86c19759743234238d03acbbc87f0f59d5bb"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-c/reference/head-c-right-shadow.json": {
+      "bytes": 459,
+      "sha256": "9c7dc2e46b8c276c86b5940b55984c2bc71d96944bc437db34d7e747d0e0ef1a"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-c/reference/head-c-right-shadow.png": {
+      "bytes": 43738,
+      "sha256": "dd51c3d25e2e4aa0ca6d3f98013d833bd9af778664db595a40f63a4d9d519f9d"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-c/reference/head-c-right-unshadowed.json": {
+      "bytes": 460,
+      "sha256": "74f6efac958daad7de1b1e5f5f30d18863c37eb6c82c09a4b0e830d9dac32a07"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/head-c/reference/head-c-right-unshadowed.png": {
+      "bytes": 44648,
+      "sha256": "066adb836d1913db116cfce65a2690436b0ac9c3e1fa3de6a89d412d1b721be3"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-d/comparison-reserved-d.png": {
+      "bytes": 70086,
+      "sha256": "bbed5c6c3000928e0f09436ba829033ee94e6cdaad8a9363d35ac49f12bae0a9"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-d/images/reserved-d-front-S3.png": {
+      "bytes": 25194,
+      "sha256": "11393b59b15707931e4b9f5192a441cc82ab74c69eaaea616739dd91191f5fdf"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-d/images/reserved-d-front-S4.png": {
+      "bytes": 27868,
+      "sha256": "cc7cea49ba7a646dfd2fd4fe004575ac267aff72524658ff3860464d090d501d"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-d/images/reserved-d-front-all-edges.png": {
+      "bytes": 28723,
+      "sha256": "9fd0a902efc46e5ba140b2bc9dcf25b61763aaf0707db329f90ecf4b9440b4ab"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-d/images/reserved-d-front-control.png": {
+      "bytes": 25408,
+      "sha256": "6cd8c586c63c373cfde1a1f7864b541be10ca15a01f406f3c60edd1b2b8e498e"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-d/images/reserved-d-front-masses.png": {
+      "bytes": 13490,
+      "sha256": "b8c02e0d2ffa80d6575594f24bb9f53885d9ff1104db7ec9d1a64d7356d4b80e"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-d/images/reserved-d-front-structure.png": {
+      "bytes": 8638,
+      "sha256": "278974569f4ca12f3aab4a7d400256a9927d27d676633ae027506d9adab7b452"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-d/images/reserved-d-left-S3.png": {
+      "bytes": 24431,
+      "sha256": "6fd7f9960efb0ecc6583241dd68a87a61590f98224537b44f156656cf80d3b51"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-d/images/reserved-d-left-S4.png": {
+      "bytes": 27329,
+      "sha256": "c94af7ae05715277e35e46d596817d1d46a2bdf21224a65b05f9ad8666b45c8f"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-d/images/reserved-d-left-all-edges.png": {
+      "bytes": 28248,
+      "sha256": "a493e5ba19cf705f183c335742ef61b87bbcd5d85feac0c255e6fec744cd9480"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-d/images/reserved-d-left-control.png": {
+      "bytes": 24973,
+      "sha256": "53a3b12216dfa3e60289d73f3cd770eec443cf4caf574a18510678595922838a"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-d/images/reserved-d-left-masses.png": {
+      "bytes": 12201,
+      "sha256": "fa88bcb0bf460c7427ccafdbc4c705a964f722c2b94ae2a536e43eb16506e4cb"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-d/images/reserved-d-left-structure.png": {
+      "bytes": 8638,
+      "sha256": "278974569f4ca12f3aab4a7d400256a9927d27d676633ae027506d9adab7b452"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-d/images/reserved-d-right-S3.png": {
+      "bytes": 24310,
+      "sha256": "27ca42b718bef1310976cc523ebeb688b2d3d6f3ce94ecaa3ba3c25567c2b0c8"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-d/images/reserved-d-right-S4.png": {
+      "bytes": 27056,
+      "sha256": "87049539128c3ca809c119ea5af314791d8663c04ccbc76171337a1f9e00feec"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-d/images/reserved-d-right-all-edges.png": {
+      "bytes": 27808,
+      "sha256": "62a9cddd7be72585457798f989913aa6bdc955b4e6950d45bf1f2840061bf2bd"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-d/images/reserved-d-right-control.png": {
+      "bytes": 25126,
+      "sha256": "84894362db722937a41999589af04e67b38be9b03741565e633579079218d062"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-d/images/reserved-d-right-masses.png": {
+      "bytes": 12138,
+      "sha256": "8d26bb27f08a648b99c63e3c8ae3c97771665438a7a0977718fe108f78b19514"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-d/images/reserved-d-right-structure.png": {
+      "bytes": 8638,
+      "sha256": "278974569f4ca12f3aab4a7d400256a9927d27d676633ae027506d9adab7b452"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-d/reference/calibration-0.25.png": {
+      "bytes": 2921,
+      "sha256": "2487a639f9fc52942aaf5f517ec65d2fde5d455730fb2530be3d5c9d3acc2dd4"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-d/reference/calibration-0.65.png": {
+      "bytes": 2921,
+      "sha256": "ee0af264c11984692b68735b18d6a0975698bec5d72031cada0c787acd99d802"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-d/reference/calibration-1.0.png": {
+      "bytes": 2921,
+      "sha256": "fd24d67795cfbde935a01f77690fbc67d23b3941cf5c2ef333dd5af09a9ae8fc"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-d/reference/reserved-d-front-shadow.json": {
+      "bytes": 463,
+      "sha256": "fb16f7a24a075d608f2fed6e7e69945d995aa1917ab715df9f5ab32ec23a34d5"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-d/reference/reserved-d-front-shadow.png": {
+      "bytes": 46139,
+      "sha256": "fa36e4f4ecbf4072325f8993453de5217511fe1457104b2f67b3df6cb3ad5a4a"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-d/reference/reserved-d-front-unshadowed.json": {
+      "bytes": 464,
+      "sha256": "5d5ace498976fe29cb3356a824f5b48dc53e6bfc9e96dbb49beaf3a3a032ba70"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-d/reference/reserved-d-front-unshadowed.png": {
+      "bytes": 46416,
+      "sha256": "1fb9e7a13f8022a9a41e67fe9349dbc6270f8e66d7f1f4e249634762636b09c2"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-d/reference/reserved-d-left-shadow.json": {
+      "bytes": 462,
+      "sha256": "ce546f0d669b8047c685c5c314f3c551e9dfb19cbfbffe39bccf2044d8d73c9d"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-d/reference/reserved-d-left-shadow.png": {
+      "bytes": 43850,
+      "sha256": "79ec7d68650bb677549609e856eb339e1175c3fd89f07cac2216721dd24a2ca6"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-d/reference/reserved-d-left-unshadowed.json": {
+      "bytes": 463,
+      "sha256": "f5696a4d20707dc0c60f478ec1ac5675d7945176277fc94d4d6bac84ee13d981"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-d/reference/reserved-d-left-unshadowed.png": {
+      "bytes": 45088,
+      "sha256": "981d06d4d5cd8a97546010dad948c6bf08aa852faac3b5cda308967a8cb35822"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-d/reference/reserved-d-right-shadow.json": {
+      "bytes": 463,
+      "sha256": "05dcac6897f0c633efbc8822042f4e802b781106b8b1255a051a16edf866c8fd"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-d/reference/reserved-d-right-shadow.png": {
+      "bytes": 43860,
+      "sha256": "6ad5ac779394a4cd004306900d8c4a3213ab50b35e64f78a21cdace1f91b719e"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-d/reference/reserved-d-right-unshadowed.json": {
+      "bytes": 464,
+      "sha256": "9c908c85730c9fa2cf3de1016afa993f08b7faf558ba4413787e4b269ebe67e4"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-d/reference/reserved-d-right-unshadowed.png": {
+      "bytes": 44976,
+      "sha256": "77ef87c2d414751d1eb3967f6d8405fd500148b1f036843a0adcb891b05895f3"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-e/comparison-reserved-e.png": {
+      "bytes": 65062,
+      "sha256": "203e57e3d3746cd1b4fde0328753b49dc03a33f18b8deb98d66ef2bb3b5af828"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-e/images/reserved-e-front-S3.png": {
+      "bytes": 23509,
+      "sha256": "3c84db29b2a9c3f736980d31507de26aa1c0da4d332d02af82bc523ebf6a4971"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-e/images/reserved-e-front-S4.png": {
+      "bytes": 25980,
+      "sha256": "c0ee42632f56c00ad37eeab5ee514143170f3bc6210e50a3bfeed3e26b94ea08"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-e/images/reserved-e-front-all-edges.png": {
+      "bytes": 26827,
+      "sha256": "9d258ce7112d9e51f2b0b01bc5bea230684c8027957c115e70132bd080e41b18"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-e/images/reserved-e-front-control.png": {
+      "bytes": 23555,
+      "sha256": "ec61731ad65025b1406ac604c79cd9d1688bb3071d2ae49ce9ed2c94b845a7a5"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-e/images/reserved-e-front-masses.png": {
+      "bytes": 12819,
+      "sha256": "2cee8e353642fa3ee7fc7d2dbef2b9c126ee6ff5018040eab12902cac109f42d"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-e/images/reserved-e-front-structure.png": {
+      "bytes": 8246,
+      "sha256": "6a8a9f2fc4fbd1c321ea295a771fe927d43f2b0f812a9ed229d2ab3f04f71abf"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-e/images/reserved-e-left-S3.png": {
+      "bytes": 22728,
+      "sha256": "6efeb43e553012d72964c61522b053c00b29c29228c5665c42263e6ef820554a"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-e/images/reserved-e-left-S4.png": {
+      "bytes": 25266,
+      "sha256": "5d9a7e9f4ea299ec55da87eb25be4f8c186745faefdc50c19dd4a775ccbe134c"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-e/images/reserved-e-left-all-edges.png": {
+      "bytes": 26247,
+      "sha256": "e35427558ad0587c657d7d20647a40e43a50282dea12c48459ad0d05fd64b45f"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-e/images/reserved-e-left-control.png": {
+      "bytes": 23215,
+      "sha256": "7d26a1044cf7078effcda852717dd7bed098316a5edbb9de87fb3161dcdd19cb"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-e/images/reserved-e-left-masses.png": {
+      "bytes": 11627,
+      "sha256": "8343dbe62b2c5e0759baa44e8a780904642b881ab751db8eb3ed147e4cfdcfc2"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-e/images/reserved-e-left-structure.png": {
+      "bytes": 8246,
+      "sha256": "6a8a9f2fc4fbd1c321ea295a771fe927d43f2b0f812a9ed229d2ab3f04f71abf"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-e/images/reserved-e-right-S3.png": {
+      "bytes": 22910,
+      "sha256": "3f0192ae65291b23bc9ffabceb904c86418cc0e4cfdd851cd7577a7463cad0bf"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-e/images/reserved-e-right-S4.png": {
+      "bytes": 25210,
+      "sha256": "7eb87e34f9dc39af86130c2ec886cfbd206021d697a4f3e4eb5c9c02d707ce16"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-e/images/reserved-e-right-all-edges.png": {
+      "bytes": 26248,
+      "sha256": "4913263aab7ee25fb07dbd75204d49bc221eb8d1e8435e5feaa41e72fc200d75"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-e/images/reserved-e-right-control.png": {
+      "bytes": 23389,
+      "sha256": "9e2e098e6aaa273aa54d924705aba3eb42bde135dc78d27a0a6c32859d826c64"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-e/images/reserved-e-right-masses.png": {
+      "bytes": 11611,
+      "sha256": "3511f51960e9efb7a62d9beae6dbc9381f110539bcde680c304d13c197d4a612"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-e/images/reserved-e-right-structure.png": {
+      "bytes": 8246,
+      "sha256": "6a8a9f2fc4fbd1c321ea295a771fe927d43f2b0f812a9ed229d2ab3f04f71abf"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-e/reference/calibration-0.25.png": {
+      "bytes": 2921,
+      "sha256": "1d79d2588f987cfb7adff3120622a4a6ec9cc71d7264f319655dfaf53d088da2"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-e/reference/calibration-0.65.png": {
+      "bytes": 2921,
+      "sha256": "9950578c1f246e113051c6fde7f131135246faa19fa2dfd0797b7023f5c2bd3e"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-e/reference/calibration-1.0.png": {
+      "bytes": 2921,
+      "sha256": "0ac46f1b65f28411c8bc6f6e2ae7b182f9c0f3182356938b24639be9e17f1d96"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-e/reference/reserved-e-front-shadow.json": {
+      "bytes": 463,
+      "sha256": "65a591e6cb163867c67196005ab96c0c978c5aee660450077182200ef62de348"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-e/reference/reserved-e-front-shadow.png": {
+      "bytes": 42504,
+      "sha256": "bd6e002b6204b6569bac00ffb765284ebd1a5ebf5c660018a624f09eca4cd73c"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-e/reference/reserved-e-front-unshadowed.json": {
+      "bytes": 464,
+      "sha256": "4f3e1ba9a4bc31d70ffa38fb88159b32351a1024a3118fa592df51826ab10c2a"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-e/reference/reserved-e-front-unshadowed.png": {
+      "bytes": 42532,
+      "sha256": "c30721991ffcee850a7497e63f87ca14abdb6ea794bec9e9c72e339312421d78"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-e/reference/reserved-e-left-shadow.json": {
+      "bytes": 462,
+      "sha256": "e77eb683b3c8b7d7e38caab889855965eac17403373df25c2083558145656a71"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-e/reference/reserved-e-left-shadow.png": {
+      "bytes": 40990,
+      "sha256": "a18aded82e45fb056504a79f050ef4793ca7a2b453fb658f04f6e2195e3bb592"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-e/reference/reserved-e-left-unshadowed.json": {
+      "bytes": 463,
+      "sha256": "1a5a6aedf7993cffa4b5bb7c33777a8d08bf2175a49cab8fd0cef6db9f3574db"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-e/reference/reserved-e-left-unshadowed.png": {
+      "bytes": 41497,
+      "sha256": "098016db7b576ebbab9a90cabd1d2749c01171364a048c632faa3329374df715"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-e/reference/reserved-e-right-shadow.json": {
+      "bytes": 463,
+      "sha256": "f851c8d8962f6aef0490eae4b9f39afd4f3b971795b9e80505f0bc00ee620c1f"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-e/reference/reserved-e-right-shadow.png": {
+      "bytes": 41025,
+      "sha256": "6a117af74d68c19bbbc5542edc90fb3e0ce03806ff30f1d0477ac03e033b32d6"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-e/reference/reserved-e-right-unshadowed.json": {
+      "bytes": 464,
+      "sha256": "7cd2aa45031c3883374492d2a72a929990a261f02347048e4c740628f2fa36d0"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-e/reference/reserved-e-right-unshadowed.png": {
+      "bytes": 41477,
+      "sha256": "940615be848a2016d64a5301802f351e852354ec98e6300fe9b17ff1c23b1c03"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-f/comparison-reserved-f.png": {
+      "bytes": 70835,
+      "sha256": "ac4a565717a11eecaf8ea548d8919ffba1625741f4f676c4aec6c294ee1dde0c"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-f/images/reserved-f-front-S3.png": {
+      "bytes": 26266,
+      "sha256": "e4ea70cc48c683729eb350eb1a3d88e23b52e0e2f8681488c80a81b2fdf01946"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-f/images/reserved-f-front-S4.png": {
+      "bytes": 29136,
+      "sha256": "471be7dd2803cbf9740e983f8f5128e1bca9d018b58a4963bfbebd345c5f0fb8"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-f/images/reserved-f-front-all-edges.png": {
+      "bytes": 30019,
+      "sha256": "3396cc4c2ca3e12b56d6222d2e4014f32566f48446f99f06c17fb5d955b13c34"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-f/images/reserved-f-front-control.png": {
+      "bytes": 26099,
+      "sha256": "4e223ce48c0ad34c15682a345b10eac1aa2ee51aa8a7984022c3f8af6c3b1f26"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-f/images/reserved-f-front-masses.png": {
+      "bytes": 13798,
+      "sha256": "385dfd25b739a155cc787b1bed6c101e84013673cb848cd50e6ef9361de966c0"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-f/images/reserved-f-front-structure.png": {
+      "bytes": 8732,
+      "sha256": "40e4af21bb6b13692a3ef22cb51198420a7a9a9cfac1d443ac5eb4cec6a54375"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-f/images/reserved-f-left-S3.png": {
+      "bytes": 24786,
+      "sha256": "a18d92cafbad5661c3fbb8b68e1ada751cc31bfd0469e7fc0d477eac599dd0a4"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-f/images/reserved-f-left-S4.png": {
+      "bytes": 27705,
+      "sha256": "9f75ff21cc6db4a954dd5756c65b4d26c050c8a181d0acd3eb6905fa9069ad95"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-f/images/reserved-f-left-all-edges.png": {
+      "bytes": 28776,
+      "sha256": "8a1b9217389a77b483f49b6b6f0a70d45c0e8247be41312c2eab49ef3f2aea8e"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-f/images/reserved-f-left-control.png": {
+      "bytes": 25694,
+      "sha256": "b9711f581318530b762d6f5f9906052fe5b79b409cffa659342728a9431fe42c"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-f/images/reserved-f-left-masses.png": {
+      "bytes": 11876,
+      "sha256": "381ddbe8bc3a3df80919144bc28f688f895757672f4b26aef3c62b2ddce0b8c9"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-f/images/reserved-f-left-structure.png": {
+      "bytes": 8732,
+      "sha256": "40e4af21bb6b13692a3ef22cb51198420a7a9a9cfac1d443ac5eb4cec6a54375"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-f/images/reserved-f-right-S3.png": {
+      "bytes": 24955,
+      "sha256": "7813c78d5e29f39ac79407c491043bb29506aa33e805021e5e52b7f43b04386e"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-f/images/reserved-f-right-S4.png": {
+      "bytes": 27748,
+      "sha256": "36c3ed2442eacfdbf9174d783b1b40cdd1091674cd9661e90b10bc6157d6dc42"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-f/images/reserved-f-right-all-edges.png": {
+      "bytes": 28760,
+      "sha256": "606a8f18d458524d66387619a5446297a0d734101697340b246616ba1a6acefb"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-f/images/reserved-f-right-control.png": {
+      "bytes": 26101,
+      "sha256": "2cb81d8269f17e70825e24b7ff7027c06c0d5527864ee32886db32b5162ec90e"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-f/images/reserved-f-right-masses.png": {
+      "bytes": 11993,
+      "sha256": "a095fe3e51c55d78fad41b7ef76e74eee1c77201b8d8a63c77dea3c381325325"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-f/images/reserved-f-right-structure.png": {
+      "bytes": 8732,
+      "sha256": "40e4af21bb6b13692a3ef22cb51198420a7a9a9cfac1d443ac5eb4cec6a54375"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-f/reference/calibration-0.25.png": {
+      "bytes": 2921,
+      "sha256": "809fdf9f11aac95ef21638557b5b4c9e328055ab4faae8926663bd7a04201fe7"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-f/reference/calibration-0.65.png": {
+      "bytes": 2921,
+      "sha256": "0ed19bb3de8c46e288a3ae06d6723b06c702338278957b75b7e817f559112f90"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-f/reference/calibration-1.0.png": {
+      "bytes": 2921,
+      "sha256": "a2253a479dfabdabdc191789e50fca12a48928387a5d0b54e8998fe88f3b63d7"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-f/reference/reserved-f-front-shadow.json": {
+      "bytes": 463,
+      "sha256": "f560026577273f052b54e38c60e5f70db7b7a58c5d1ffeaffdb2d26bef624a3d"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-f/reference/reserved-f-front-shadow.png": {
+      "bytes": 48672,
+      "sha256": "fe6eb78f6299402a6514a871b238496d99fe788001a52a69810073d51024f81b"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-f/reference/reserved-f-front-unshadowed.json": {
+      "bytes": 464,
+      "sha256": "13a5e845abfb7399980bff1db3e876e1ed5b6a06230786a3ab52e10cb50f8609"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-f/reference/reserved-f-front-unshadowed.png": {
+      "bytes": 48489,
+      "sha256": "6aa5a4317f0e45c680d3f1826f61a5e4f9fcb5627bbb7604fe44cfea3a429c1d"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-f/reference/reserved-f-left-shadow.json": {
+      "bytes": 462,
+      "sha256": "c688bb937d0a3f9a25d0fc72b6ae6aaea0208aaa8603a3384d7d1e6bbb674070"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-f/reference/reserved-f-left-shadow.png": {
+      "bytes": 45907,
+      "sha256": "a75b07dd6a53d01c01b9dfb56e2358ef94f809905728616d4c6054421b2b260e"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-f/reference/reserved-f-left-unshadowed.json": {
+      "bytes": 463,
+      "sha256": "5f90b51fe02627dbd9ce376bb4c63d08ee1ef72e4657f47f26fac55d28c4419f"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-f/reference/reserved-f-left-unshadowed.png": {
+      "bytes": 47104,
+      "sha256": "53b32fc952de0d2516e35e16a7736a5c41e683cfef2fc048907787fcf32ee273"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-f/reference/reserved-f-right-shadow.json": {
+      "bytes": 463,
+      "sha256": "0a3e8bd65c75fb30640c8b08510c475819788cdc36f2df1739fe2f5a7af2fdb0"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-f/reference/reserved-f-right-shadow.png": {
+      "bytes": 45716,
+      "sha256": "7a469f87c8a4d983e7e90f8e5b94c89dc749b76e3826a2f0b284d3b5cb03b198"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-f/reference/reserved-f-right-unshadowed.json": {
+      "bytes": 464,
+      "sha256": "b08e641e24e784462c5c5cc96492360938c59f9adb1ab2f06f679173f746349c"
+    },
+    "research/sketch/evidence/raw/39008089816/assets/reserved-f/reference/reserved-f-right-unshadowed.png": {
+      "bytes": 46953,
+      "sha256": "619b024ff10666833d5cff3b1f95f0d323a14708fe89d157732c9391b8e11768"
+    }
+  },
+  "humanObservers": 0,
+  "run": "39008089816",
+  "sourceHead": "3406593e84219571899a408ca69fd0abdafc5a34"
+}

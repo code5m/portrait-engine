@@ -1,8 +1,8 @@
 {
   "archiveTransport": "Git repository full-resolution PNG evidence; not an Actions ZIP",
   "artStatus": "ART_UNVERIFIED",
-  "ciCommit": "f6f2d7eb2ca9d84534c6ddc3f50c0ccffe5b3de4",
-  "ciRun": "38866567327",
+  "ciCommit": "bf8db524f0fc9b33008bcfb1ded1f2046877b56d",
+  "ciRun": "39008089816",
   "counts": {
     "cssFrames": 36,
     "identities": 6,
@@ -433,17 +433,17 @@
   ],
   "parentSourceDigest": "d9a1cb98657b19855ddb6c2328cda3c270730fe5ce6c05173d6be9bcbb227e85",
   "rawReports": [
-    "research/sketch/evidence/raw/38866567327/S4-head-a.json",
-    "research/sketch/evidence/raw/38866567327/S4-head-b.json",
-    "research/sketch/evidence/raw/38866567327/S4-head-c.json",
-    "research/sketch/evidence/raw/38866567327/S4-reserved-d.json",
-    "research/sketch/evidence/raw/38866567327/S4-reserved-e.json",
-    "research/sketch/evidence/raw/38866567327/S4-reserved-f.json"
+    "research/sketch/evidence/raw/39008089816/S4-head-a.json",
+    "research/sketch/evidence/raw/39008089816/S4-head-b.json",
+    "research/sketch/evidence/raw/39008089816/S4-head-c.json",
+    "research/sketch/evidence/raw/39008089816/S4-reserved-d.json",
+    "research/sketch/evidence/raw/39008089816/S4-reserved-e.json",
+    "research/sketch/evidence/raw/39008089816/S4-reserved-f.json"
   ],
   "schemaVersion": 1,
   "sourceDigest": "85cc67a2d0e53a8c46bfb63ebbed2016596f6a73d60c798eafa317b639e2073f",
-  "sourceHeadCommit": "6ad104b13107606a109e46c786d52566549fd3c4",
+  "sourceHeadCommit": "3406593e84219571899a408ca69fd0abdafc5a34",
   "stage": "S4",
   "status": "TECHNICAL_STUDY_COMPLETE",
-  "uiEvidence": "research/sketch/evidence/raw/38866567327/UI-result.json"
+  "uiEvidence": "research/sketch/evidence/raw/39008089816/UI-result.json"
 }
