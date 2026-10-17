@@ -55,7 +55,87 @@ async function validation(){
  for(const r of v.human.reviews){const entry=document.createElement('p');entry.className='small';entry.textContent=(r.reviewerLabel||'评审者')+' / '+(statuses[r.verdict.toUpperCase()]||r.verdict)+' / '+(r.note||'')+' / '+(viewNames[r.viewMode]||r.viewMode);history.append(entry);}
  const img=$('#reference');if(['PASS','FAIL'].includes(machine)){img.src='/api/v1/renders/'+state.renderId+'/reference.png';img.hidden=false;$('#reference-empty').hidden=true;}else{img.hidden=true;img.removeAttribute('src');$('#reference-empty').hidden=false;}
 }
-async function stages(){const data=await api('stages');$('#stage-grid').replaceChildren();for(const s of data.stages){const card=document.createElement('article'),head=document.createElement('h3'),p=document.createElement('p'),report=document.createElement('div');head.textContent=s.id+' / '+s.title;p.textContent=(statuses[s.status]||s.status)+' · 艺术质量未验证';report.className='hash';report.textContent=s.report||'无阶段结果';card.append(head,p,report);$('#stage-grid').append(card);}}
+
+let activeStage=null;
+const stageScores={structure:'头部结构',volume:'体积明暗',eyes:'五官',identity:'身份一致性',realism:'真实感'};
+const stageText=(tag,value,cls)=>{const n=document.createElement(tag);n.textContent=String(value);if(cls)n.className=cls;return n;};
+function stageScene(){
+ if(!activeStage)return;
+ const scene=activeStage.scenes.find(x=>x.id===$('#stage-scene').value);
+ if(!scene)return;
+ const gallery=$('#stage-gallery');gallery.replaceChildren();
+ for(const img of scene.images){
+  const figure=document.createElement('figure'),photo=document.createElement('img'),caption=document.createElement('figcaption');
+  photo.src=img.url;photo.alt=scene.id+' / '+img.label;photo.loading='lazy';caption.textContent=img.label;
+  figure.append(photo,caption);gallery.append(figure);
+ }
+ if(!scene.images.length)gallery.append(stageText('p','此阶段没有完整归档的原始 PNG。可查看数值与 CI，但视觉验收须等原始图补齐。','warning'));
+ $('#stage-metrics').replaceChildren();
+ for(const [key,value] of Object.entries(scene.metrics||{})){
+  if(typeof value!=='number' && typeof value!=='string')continue;
+  const box=stageText('div','', 'metric');box.append(stageText('b',value),stageText('small',key));$('#stage-metrics').append(box);
+ }
+ $('#stage-submit').disabled=!scene.images.length;
+ $('#stage-receipt').textContent='';
+ $('#stage-confirmed').checked=false;
+}
+async function openStage(stage){
+ const result=await api('stage-results/'+stage);
+ activeStage=result;$('#stage-detail').hidden=false;
+ text('#stage-title',result.id+' · '+result.title);
+ text('#stage-provenance','证据 SHA-256: '+result.revision+' / 源：'+(result.sourceDigest||'未提供'));
+ text('#stage-availability',result.imageAvailability+'；测量记录 '+result.count+' 项，展示原始图片 '+result.archivedImageCount+' 张。');
+ const badges=$('#stage-summary-badges');badges.replaceChildren();
+ badges.append(stageText('span','工程：'+(statuses[result.status]||result.status),'badge pass'),
+               stageText('span','艺术：未认证','badge'));
+ const links=$('#stage-links');links.replaceChildren();
+ for(const [name,url] of [['研究报告',result.reportUrl],['原始 CI',result.ciUrl]]){
+  if(!url)continue;
+  const a=stageText('a',name);a.href=url;a.target='_blank';a.rel='noopener noreferrer';links.append(a);
+ }
+ populate($('#stage-scene'),result.scenes,x=>x.id+' · '+(statuses[x.status]||x.status)+' · '+x.images.length+' 张图');
+ $('#stage-limits').replaceChildren();
+ for(const limit of result.limitations||[])$('#stage-limits').append(stageText('li',limit));
+ $('#stage-review-history').replaceChildren();
+ for(const review of result.reviews||[]){
+  const entry=stageText('p',(review.createdAt||'')+' / '+review.sceneId+' / '+(review.reviewerLabel||'评审者')+' / '+(statuses[review.verdict?.toUpperCase()]||review.verdict)+' / '+(review.note||''),'small');
+  $('#stage-review-history').append(entry);
+ }
+ stageScene();
+ $('#stage-detail').scrollIntoView({block:'start',behavior:'smooth'});
+}
+async function stages(){
+ const data=await api('stage-results');$('#stage-grid').replaceChildren();
+ for(const s of data.stages){
+  const card=document.createElement('article'),head=stageText('h3',s.id+' / '+s.title);
+  card.append(head,stageText('p','技术：'+(statuses[s.status]||s.status)+' · 艺术：未验证'),
+              stageText('p','场景记录：'+s.count+' · '+(s.imagesArchived?'有归档图像':'原图未完整归档'),'small'));
+  const button=stageText('button','查看证据与审核','primary');
+  button.onclick=()=>openStage(s.id).catch(e=>toast(e.message,true));card.append(button);
+  $('#stage-grid').append(card);
+ }
+}
+$('#stage-scene').onchange=stageScene;
+for(const [key,title] of Object.entries(stageScores)){
+ const label=stageText('label',title);const select=document.createElement('select');select.id='stage-score-'+key;
+ for(let i=0;i<=5;i++){const option=document.createElement('option');option.value=i||'';option.textContent=i||'—';select.append(option);}
+ $('#stage-ratings').append(label,select);
+}
+$('#stage-submit').onclick=async()=>{
+ try{
+  if(!activeStage)throw Error('请先选择阶段');
+  const scores=Object.fromEntries(Object.keys(stageScores).map(k=>[k,+$('#stage-score-'+k).value]));
+  if(Object.values(scores).some(v=>v<1)||!$('#stage-verdict').value||!$('#stage-confirmed').checked)
+   throw Error('请实际查看图像并完成五项评分、结论和人工确认');
+  const scene=activeStage.scenes.find(x=>x.id===$('#stage-scene').value);
+  if(!scene||!scene.images.length)throw Error('缺少原始图像，不能进行视觉验收');
+  const saved=await api('stage-reviews',{stage:activeStage.id,sceneId:scene.id,revision:activeStage.revision,
+   verdict:$('#stage-verdict').value,scores,note:$('#stage-note').value,humanConfirmed:true});
+  await openStage(activeStage.id);$('#stage-scene').value=scene.id;stageScene();
+  text('#stage-receipt','已保存人工意见 '+saved.id+'；并未签发艺术通过证书。');
+ }catch(e){toast(e.message,true);}
+};
+
 async function history(){const [r,j]=await Promise.all([api('renders'),api('jobs')]);$('#history').replaceChildren();for(const row of r.renders){const b=document.createElement('button');b.className='quiet';b.textContent=(row.stage||'S2')+' / '+row.id.slice(-12)+' / '+row.weights.map(x=>x.toFixed(1)).join(' ');b.onclick=()=>{tab('lab');loadRender(row.id).catch(e=>toast(e.message,true));};$('#history').append(b);}text('#jobs',j.jobs.map(x=>x.id.slice(0,8)+'  '+(operations[x.operation]||x.operation)+'  '+({succeeded:'完成',failed:'失败',running:'执行中',queued:'排队'}[x.status]||x.status)+(x.error?'\n'+x.error:'')).join('\n'));}
 function tab(name){for(const t of ['lab','stages','history'])$('#tab-'+t).hidden=t!==name;for(const b of document.querySelectorAll('[data-tab]'))b.classList.toggle('active',b.dataset.tab===name);if(name==='stages')stages().catch(e=>toast(e.message,true));if(name==='history')history().catch(e=>toast(e.message,true));}
 async function ready(){const data=await api('catalog');state.catalog=data;populate(pipeline,data.stages,stage=>stageNames[stage]||stage);populate($('#light'),data.lights,item=>({left:'左侧光',front:'正面光',right:'右侧光'}[item.id]||item.id));configureInputs();text('#status','已就绪。选择研究阶段、人物和光照。首次计算需要等待；真人评价延期不会阻止生成与机器验证。');}
