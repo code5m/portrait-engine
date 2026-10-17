@@ -10,9 +10,38 @@ from urllib.parse import urlsplit,unquote
 from model import ROOT,CACHE,CONFIG,HeadModel,prepare,source_digest,canonical,sha,save_json
 from surface_registry import catalog as surface_catalog,validate_payload as validate_surface_payload
 from stage_archive import stage_result,image_data,validate_stage_review
-STATIC={'/':'index.html','/app.mjs':'app.mjs','/style.css':'style.css','/renderer.mjs':'renderer.mjs',
-        '/study_renderer.mjs':'study_renderer.mjs','/surface_renderer.mjs':'surface_renderer.mjs',
-        '/pipeline_renderer.mjs':'pipeline_renderer.mjs','/api-guide':'api.html'}
+# One origin: / shows the original CSS portrait; /workbench/ hosts the
+# authenticated research and evidence lab. API endpoints remain /api/v1/.
+STATIC={
+    '/workbench':'index.html','/workbench/':'index.html',
+    '/workbench/app.mjs':'app.mjs','/workbench/style.css':'style.css',
+    '/workbench/renderer.mjs':'renderer.mjs',
+    '/workbench/study_renderer.mjs':'study_renderer.mjs',
+    '/workbench/surface_renderer.mjs':'surface_renderer.mjs',
+    '/workbench/pipeline_renderer.mjs':'pipeline_renderer.mjs',
+    '/workbench/api-guide':'api.html',
+    '/api-guide':'api.html'
+}
+ROOT_STATIC_DIRS=('src','styles','study')
+ROOT_STATIC_FILES=frozenset(('index.html','standalone.html'))
+ROOT_MIME={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8',
+           '.mjs':'text/javascript; charset=utf-8','.js':'text/javascript; charset=utf-8',
+           '.json':'application/json; charset=utf-8',
+           '.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp'}
+
+def portrait_static(path):
+    """Allowlist public portrait UI assets, never .git, research evidence or data."""
+    relative=path.lstrip('/')
+    parts=relative.split('/')
+    if relative not in ROOT_STATIC_FILES and not (
+        len(parts)>1 and parts[0] in ROOT_STATIC_DIRS
+    ):return None
+    file=(ROOT/relative).resolve()
+    if not file.is_relative_to(ROOT.resolve()) or not file.is_file():return None
+    kind=ROOT_MIME.get(file.suffix.lower())
+    if not kind:return None
+    return file,kind
+
 ID=re.compile(r'^[a-z0-9-]{1,80}$');MAX_BODY=32768
 DIMS=['structure','volume','eyes','identity','realism']
 STAGES=('S2','S3','S4','S5','S6')
@@ -231,8 +260,13 @@ class Handler(BaseHTTPRequestHandler):
         try:
             self.headers_ok();p=self.endpoint()
             if p in STATIC:
-                path=ROOT/'workbench'/STATIC[p];kind='text/css; charset=utf-8' if p.endswith('.css') else ('text/javascript; charset=utf-8' if p.endswith('.mjs') else 'text/html; charset=utf-8')
+                path=ROOT/'workbench'/STATIC[p]
+                kind=ROOT_MIME[path.suffix.lower()]
                 return self.send(200,path.read_bytes(),kind)
+            original=portrait_static('/index.html' if p=='/' else p)
+            if original:
+                file,kind=original
+                return self.send(200,file.read_bytes(),kind)
             if p=='/api/v1/health':return self.send(200,{'apiVersion':'1','requiresLogin':True,'remote':self.server.remote,'accessTokenRequired':bool(TOKEN),'artStatus':'ART_UNVERIFIED','modelReady':(CACHE/'source-verification.json').exists(),'blenderAvailable':bool(os.getenv('PORTRAIT_BLENDER') or shutil.which('blender'))})
             if p=='/api/v1/openapi':return self.send(200,openapi_schema())
             s=self.session()
@@ -349,7 +383,7 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('--host',default='127.0.0.1');parser.add_argument('--port',default=4186,type=int);args=parser.parse_args()
+    parser=argparse.ArgumentParser();parser.add_argument('--host',default='127.0.0.1');parser.add_argument('--port',default=4173,type=int);args=parser.parse_args()
     remote=args.host not in ('127.0.0.1','localhost','::1')
     if remote and len(TOKEN)<32:raise SystemExit('Non-loopback binding requires PORTRAIT_TOKEN with at least 32 characters. Use a TLS proxy for sharing.')
     initialize();threading.Thread(target=worker,daemon=True).start()
@@ -361,7 +395,7 @@ def main():
         u=urlsplit(public)
         if u.scheme!='https' or not u.netloc or u.path not in ('','/'):raise SystemExit('Public origin must be an https origin')
         server.allowed_hosts.add(u.netloc);server.allowed_origins.add(public.rstrip('/'))
-    print('PORTRAIT_WORKBENCH http://'+args.host+':'+str(args.port),flush=True)
+    print('PORTRAIT_STUDIO http://'+args.host+':'+str(args.port)+'/ (research: /workbench/)',flush=True)
     try:server.serve_forever()
     finally:server.server_close()
 if __name__=='__main__':main()
