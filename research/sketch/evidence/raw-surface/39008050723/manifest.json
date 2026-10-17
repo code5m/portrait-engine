@@ -1,0 +1,10 @@
+{
+  "files": {
+    "research/sketch/evidence/raw-surface/39008050723/result.json": {
+      "bytes": 2606,
+      "sha256": "84573ab4d7352a311e8836db0d8136e962fa667aa11bb9d508b7bd42c22f7e30"
+    }
+  },
+  "run": "39008050723",
+  "sourceHead": "a1c0cf4af089817a9be4969d8627755972b8ce57"
+}
