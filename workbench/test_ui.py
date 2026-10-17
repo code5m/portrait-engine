@@ -39,7 +39,28 @@ def run():
                 if os.getenv('PORTRAIT_CHROMIUM'):opts['executable_path']=os.environ['PORTRAIT_CHROMIUM']
                 b=p.chromium.launch(**opts);page=b.new_page(viewport={'width':1440,'height':1080});errors=[]
                 page.on('pageerror',lambda e:errors.append(str(e)))
-                response=page.goto('http://127.0.0.1:4196/')
+                # One server provides the original portrait and the authenticated lab.
+                landing=b.new_page()
+                landing.goto('http://127.0.0.1:4196/')
+                expect(landing.locator('#portrait')).to_be_visible()
+                expect(landing.locator('.lab-entry')).to_have_attribute('href','/workbench/')
+                landing.click('.lab-entry')
+                expect(landing.locator('#login')).to_be_visible()
+                expect(landing.locator('#stage-grid')).to_be_attached()
+                # Modal login blocks the sidebar: before authenticating,
+                # navigate using the visible link INSIDE the dialog.
+                expect(landing.locator('.login-back-link')).to_be_visible()
+                landing.click('.login-back-link')
+                expect(landing.locator('#portrait')).to_be_visible()
+                # After login the sidebar return link must also work.
+                landing.click('.lab-entry')
+                landing.fill('#reviewer-name','AUTOMATED_NAVIGATION_ONLY')
+                landing.click('#login-form button')
+                expect(landing.locator('#login')).not_to_be_visible()
+                landing.click('.site-back-link')
+                expect(landing.locator('#portrait')).to_be_visible()
+                landing.close()
+                response=page.goto('http://127.0.0.1:4196/workbench/')
                 policy=response.headers.get('content-security-policy','')
                 assert "script-src 'self'" in policy and 'unsafe-eval' not in policy,'Do not weaken production CSP to make E2E pass'
                 page.fill('#reviewer-name','AUTOMATED_TEST_NOT_A_HUMAN');page.click('#login-form button')

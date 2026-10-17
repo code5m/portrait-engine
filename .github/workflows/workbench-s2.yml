@@ -41,6 +41,7 @@ jobs:
       - name: Synthetic mathematics, exact cache and API security tests (not human ratings)
         run: |
           python -m unittest discover -s workbench -p test_contract.py -v
+          python -m unittest discover -s workbench -p test_unified_routes.py -v
           python workbench/test_s2_cache.py
       - name: Verify pinned MIT model and six non-affine identities
         run: python workbench/model.py

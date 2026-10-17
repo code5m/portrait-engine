@@ -1,10 +1,10 @@
-<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Portrait API / S2-S4</title><body><main style="max-width:900px;margin:40px auto;font:16px/1.8 system-ui;padding:20px"><h1>素描工作台 API</h1><p><a href="/">返回工作台</a> · <a href="/api/v1/openapi">读取 OpenAPI 3.1</a></p><p>默认运行在本机4186端口。先建立会话，再执行模型准备、样本生成和独立验证。生成、机器结果与人工评价分别保存；不能通过接口把自己标成独立真人或伪造 ART_PASS。</p><h2>1. 建立会话</h2><pre>POST /api/v1/session
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Portrait API / S2-S6</title><body><main style="max-width:900px;margin:40px auto;font:16px/1.8 system-ui;padding:20px"><h1>素描工作台 API</h1><p><a href="/workbench/">返回研究工作台</a> · <a href="/api/v1/openapi">读取 OpenAPI 3.1</a></p><p>默认与肖像主页共用本机4173端口（/workbench/）。先建立会话，再执行模型准备、样本生成和独立验证。生成、机器结果与人工评价分别保存；不能通过接口把自己标成独立真人或伪造 ART_PASS。</p><h2>1. 建立会话</h2><pre>POST /api/v1/session
 {"name":"我的评审称呼"}</pre><p>共享服务需要附带管理员配置的访问口令。返回 HttpOnly 会话Cookie和csrf。后续浏览器写操作附加X-CSRF-Token；程序也可使用已配置的Bearer令牌。</p><h2>2. 排队执行任务</h2><pre>POST /api/v1/jobs
 {"operation":"prepare","payload":{}}
 
 {"operation":"render","payload":{"stage":"S4","identity":"head-a","light":"left"}}
 
-{"operation":"verify","payload":{"renderId":"实际返回的id"}}</pre><p>stage可选S2/S3/S4，缺省S2。也可以将identity替换为六个[-1.5,1.5]的weights。灯位left/front/right。只接受这些操作，不支持任意系统命令、外部URL或路径。</p><h2>3. 获取结果</h2><pre>GET /api/v1/jobs/{id}
+{"operation":"verify","payload":{"renderId":"实际返回的id"}}</pre><p>stage可选S2/S3/S4/S5/S6，缺省S2。也可以将identity替换为六个[-1.5,1.5]的weights。灯位left/front/right。只接受这些操作，不支持任意系统命令、外部URL或路径。</p><h2>3. 获取结果</h2><pre>GET /api/v1/jobs/{id}
 GET /api/v1/renders/{id}
 GET /api/v1/renders/{id}/validation
 GET /api/v1/renders/{id}/download.html</pre><p>几何首次编译需等待，任务出错会明确返回失败。三灰阶和边缘对照用于研究，不代表艺术质量通过。</p><h2>4. 人工意见</h2><p>POST /api/v1/reviews需要renderId、sourceDigest、contentHash、五项scores、verdict和humanConfirmed。viewMode有tone/structure，S3/S4还有masses，S4还有edges-control。评价与具体版本、阶段、观察方式绑定；对照的接受不等于候选接受。坐标标注与意见可从/api/v1/export导出。</p><p>所有真人身份与独立性均未经系统认证。当前研究状态以阶段档案为准。</p></main></body></html>

@@ -9,9 +9,55 @@ from pathlib import Path
 from urllib.parse import urlsplit,unquote
 from model import ROOT,CACHE,CONFIG,HeadModel,prepare,source_digest,canonical,sha,save_json
 from surface_registry import catalog as surface_catalog,validate_payload as validate_surface_payload
-STATIC={'/':'index.html','/app.mjs':'app.mjs','/style.css':'style.css','/renderer.mjs':'renderer.mjs',
-        '/study_renderer.mjs':'study_renderer.mjs','/surface_renderer.mjs':'surface_renderer.mjs',
-        '/pipeline_renderer.mjs':'pipeline_renderer.mjs','/api-guide':'api.html'}
+from stage_archive import stage_result,image_data,validate_stage_review
+# One origin: / shows the original CSS portrait; /workbench/ hosts the
+# authenticated research and evidence lab. API endpoints remain /api/v1/.
+STATIC={
+    '/workbench':'index.html','/workbench/':'index.html',
+    '/workbench/app.mjs':'app.mjs','/workbench/style.css':'style.css',
+    '/workbench/renderer.mjs':'renderer.mjs',
+    '/workbench/study_renderer.mjs':'study_renderer.mjs',
+    '/workbench/surface_renderer.mjs':'surface_renderer.mjs',
+    '/workbench/pipeline_renderer.mjs':'pipeline_renderer.mjs',
+    '/workbench/api-guide':'api.html',
+    '/api-guide':'api.html'
+}
+ROOT_STATIC_DIRS=('src','styles','study')
+ROOT_STATIC_FILES=frozenset(('index.html','standalone.html'))
+ROOT_MIME={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8',
+           '.mjs':'text/javascript; charset=utf-8','.js':'text/javascript; charset=utf-8',
+           '.json':'application/json; charset=utf-8',
+           '.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp'}
+
+def portrait_static(path):
+    """Allowlist public portrait UI assets, never .git, research evidence or data."""
+    relative=path.lstrip('/')
+    parts=relative.split('/')
+    if relative not in ROOT_STATIC_FILES and not (
+        len(parts)>1 and parts[0] in ROOT_STATIC_DIRS
+    ):return None
+    file=(ROOT/relative).resolve()
+    if not file.is_relative_to(ROOT.resolve()) or not file.is_file():return None
+    kind=ROOT_MIME.get(file.suffix.lower())
+    if not kind:return None
+    return file,kind
+
+def studio_home():
+    """Non-destructive navigation: frozen original HTML and standalone stay byte-identical."""
+    document=(ROOT/'index.html').read_text(encoding='utf8')
+    slot='<div class="topbar-right">'
+    if document.count(slot)!=1:raise RuntimeError('Original portrait navigation anchor changed')
+    link='<a class="lab-entry" href="/workbench/" aria-label="进入研究实验室和阶段审核">研究实验室 · 阶段审核 ↗</a>'
+    css='''<style>
+    .lab-entry{color:#e4c69e;border:1px solid #6b6a56;padding:8px 12px;border-radius:5px;
+      font-size:11px;font-weight:600;white-space:nowrap;text-decoration:none}
+    .lab-entry:hover{background:#343a32;border-color:#c0a27c}
+    .lab-entry:focus-visible{outline:2px solid #d8a878;outline-offset:3px}
+    @media(max-width:800px){.topbar-right{gap:8px}.lab-entry{font-size:11px}}
+    @media(max-width:520px){.lab-entry{font-size:10px;padding:7px;white-space:normal;max-width:128px;text-align:center}}
+    </style>'''
+    return document.replace(slot,slot+link,1).replace('</head>',css+'</head>',1)
+
 ID=re.compile(r'^[a-z0-9-]{1,80}$');MAX_BODY=32768
 DIMS=['structure','volume','eyes','identity','realism']
 STAGES=('S2','S3','S4','S5','S6')
@@ -39,6 +85,7 @@ def initialize():
         c.executescript('''PRAGMA journal_mode=WAL;
         CREATE TABLE IF NOT EXISTS jobs(id TEXT PRIMARY KEY,operation TEXT,payload TEXT,status TEXT,result TEXT,error TEXT,created REAL);
         CREATE TABLE IF NOT EXISTS reviews(id TEXT PRIMARY KEY,reviewer TEXT,render_id TEXT,source_digest TEXT,content_hash TEXT,payload TEXT,created REAL);
+         CREATE TABLE IF NOT EXISTS stage_reviews(id TEXT PRIMARY KEY,reviewer TEXT,stage TEXT,scene_id TEXT,revision TEXT,payload TEXT,created REAL);
         CREATE TABLE IF NOT EXISTS events(id INTEGER PRIMARY KEY,kind TEXT,payload,created REAL);
         ''')
         c.execute("UPDATE jobs SET status='failed',error='Server restarted; retry explicitly' WHERE status IN ('queued','running')")
@@ -229,13 +276,32 @@ class Handler(BaseHTTPRequestHandler):
         try:
             self.headers_ok();p=self.endpoint()
             if p in STATIC:
-                path=ROOT/'workbench'/STATIC[p];kind='text/css; charset=utf-8' if p.endswith('.css') else ('text/javascript; charset=utf-8' if p.endswith('.mjs') else 'text/html; charset=utf-8')
+                path=ROOT/'workbench'/STATIC[p]
+                kind=ROOT_MIME[path.suffix.lower()]
                 return self.send(200,path.read_bytes(),kind)
+            if p in ('/','/index.html'):
+                return self.send(200,studio_home(),'text/html; charset=utf-8')
+            original=portrait_static(p)
+            if original:
+                file,kind=original
+                return self.send(200,file.read_bytes(),kind)
             if p=='/api/v1/health':return self.send(200,{'apiVersion':'1','requiresLogin':True,'remote':self.server.remote,'accessTokenRequired':bool(TOKEN),'artStatus':'ART_UNVERIFIED','modelReady':(CACHE/'source-verification.json').exists(),'blenderAvailable':bool(os.getenv('PORTRAIT_BLENDER') or shutil.which('blender'))})
             if p=='/api/v1/openapi':return self.send(200,openapi_schema())
             s=self.session()
             if p=='/api/v1/catalog':return self.send(200,{'identities':CONFIG['identities'],'lights':CONFIG['lights'],'sourceDigest':source_digest(),'thresholds':CONFIG['thresholds'],'stages':list(STAGES),'surface':surface_catalog(),'session':{'name':s['name']}})
             if p=='/api/v1/stages':return self.send(200,json_file(ROOT/'research/sketch/stages.json'))
+            if p=='/api/v1/stage-results':
+                return self.send(200,{'stages':[stage_result('S'+str(i),False) for i in range(7)]})
+            if p.startswith('/api/v1/stage-results/'):
+                parts=p.split('/')
+                if len(parts)==5:
+                    result=stage_result(parts[4])
+                    with db() as c:rows=c.execute('SELECT payload FROM stage_reviews WHERE stage=? ORDER BY created DESC',(parts[4],)).fetchall()
+                    result['reviews']=[json.loads(x['payload']) for x in rows]
+                    return self.send(200,result)
+                if len(parts)==8 and parts[5]=='images':
+                    return self.send(200,image_data(parts[4],parts[6],parts[7]),'image/png')
+                raise FileNotFoundError('Stage resource not found')
             if p=='/api/v1/jobs':
                 with db() as c:rows=c.execute('SELECT * FROM jobs ORDER BY created DESC LIMIT 30').fetchall()
                 return self.send(200,{'jobs':[dict(x) for x in rows]})
@@ -311,6 +377,16 @@ class Handler(BaseHTTPRequestHandler):
                     JOBS.put_nowait((ident,op,payload))
                 emit('job-created',{'id':ident,'operation':op})
                 return self.send(202,{'jobId':ident,'status':'queued'})
+            if p=='/api/v1/stage-reviews':
+                record=validate_stage_review(data)
+                ident=secrets.token_hex(12)
+                record.update(id=ident,reviewerSession=s['id'],reviewerLabel=s['name'],
+                              reviewType='AUTOMATED_TEST' if os.getenv('PORTRAIT_TEST_MODE')=='1' else 'OWNER_SELF_REPORTED',
+                              createdAt=time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()))
+                with db() as c:c.execute('INSERT INTO stage_reviews VALUES(?,?,?,?,?,?,?)',
+                    (ident,s['id'],record['stage'],record['sceneId'],record['revision'],canonical(record).decode(),time.time()))
+                emit('stage-review-created',{'id':ident,'stage':record['stage'],'sceneId':record['sceneId']})
+                return self.send(201,{'id':ident,'artStatus':'ART_UNVERIFIED'})
             if p=='/api/v1/reviews':
                 d=read_render(str(data.get('renderId','')));record=review_payload(data,d);ident=secrets.token_hex(12)
                 record.update(id=ident,reviewerSession=s['id'],reviewerLabel=s['name'],createdAt=time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()))
@@ -325,11 +401,17 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('--host',default='127.0.0.1');parser.add_argument('--port',default=4186,type=int);args=parser.parse_args()
+    parser=argparse.ArgumentParser();parser.add_argument('--host',default='127.0.0.1');parser.add_argument('--port',default=4173,type=int);args=parser.parse_args()
     remote=args.host not in ('127.0.0.1','localhost','::1')
     if remote and len(TOKEN)<32:raise SystemExit('Non-loopback binding requires PORTRAIT_TOKEN with at least 32 characters. Use a TLS proxy for sharing.')
     initialize();threading.Thread(target=worker,daemon=True).start()
-    server=ThreadingHTTPServer((args.host,args.port),Handler);server.remote=remote
+    try:
+        server=ThreadingHTTPServer((args.host,args.port),Handler)
+    except OSError as exc:
+        if getattr(exc,'errno',None)==98:
+            raise SystemExit('PORT_IN_USE: 请先停止 4173 上旧的 python http.server，再运行统一的 npm run dev') from exc
+        raise
+    server.remote=remote
     names={'127.0.0.1:'+str(args.port),'localhost:'+str(args.port),args.host+':'+str(args.port)}
     public=os.getenv('PORTRAIT_PUBLIC_ORIGIN')
     server.allowed_origins={'http://'+x for x in names};server.allowed_hosts=names
@@ -337,7 +419,7 @@ def main():
         u=urlsplit(public)
         if u.scheme!='https' or not u.netloc or u.path not in ('','/'):raise SystemExit('Public origin must be an https origin')
         server.allowed_hosts.add(u.netloc);server.allowed_origins.add(public.rstrip('/'))
-    print('PORTRAIT_WORKBENCH http://'+args.host+':'+str(args.port),flush=True)
+    print('PORTRAIT_STUDIO http://'+args.host+':'+str(args.port)+'/ (research: /workbench/)',flush=True)
     try:server.serve_forever()
     finally:server.server_close()
 if __name__=='__main__':main()
