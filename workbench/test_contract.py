@@ -56,6 +56,29 @@ class ApiTests(unittest.TestCase):
     def login(self):
         st,d,h=self.request('POST','/api/v1/session',{'name':'SYNTHETIC_TEST'})
         self.assertEqual(st,200);return {'Cookie':h['Set-Cookie'].split(';')[0],'X-CSRF-Token':d['csrf']}
+    def test_unified_home_workbench_same_origin_and_private_evidence(self):
+        status,home,_=self.request('GET','/')
+        self.assertEqual(status,200)
+        self.assertIn(b'PORTRAIT ENGINE',home)
+        self.assertIn(b'href="/workbench/"',home)
+        self.assertIn(b'src/app.mjs',home)
+        for path,needle in [
+            ('/index.html',b'href="/workbench/"'),
+            ('/src/app.mjs',b'export'),
+            ('/styles/layout.css',b'.topbar'),
+            ('/workbench/',b'id="stage-grid"'),
+            ('/workbench/app.mjs',b'pipeline_renderer.mjs'),
+            ('/workbench/style.css',b'.shell'),
+            ('/workbench/api-guide',b'/api/v1/jobs')]:
+            with self.subTest(path=path):
+                st,body,_=self.request('GET',path)
+                self.assertEqual(st,200)
+                self.assertIn(needle,body)
+        self.assertEqual(self.request('GET','/api/v1/stage-results')[0],403)
+        self.assertEqual(self.request('GET','/research/sketch/evidence/S6.json')[0],404)
+        self.assertEqual(self.request('GET','/data/workbench/state.sqlite3')[0],404)
+        self.assertEqual(self.request('GET','/.git/config')[0],404)
+
     def test_origin_host_and_traversal(self):
         self.assertEqual(self.request('GET','/api/v1/health',headers={'Host':'evil.invalid'})[0],403)
         self.assertEqual(self.request('POST','/api/v1/session',{'name':'x'},headers={'Origin':'https://evil.invalid'})[0],403)
