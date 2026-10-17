@@ -64,7 +64,7 @@ class ApiTests(unittest.TestCase):
         self.assertIn(b'src/app.mjs',home)
         for path,needle in [
             ('/index.html',b'href="/workbench/"'),
-            ('/src/app.mjs',b'export'),
+            ('/src/app.mjs',b'portrait'),
             ('/styles/layout.css',b'.topbar'),
             ('/workbench/',b'id="stage-grid"'),
             ('/workbench/app.mjs',b'pipeline_renderer.mjs'),
