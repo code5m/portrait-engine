@@ -60,6 +60,7 @@ jobs:
           npm run verify
           python -m py_compile workbench/*.py
           python workbench/test_contract.py
+          python workbench/test_unified_routes.py
           python workbench/test_surface.py
   s5:
     name: S5 ${{ matrix.case }}
