@@ -405,7 +405,13 @@ def main():
     remote=args.host not in ('127.0.0.1','localhost','::1')
     if remote and len(TOKEN)<32:raise SystemExit('Non-loopback binding requires PORTRAIT_TOKEN with at least 32 characters. Use a TLS proxy for sharing.')
     initialize();threading.Thread(target=worker,daemon=True).start()
-    server=ThreadingHTTPServer((args.host,args.port),Handler);server.remote=remote
+    try:
+        server=ThreadingHTTPServer((args.host,args.port),Handler)
+    except OSError as exc:
+        if getattr(exc,'errno',None)==98:
+            raise SystemExit('PORT_IN_USE: 请先停止 4173 上旧的 python http.server，再运行统一的 npm run dev') from exc
+        raise
+    server.remote=remote
     names={'127.0.0.1:'+str(args.port),'localhost:'+str(args.port),args.host+':'+str(args.port)}
     public=os.getenv('PORTRAIT_PUBLIC_ORIGIN')
     server.allowed_origins={'http://'+x for x in names};server.allowed_hosts=names
