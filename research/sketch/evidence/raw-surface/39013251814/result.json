@@ -1,0 +1,14 @@
+{
+  "artStatus": "ART_UNVERIFIED",
+  "counts": {
+    "S5": 18,
+    "S6": 45
+  },
+  "failures": [],
+  "humanObservers": 0,
+  "humanReview": "DEFERRED_BY_OWNER",
+  "run": "39013251814",
+  "schemaVersion": 1,
+  "sourceHead": "4c056666719d6d3738f11e244501f8c7bf5acabe",
+  "status": "PASS"
+}
