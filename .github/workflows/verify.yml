@@ -15,5 +15,12 @@ jobs:
           node-version: '22'
       - name: Check syntax, research policy, source contract, and offline build
         run: npm run verify
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install stage evidence verification dependencies
+        run: python -m pip install -q numpy
+      - name: Verify stage archive, image hashes, and human-review safety
+        run: PYTHONPATH=workbench python -m unittest workbench.test_stage_archive -v
       - name: Ensure standalone build matches committed source
         run: git diff --exit-code -- standalone.html study/010-blind-offline.html study/010-results-offline.html
