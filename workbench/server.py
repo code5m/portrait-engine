@@ -58,7 +58,7 @@ def studio_home():
     </style>'''
     return document.replace(slot,slot+link,1).replace('</head>',css+'</head>',1)
 
-ID=re.compile(r'^[a-z0-9-]{1,80};MAX_BODY=32768
+ID=re.compile(r'^[a-z0-9-]{1,80}$');MAX_BODY=32768
 DIMS=['structure','volume','eyes','identity','realism']
 STAGES=('S2','S3','S4','S5','S6')
 TOKEN=os.getenv('PORTRAIT_TOKEN','');MODEL=None;JOBS=queue.Queue(maxsize=8);SESSIONS={};LOCK=threading.RLock()
