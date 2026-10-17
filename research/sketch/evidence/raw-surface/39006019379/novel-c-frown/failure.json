@@ -1,0 +1,10 @@
+{
+  "artStatus": "ART_UNVERIFIED",
+  "caseId": "novel-c-frown",
+  "ciRun": "39006019379",
+  "humanObservers": 0,
+  "reason": "Compiler or reference failed before measurement; inspect original job log",
+  "sourceHeadCommit": "93ea38d33ccc349d8e04927f5948e36dc2ab569e",
+  "stage": "S6",
+  "status": "INCOMPLETE"
+}

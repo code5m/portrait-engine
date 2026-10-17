@@ -1,0 +1,27 @@
+{
+  "artStatus": "ART_UNVERIFIED",
+  "counts": {
+    "S5": 18,
+    "S6": 39
+  },
+  "failures": [
+    {
+      "caseId": "novel-c-neutral",
+      "reason": "KeyError: 'report.json'"
+    },
+    {
+      "caseId": "novel-c-frown",
+      "reason": "KeyError: 'report.json'"
+    },
+    {
+      "caseId": "aggregate",
+      "reason": "Incomplete S6 matrix"
+    }
+  ],
+  "humanObservers": 0,
+  "humanReview": "DEFERRED_BY_OWNER",
+  "run": "39006019379",
+  "schemaVersion": 1,
+  "sourceHead": "93ea38d33ccc349d8e04927f5948e36dc2ab569e",
+  "status": "FAIL"
+}
