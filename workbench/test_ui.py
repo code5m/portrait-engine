@@ -39,7 +39,7 @@ def run():
                 if os.getenv('PORTRAIT_CHROMIUM'):opts['executable_path']=os.environ['PORTRAIT_CHROMIUM']
                 b=p.chromium.launch(**opts);page=b.new_page(viewport={'width':1440,'height':1080});errors=[]
                 page.on('pageerror',lambda e:errors.append(str(e)))
-                response=page.goto('http://127.0.0.1:4196/')
+                response=page.goto('http://127.0.0.1:4196/workbench/')
                 policy=response.headers.get('content-security-policy','')
                 assert "script-src 'self'" in policy and 'unsafe-eval' not in policy,'Do not weaken production CSP to make E2E pass'
                 page.fill('#reviewer-name','AUTOMATED_TEST_NOT_A_HUMAN');page.click('#login-form button')
