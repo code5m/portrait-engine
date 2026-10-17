@@ -47,6 +47,16 @@ def run():
                 landing.click('.lab-entry')
                 expect(landing.locator('#login')).to_be_visible()
                 expect(landing.locator('#stage-grid')).to_be_attached()
+                # Modal login blocks the sidebar: before authenticating,
+                # navigate using the visible link INSIDE the dialog.
+                expect(landing.locator('.login-back-link')).to_be_visible()
+                landing.click('.login-back-link')
+                expect(landing.locator('#portrait')).to_be_visible()
+                # After login the sidebar return link must also work.
+                landing.click('.lab-entry')
+                landing.fill('#reviewer-name','AUTOMATED_NAVIGATION_ONLY')
+                landing.click('#login-form button')
+                expect(landing.locator('#login')).not_to_be_visible()
                 landing.click('.site-back-link')
                 expect(landing.locator('#portrait')).to_be_visible()
                 landing.close()
