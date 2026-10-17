@@ -18,3 +18,5 @@
 @media(max-width:800px){.study-fieldset{grid-column:1/-1}}
 
 .studio-options{display:flex;flex-wrap:wrap;gap:6px}.studio-options button{border:1px solid #424c44;color:#b8c3b9;background:#242c27;border-radius:3px;padding:8px 10px;font-size:11px}.studio-options button.active,.studio-options button[aria-pressed="true"]{border-color:#d6ba91;color:#ffedcf;background:#3e453c}
+
+.lab-entry{color:#e4c69e;border:1px solid #6b6a56;padding:8px 12px;border-radius:5px;font-size:11px;font-weight:600;letter-spacing:.1px;white-space:nowrap}.lab-entry:hover{background:#343a32;border-color:#c0a27c}.lab-entry:focus-visible{outline:2px solid #d8a878;outline-offset:3px}@media(max-width:800px){.topbar-right .lab-entry{font-size:11px;letter-spacing:0;padding:8px}.topbar-right{gap:8px}}@media(max-width:520px){.topbar-right .lab-entry{font-size:10px;padding:7px;white-space:normal;text-align:center;max-width:128px}}
