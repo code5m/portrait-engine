@@ -8,6 +8,22 @@
 <div class="legend" id="legend">注意：结构区域是表面概括，不是骨骼或肌肉解剖模型。</div><div class="actions"><button id="verify" disabled>运行机器验证</button><a id="download" hidden>导出独立 CSS 作品</a></div><p id="hash" class="hash"></p>
 </section><section class="panel machine"><h3>机器验证</h3><p id="machine-summary">没有实际测量前，不显示通过。</p><div id="metrics" class="metrics"></div><p class="footnote">你的评审与机器结果分别保存。任何一项未通过都不会被绿色总分掩盖。</p></section></div>
 <section class="panel review-form"><h3>我来验收</h3><div class="warning">这是你对固定样本的自主评审，不是已认证的多人盲测。</div><div><div id="ratings" class="ratings"></div><label for="verdict">我的结论</label><select id="verdict"><option value="">请选择</option><option value="accept">接受当前阶段样本</option><option value="revise">需要修改</option><option value="reject">不接受</option></select><label for="note">具体问题与意见</label><textarea id="note" maxlength="2000" placeholder="例如：眼窝太黑、鼻部断裂、人物太相似..."></textarea></div><div><label for="pin-note">图上标注</label><input id="pin-note" type="text" maxlength="300" placeholder="输入问题，再点左图位置"><ol id="annotation-list"></ol><label class="check"><input type="checkbox" id="human-confirmed">我已亲自查看当前样本，这是我的实际判断。</label><button id="submit-review" class="primary" disabled>保存评审记录</button><p id="review-receipt" class="small" role="status">记录与样本散列、源码版本绑定。</p></div></section></div></section>
-<section id="tab-stages" hidden><div id="stage-grid" class="stage-grid"></div><p>阶段结论以仓库证据为准；这里不允许通过按钮伪造 COMPLETE。</p></section>
+<section id="tab-stages" hidden>
+<section class="panel"><h3>阶段研究验收中心 · S0–S6</h3><p>按阶段查看机器结论、已归档原始图、独立参考、实验指标和人工意见。技术完成不等于写实质量过关。</p><div id="stage-grid" class="stage-grid"></div></section>
+<section class="panel stage-detail" id="stage-detail" hidden>
+<div class="stage-detail-head"><div><h3 id="stage-title"></h3><p id="stage-provenance" class="hash"></p></div><div id="stage-summary-badges" class="badges"></div></div>
+<p id="stage-availability"></p><div id="stage-links" class="actions"></div>
+<label class="scene-picker">选择实际测试场景<select id="stage-scene"></select></label>
+<div id="stage-gallery" class="stage-gallery"></div>
+<h3>原始机器测量</h3><div id="stage-metrics" class="metrics"></div>
+<details><summary>查看限制与阶段真实性说明</summary><ul id="stage-limits"></ul></details>
+<section class="stage-judgment"><h3>对当前场景进行人工审核</h3><p class="warning">仅记录你实际看到的判断；不会改变机器通过结论，也不会自动认证 ART_PASS。图片缺失时不能提交视觉验收。</p>
+<div id="stage-ratings" class="ratings"></div><label>我的判断<select id="stage-verdict"><option value="">请选择</option><option value="accept">我认为当前场景可接受</option><option value="revise">需要继续修改</option><option value="reject">当前场景不合格</option></select></label>
+<label>观察意见<textarea id="stage-note" maxlength="2000" placeholder="写下具体问题，例如眼窝、发丝、明暗交界线或五官比例..."></textarea></label>
+<label class="check"><input type="checkbox" id="stage-confirmed">我亲自查看了当前归档场景，并确认以上是我的真实意见</label>
+<button id="stage-submit" class="primary">保存本场景审核</button><p id="stage-receipt" role="status" class="small"></p>
+<h3>本阶段已保存的人工意见</h3><div id="stage-review-history"></div></section>
+</section>
+</section>
 <section id="tab-history" hidden><div class="panel"><h3>评审与实验记录</h3><button id="export">导出全部人工评审</button><div id="history"></div><h3>最近任务</h3><pre id="jobs"></pre></div></section>
 </main></div><dialog id="login"><h2>开始你的评审</h2><p>不需要编程。选择样本，运行验证，然后记录你看到的问题。</p><form id="login-form"><label>评审称呼<input id="reviewer-name" maxlength="40" required value="本地评审者"></label><label id="token-label" hidden>访问令牌<input id="access-token" type="password" autocomplete="current-password"></label><button class="primary">进入工作台</button><p id="login-error"></p></form></dialog><div class="toast" id="toast" hidden role="status"></div><script type="module" src="/app.mjs"></script></body></html>
