@@ -1,8 +1,8 @@
 {
   "archiveTransport": "Git repository full-resolution PNG evidence; not an Actions ZIP",
   "artStatus": "ART_UNVERIFIED",
-  "ciCommit": "f6f2d7eb2ca9d84534c6ddc3f50c0ccffe5b3de4",
-  "ciRun": "38866567327",
+  "ciCommit": "48b4b88da413f7f97954683b9e48c33d13724188",
+  "ciRun": "39016221517",
   "counts": {
     "cssFrames": 72,
     "identities": 6,
@@ -35,7 +35,7 @@
         "interiorMAE": 2.6301,
         "silhouetteIoU": 0.987103
       },
-      "referenceHash": "a467c75122563cfda2627835bfbc7acd01c017d72fd1ca232954ab2cb976bc77",
+      "referenceHash": "accba91ee214ff0a6a50adc59c4652c95a96ad529fbcf7fcc5ecf5aefc5e1695",
       "shadowError": 4.67582,
       "shadowPixels": 1493,
       "status": "PASS",
@@ -66,7 +66,7 @@
         "interiorMAE": 2.84949,
         "silhouetteIoU": 0.987161
       },
-      "referenceHash": "4571d22a33defbd980c8984cdb4f8ee3a362c5d99645b5aed1020678fca43ad7",
+      "referenceHash": "6fec254c1465a07f477800bbf5dd5ec318b20a008bbbd987d880637dc27955b6",
       "shadowError": 6.71231,
       "shadowPixels": 1300,
       "status": "PASS",
@@ -97,7 +97,7 @@
         "interiorMAE": 2.61694,
         "silhouetteIoU": 0.987016
       },
-      "referenceHash": "402e9813ab060dec2ab95ea05afafb39fe39b993db941bdec1c064f91a8d03c2",
+      "referenceHash": "5b17428a187b0e748bf5790f916f595e87c96c656b08ebb7e863a89570b634d1",
       "shadowError": 4.56759,
       "shadowPixels": 1487,
       "status": "PASS",
@@ -128,7 +128,7 @@
         "interiorMAE": 2.68662,
         "silhouetteIoU": 0.988117
       },
-      "referenceHash": "bbfa84f6fb6ff5feb4ceb0b2b905320ec72199e332275df8e09a492973cf277e",
+      "referenceHash": "ba88730f4efe5aa913d7a80eff6c7d4d89cb2dcde328a97ba2fb3888eb640a77",
       "shadowError": 4.04094,
       "shadowPixels": 2125,
       "status": "PASS",
@@ -159,7 +159,7 @@
         "interiorMAE": 2.86881,
         "silhouetteIoU": 0.988069
       },
-      "referenceHash": "056521dcc30c4f9b8308d37797176fd84a1944dfcf0759311c9d540737672b8a",
+      "referenceHash": "7f20df6dc389fd1e568dca1492e832b8f696fa1c313eb9e968023b6fb21e4b9b",
       "shadowError": 6.58561,
       "shadowPixels": 1501,
       "status": "PASS",
@@ -190,7 +190,7 @@
         "interiorMAE": 2.67814,
         "silhouetteIoU": 0.988093
       },
-      "referenceHash": "d8eb9278737037908ce44a239e3296f64749103b3502216a5063c79f99298de9",
+      "referenceHash": "697c6a20fa503220ee750ff2afc97327da20b62b9eef4b333d02d6c6a6982131",
       "shadowError": 3.8683,
       "shadowPixels": 2126,
       "status": "PASS",
@@ -221,7 +221,7 @@
         "interiorMAE": 2.61012,
         "silhouetteIoU": 0.987902
       },
-      "referenceHash": "bce14659abc08fab307b0cb010e4d9d2d6b58de256442c91cf459a6aef08d5e6",
+      "referenceHash": "af542a6c3341a96480450d81c8ee1c918684aa286bfe08e6829aa35ab13b31be",
       "shadowError": 4.1696,
       "shadowPixels": 1816,
       "status": "PASS",
@@ -252,7 +252,7 @@
         "interiorMAE": 2.84816,
         "silhouetteIoU": 0.987902
       },
-      "referenceHash": "e7ca46c7940375eefdbe054b1fa68894af7afbb9faa929067d3bc5d66d137dd7",
+      "referenceHash": "89171c20e56a75430d8c989d960fc307744ba32bb1da4cabd06be625d9c517a9",
       "shadowError": 7.3286,
       "shadowPixels": 1126,
       "status": "PASS",
@@ -283,7 +283,7 @@
         "interiorMAE": 2.59914,
         "silhouetteIoU": 0.987852
       },
-      "referenceHash": "2723b1ab52079beaaeb4e325d9a34b5076b9eefc82364f68304c4d8f06c02c72",
+      "referenceHash": "a0394d2b708742330d5745913dbaa7988a1a1f5bef5cbfe8fe6f5837d7249f8d",
       "shadowError": 4.25924,
       "shadowPixels": 1786,
       "status": "PASS",
@@ -314,7 +314,7 @@
         "interiorMAE": 2.68224,
         "silhouetteIoU": 0.988505
       },
-      "referenceHash": "f88488da8eab1e38e71c0ca92f3c9c6602211ae2c551318849bb049c7dec425d",
+      "referenceHash": "da0caeecc6a71464696be92b152d99fe9377287f123fa5b38ef5a3e0363eafa9",
       "shadowError": 3.69297,
       "shadowPixels": 2446,
       "status": "PASS",
@@ -345,7 +345,7 @@
         "interiorMAE": 2.94031,
         "silhouetteIoU": 0.988505
       },
-      "referenceHash": "263ead945cf4bfdd98a59f203d08930b2a3d937fb67f0531744959d8117662b8",
+      "referenceHash": "a9f0d0be545a8b6ae54a2e98479a5ff4456cbc319b04e3fb60b08b97688e60a5",
       "shadowError": 5.93052,
       "shadowPixels": 1756,
       "status": "PASS",
@@ -376,7 +376,7 @@
         "interiorMAE": 2.70178,
         "silhouetteIoU": 0.988379
       },
-      "referenceHash": "2ecb3f5821789ac2f6fc4e24e2f5ec418a0d522a2d52bc30cf9d92fe3c99b44e",
+      "referenceHash": "bf97889c66670d993ce56d3de2a283d0372061002bee7a16ee125e9f1ffe571d",
       "shadowError": 3.73581,
       "shadowPixels": 2449,
       "status": "PASS",
@@ -407,7 +407,7 @@
         "interiorMAE": 2.6293,
         "silhouetteIoU": 0.986965
       },
-      "referenceHash": "db358b5fa96fa56502ce00b246708aa3400bb82dc2f506ca0a6a15bb98b8405e",
+      "referenceHash": "2c3f7aeba004ad3563d34f115df9b45193416240db335a900ccc82853c203220",
       "shadowError": 4.46285,
       "shadowPixels": 1292,
       "status": "PASS",
@@ -438,7 +438,7 @@
         "interiorMAE": 2.90979,
         "silhouetteIoU": 0.986489
       },
-      "referenceHash": "25ea80f6a4ad0b0dcd3bc9e26eba846ba8f0bbf6c0287f35e4b68db7542df9c5",
+      "referenceHash": "ff39ac0367355a43c667df196865bea87298895a3c9f91ef48b4a22d9e75985c",
       "shadowError": 8.49796,
       "shadowPixels": 1227,
       "status": "PASS",
@@ -469,7 +469,7 @@
         "interiorMAE": 2.66881,
         "silhouetteIoU": 0.98705
       },
-      "referenceHash": "3d4e19e1931f72d8c9b4ff1802fd47e28f6278af94276d6c96959a51347c607a",
+      "referenceHash": "4acf40365ec98eb2eb211396ff1fe4736c96b9c1aed1b97ab2377f9fecb2c3f8",
       "shadowError": 4.54389,
       "shadowPixels": 1276,
       "status": "PASS",
@@ -500,7 +500,7 @@
         "interiorMAE": 2.67912,
         "silhouetteIoU": 0.989791
       },
-      "referenceHash": "8ab1163c6aaf82adea77491f6f8a3021cf8f85f628014c7ac3d0da6643eef5bb",
+      "referenceHash": "9e9f496f7f2bf0ad61621037e709bdefe0c0f45d65ee0c2a6b065d013efe376f",
       "shadowError": 3.77834,
       "shadowPixels": 2382,
       "status": "PASS",
@@ -531,7 +531,7 @@
         "interiorMAE": 2.89302,
         "silhouetteIoU": 0.989814
       },
-      "referenceHash": "c29bcf0f35ef6be59b6454307225baf0bb0a9ec37fe09f011e17054af8944f56",
+      "referenceHash": "a57089f18e6ffe75c5d81070aff8f216eab72e580c7191c4300c2d3e5151e55c",
       "shadowError": 10.02727,
       "shadowPixels": 880,
       "status": "PASS",
@@ -562,7 +562,7 @@
         "interiorMAE": 2.67943,
         "silhouetteIoU": 0.989884
       },
-      "referenceHash": "fe1cc249df745d17caa8aeafde901a50ade697f8ec3036ea38813b974aa1cb5e",
+      "referenceHash": "7c3c400fc49bc5a7d6705b5bb0fb5e39d281d1db5e04f6a6d778fe1b7d6d0f8c",
       "shadowError": 3.77671,
       "shadowPixels": 2396,
       "status": "PASS",
@@ -576,17 +576,17 @@
     }
   ],
   "rawReports": [
-    "research/sketch/evidence/raw/38866567327/S3-head-a.json",
-    "research/sketch/evidence/raw/38866567327/S3-head-b.json",
-    "research/sketch/evidence/raw/38866567327/S3-head-c.json",
-    "research/sketch/evidence/raw/38866567327/S3-reserved-d.json",
-    "research/sketch/evidence/raw/38866567327/S3-reserved-e.json",
-    "research/sketch/evidence/raw/38866567327/S3-reserved-f.json"
+    "research/sketch/evidence/raw/39016221517/S3-head-a.json",
+    "research/sketch/evidence/raw/39016221517/S3-head-b.json",
+    "research/sketch/evidence/raw/39016221517/S3-head-c.json",
+    "research/sketch/evidence/raw/39016221517/S3-reserved-d.json",
+    "research/sketch/evidence/raw/39016221517/S3-reserved-e.json",
+    "research/sketch/evidence/raw/39016221517/S3-reserved-f.json"
   ],
   "schemaVersion": 1,
   "sourceDigest": "d9a1cb98657b19855ddb6c2328cda3c270730fe5ce6c05173d6be9bcbb227e85",
-  "sourceHeadCommit": "6ad104b13107606a109e46c786d52566549fd3c4",
+  "sourceHeadCommit": "48b4b88da413f7f97954683b9e48c33d13724188",
   "stage": "S3",
   "status": "TECHNICAL_STUDY_COMPLETE",
-  "uiEvidence": "research/sketch/evidence/raw/38866567327/UI-result.json"
+  "uiEvidence": "research/sketch/evidence/raw/39016221517/UI-result.json"
 }
