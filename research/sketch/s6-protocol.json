@@ -1,0 +1,24 @@
+{
+  "schemaVersion":1,
+  "stage":"S6",
+  "registeredBeforeMeasurement":true,
+  "hypothesis":"The unchanged S5 algorithm remains valid on predeclared identities using previously unused ICT PCA modes and five source-pinned expression poses, with no identity-specific drawing code.",
+  "scope":"3 new parameter identities x 3 lights x 5 expression poses = 45 actual browser scenes and independent Cycles references. Shared-topology PCA/expression transfer, NOT unseen real-person recognition or independent-population artistic generalization.",
+  "identities":[
+    {"id":"novel-a","label":"新参数 A","split":"new-modes","weights":[0.55,-0.3,0.2,0,0,0],"extraWeights":[1,0,0]},
+    {"id":"novel-b","label":"新参数 B","split":"new-modes","weights":[-0.4,0.65,-0.35,0.25,0,0],"extraWeights":[0,0.9,0]},
+    {"id":"novel-c","label":"新参数 C","split":"new-modes","weights":[0,-0.3,0.7,0,0.35,-0.25],"extraWeights":[0,0,-0.9]}
+  ],
+  "expressions":{
+    "neutral":{},
+    "smile":{"mouthSmile_L.obj":0.35,"mouthSmile_R.obj":0.35},
+    "frown":{"mouthFrown_L.obj":0.35,"mouthFrown_R.obj":0.35},
+    "blink":{"eyeBlink_L.obj":0.45,"eyeBlink_R.obj":0.45},
+    "jaw-open":{"jawOpen.obj":0.22}
+  },
+  "thresholds":{"minimumIdentityNonAffineRMS":0.0005,"minimumExpressionRMS":0.00001,"maxExpressionDisplacementSpan":0.15,"referenceFullMAE":7,"referenceInteriorMAE":9,"referenceFeatureMAE":14,"referenceSilhouetteIoU":0.975},
+  "controls":"All S5 ablations; neutral identity hash invariant across expression/light; pose geometry hash invariant across light; exact repeated CSS rendering; old S0-S4/default output unchanged.",
+  "holdoutPolicy":"The entire fixed matrix is registered before these measurements. Once inspected for debugging it is no longer a blind holdout; failures and changes must be retained. Additional PCA modes are not individual real people.",
+  "humanReview":"DEFERRED_BY_OWNER",
+  "artStatus":"ART_UNVERIFIED"
+}

@@ -1,0 +1,212 @@
+name: Sketch S5-S6 / materials and new-mode expression transfer
+on:
+  pull_request:
+    paths: ['workbench/**', 'research/sketch/**', 'docs/sketch/**', 'test/**', '.github/workflows/sketch-s5-s6.yml', '.github/actions/surface-case/**']
+  push:
+    branches: [main]
+    paths: ['workbench/**', 'research/sketch/**', 'docs/sketch/**', 'test/**', '.github/workflows/sketch-s5-s6.yml', '.github/actions/surface-case/**']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: surface-s5-s6-${{ github.ref }}
+  cancel-in-progress: true
+env:
+  SOURCE_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+  OPENBLAS_NUM_THREADS: '1'
+  OMP_NUM_THREADS: '1'
+jobs:
+  plan:
+    name: Frozen 18 S5 and 45 S6 scene plan
+    runs-on: ubuntu-24.04
+    outputs:
+      s5: ${{ steps.plan.outputs.s5 }}
+      s6: ${{ steps.plan.outputs.s6 }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - id: plan
+        run: |
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          p2=json.loads(Path('research/sketch/s2-protocol.json').read_text())
+          p6=json.loads(Path('research/sketch/s6-protocol.json').read_text())
+          s5=[i['id']+'-neutral' for i in p2['identities']]
+          s6=[i['id']+'-'+e for i in p6['identities'] for e in p6['expressions']]
+          assert len(s5)==6 and len(s6)==15 and len(set(s5+s6))==21 and len(p2['lights'])==3
+          with open(os.environ['GITHUB_OUTPUT'],'a') as out:
+              out.write('s5='+json.dumps(s5)+'\ns6='+json.dumps(s6)+'\n')
+          print('REQUIRED_SCENES',len(s5)*3,len(s6)*3,'human review deferred; not ART_PASS')
+          PY
+  contracts:
+    name: Surface numerical, security and native CSS regression tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          python -m pip install -q -r workbench/requirements.txt
+          python -m playwright install --with-deps chromium > "$RUNNER_TEMP/chromium.log" 2>&1 || { tail -50 "$RUNNER_TEMP/chromium.log"; exit 1; }
+          npm run verify
+          python -m py_compile workbench/*.py
+          python workbench/test_contract.py
+          python workbench/test_surface.py
+  s5:
+    name: S5 ${{ matrix.case }}
+    needs: [plan, contracts]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix:
+        case: ${{ fromJSON(needs.plan.outputs.s5) }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/surface-case
+        with:
+          case: ${{ matrix.case }}
+          stage: S5
+  s6:
+    name: S6 ${{ matrix.case }}
+    needs: [plan, contracts, s5]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      max-parallel: 12
+      matrix:
+        case: ${{ fromJSON(needs.plan.outputs.s6) }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/surface-case
+        with:
+          case: ${{ matrix.case }}
+          stage: S6
+  archive:
+    name: All 63 scenes, real UI and durable evidence gate
+    needs: [plan, contracts, s5, s6]
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -q -r workbench/requirements.txt
+      - uses: actions/cache/restore@v4
+        with:
+          path: data/workbench/surface/receipts
+          key: surface-proof-${{ github.run_id }}-${{ env.SOURCE_HEAD_SHA }}-head-a-neutral
+      - uses: actions/cache/restore@v4
+        with:
+          path: data/workbench/surface/receipts
+          key: surface-proof-${{ github.run_id }}-${{ env.SOURCE_HEAD_SHA }}-head-b-neutral
+      - uses: actions/cache/restore@v4
+        with:
+          path: data/workbench/surface/receipts
+          key: surface-proof-${{ github.run_id }}-${{ env.SOURCE_HEAD_SHA }}-head-c-neutral
+      - uses: actions/cache/restore@v4
+        with:
+          path: data/workbench/surface/receipts
+          key: surface-proof-${{ github.run_id }}-${{ env.SOURCE_HEAD_SHA }}-reserved-d-neutral
+      - uses: actions/cache/restore@v4
+        with:
+          path: data/workbench/surface/receipts
+          key: surface-proof-${{ github.run_id }}-${{ env.SOURCE_HEAD_SHA }}-reserved-e-neutral
+      - uses: actions/cache/restore@v4
+        with:
+          path: data/workbench/surface/receipts
+          key: surface-proof-${{ github.run_id }}-${{ env.SOURCE_HEAD_SHA }}-reserved-f-neutral
+      - uses: actions/cache/restore@v4
+        with:
+          path: data/workbench/surface/receipts
+          key: surface-proof-${{ github.run_id }}-${{ env.SOURCE_HEAD_SHA }}-novel-a-neutral
+      - uses: actions/cache/restore@v4
+        with:
+          path: data/workbench/surface/receipts
+          key: surface-proof-${{ github.run_id }}-${{ env.SOURCE_HEAD_SHA }}-novel-a-smile
+      - uses: actions/cache/restore@v4
+        with:
+          path: data/workbench/surface/receipts
+          key: surface-proof-${{ github.run_id }}-${{ env.SOURCE_HEAD_SHA }}-novel-a-frown
+      - uses: actions/cache/restore@v4
+        with:
+          path: data/workbench/surface/receipts
+          key: surface-proof-${{ github.run_id }}-${{ env.SOURCE_HEAD_SHA }}-novel-a-blink
+      - uses: actions/cache/restore@v4
+        with:
+          path: data/workbench/surface/receipts
+          key: surface-proof-${{ github.run_id }}-${{ env.SOURCE_HEAD_SHA }}-novel-a-jaw-open
+      - uses: actions/cache/restore@v4
+        with:
+          path: data/workbench/surface/receipts
+          key: surface-proof-${{ github.run_id }}-${{ env.SOURCE_HEAD_SHA }}-novel-b-neutral
+      - uses: actions/cache/restore@v4
+        with:
+          path: data/workbench/surface/receipts
+          key: surface-proof-${{ github.run_id }}-${{ env.SOURCE_HEAD_SHA }}-novel-b-smile
+      - uses: actions/cache/restore@v4
+        with:
+          path: data/workbench/surface/receipts
+          key: surface-proof-${{ github.run_id }}-${{ env.SOURCE_HEAD_SHA }}-novel-b-frown
+      - uses: actions/cache/restore@v4
+        with:
+          path: data/workbench/surface/receipts
+          key: surface-proof-${{ github.run_id }}-${{ env.SOURCE_HEAD_SHA }}-novel-b-blink
+      - uses: actions/cache/restore@v4
+        with:
+          path: data/workbench/surface/receipts
+          key: surface-proof-${{ github.run_id }}-${{ env.SOURCE_HEAD_SHA }}-novel-b-jaw-open
+      - uses: actions/cache/restore@v4
+        with:
+          path: data/workbench/surface/receipts
+          key: surface-proof-${{ github.run_id }}-${{ env.SOURCE_HEAD_SHA }}-novel-c-neutral
+      - uses: actions/cache/restore@v4
+        with:
+          path: data/workbench/surface/receipts
+          key: surface-proof-${{ github.run_id }}-${{ env.SOURCE_HEAD_SHA }}-novel-c-smile
+      - uses: actions/cache/restore@v4
+        with:
+          path: data/workbench/surface/receipts
+          key: surface-proof-${{ github.run_id }}-${{ env.SOURCE_HEAD_SHA }}-novel-c-frown
+      - uses: actions/cache/restore@v4
+        with:
+          path: data/workbench/surface/receipts
+          key: surface-proof-${{ github.run_id }}-${{ env.SOURCE_HEAD_SHA }}-novel-c-blink
+      - uses: actions/cache/restore@v4
+        with:
+          path: data/workbench/surface/receipts
+          key: surface-proof-${{ github.run_id }}-${{ env.SOURCE_HEAD_SHA }}-novel-c-jaw-open
+      - name: Archive all raw outcomes; incomplete or failed matrices remain red
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python -u workbench/archive_surface.py publish
+      - name: Require successful prerequisite and every real case
+        env:
+          CONTRACTS: ${{ needs.contracts.result }}
+          S5_RESULT: ${{ needs.s5.result }}
+          S6_RESULT: ${{ needs.s6.result }}
+        run: |
+          test "$CONTRACTS" = success
+          test "$S5_RESULT" = success
+          test "$S6_RESULT" = success

@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 const read=p=>JSON.parse(fs.readFileSync(new URL('../'+p,import.meta.url),'utf8'));
-const sceneFields={S0:'scene',S1:'scene',S2:'renderId',S3:'id',S4:'id'};
+const sceneFields={S0:'scene',S1:'scene',S2:'renderId',S3:'id',S4:'id',S5:'id',S6:'id'};
 function validateRows(stage,rows){
  const field=sceneFields[stage];assert.ok(field,'Unregistered evidence schema '+stage);
  assert.ok(Array.isArray(rows)&&rows.length>0,'Empty measurement table');
@@ -40,4 +40,7 @@ test('stage-specific schema still rejects missing, duplicated or invalid nested 
  assert.throws(()=>validateRows('S3',[{id:'a',metrics:{fullMAE:NaN}}]));
  assert.throws(()=>validateRows('S4',[{id:'a',metrics:{interiorMAE:-1}}]));
  assert.throws(()=>validateRows('S3',[]));
+ assert.throws(()=>validateRows('S5',[{renderId:'wrong'}]),/Missing id/);
+ assert.throws(()=>validateRows('S6',[{id:'novel-a'},{id:'novel-a'}]),/Duplicated/);
+ assert.throws(()=>validateRows('S6',[{id:'a',surfaceAddedSkinMAE:NaN}]));
 });
